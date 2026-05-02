@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -245,7 +244,7 @@ if menu == "Dashboard":
                 st.markdown("- [" + stat + "] **" + f["nome"] + "** - " + f.get("tipo", "Fixo"))
         else:
             st.info("Nenhum funcionario cadastrado.")
-            
+
 
 elif menu == "Cadastro de Funcionarios":
     st.markdown("### Cadastro de Funcionarios")
@@ -517,6 +516,48 @@ elif menu == "Gerador de Escala":
                 st.info("Nenhuma escala gerada ainda.")
 
 
+elif menu == "Registro de Motorista":
+    st.markdown("### Registro de Motorista")
+    motoristas = carregar_motoristas()
+    tab1, tab2 = st.tabs(["Novo Registro", "Historico de Motoristas"])
+    with tab1:
+        st.markdown("#### Registrar Chegada / Saida")
+        tipo_reg = st.radio("Tipo de Registro:", ["Chegada", "Saida"])
+        st.markdown("---")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("#### Dados do Motorista")
+            nome_mot = st.text_input("Nome do Motorista")
+            tel_mot = st.text_input("Telefone (opcional)", placeholder="11999999999")
+            placa = st.text_input("Placa do Veiculo", placeholder="[LICENSE_PLATE]")
+            tipo_veic = st.selectbox("Tipo de Veiculo", TIPOS_VEICULO)
+            st.markdown("---")
+            st.markdown("#### Horario")
+            horario_modo = st.radio("Modo do horario:", ["Automatico (agora)", "Manual (digitar)"])
+            if horario_modo == "Automatico (agora)":
+                horario_reg = datetime.now().strftime("%H:%M")
+                st.info("Horario automatico: " + horario_reg)
+            else:
+                horario_reg = st.text_input("Digite o horario (HH:MM)", placeholder="14:30")
+        with c2:
+            st.markdown("#### Foto do Motorista / Veiculo")
+            fonte_foto = st.radio("Origem da foto:", ["Upload", "Camera"], key="foto_mot_fonte")
+            foto_mot = None
+            if fonte_foto == "Upload":
+                foto_mot = st.file_uploader("Selecione a foto", type=["jpg", "jpeg", "png"], key="up_mot")
+            else:
+                foto_mot = st.camera_input("Tire uma foto", key="cam_mot")
+            st.markdown("---")
+            st.markdown("#### Assinatura (opcional)")
+            tem_assinatura = st.checkbox("Motorista vai assinar?")
+            assinatura_texto = ""
+            if tem_assinatura:
+                assinatura_texto = st.text_input("Nome completo como assinatura")
+        obs_mot = st.text_area("Observacoes", placeholder="Ex: Carga com avaria, motorista sem crachha...")
+        st.markdown("---")
+        if st.button("Registrar " + tipo_reg, type="primary", use_container_width=True):
+            if nome_mot and placa:
+                registro = {}
                 registro["nome"] = nome_mot
                 registro["telefone"] = tel_mot
                 registro["placa"] = placa.upper()
@@ -589,8 +630,6 @@ elif menu == "Gerador de Escala":
                 st.info("Nenhum motorista registrado nessa data.")
         else:
             st.info("Nenhum motorista registrado ainda.")
-
-
 elif menu == "Forecast / Volume":
     st.markdown("### Forecast / Volume Previsto")
     forecasts = carregar_forecast()
@@ -813,7 +852,6 @@ elif menu == "Validacao por Foto (IA)":
                         st.dataframe(pd.DataFrame(v["deteccoes"]), use_container_width=True, hide_index=True)
         else:
             st.info("Nenhuma validacao registrada ainda.")
-
 
 
 elif menu == "Enviar por WhatsApp":
