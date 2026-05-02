@@ -240,6 +240,7 @@ if menu == "Dashboard":
                 st.markdown("- [" + stat + "] **" + f["nome"] + "** - " + f.get("tipo", "Fixo"))
         else:
             st.info("Nenhum funcionario cadastrado.")
+            
 elif menu == "Cadastro de Funcionarios":
     st.markdown("### Cadastro de Funcionarios")
     funcionarios = carregar_funcionarios()
@@ -624,7 +625,8 @@ elif menu == "Registro de Motorista":
                 st.info("Nenhum motorista registrado nessa data.")
         else:
             st.info("Nenhum motorista registrado ainda.")
-            elif menu == "Forecast / Volume":
+
+elif menu == "Forecast / Volume":
     st.markdown("### Forecast / Volume Previsto")
     forecasts = carregar_forecast()
     tab1, tab2, tab3 = st.tabs(["Cadastro Manual", "Upload CSV/Excel", "Historico"])
