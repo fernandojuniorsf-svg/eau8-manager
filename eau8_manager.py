@@ -51,8 +51,6 @@ div[data-testid="stExpander"] {border: 1px solid #37475A; border-radius: 8px; bo
 """
 st.markdown(css, unsafe_allow_html=True)
 
-LOGO_AMAZON = "logo.png"
-
 sidebar_html = '<div class="sidebar-logo">'
 sidebar_html += '<img src="' + LOGO_AMAZON + '" width="150" style="margin-bottom:0.5rem;">'
 sidebar_html += '<h2 style="color:#FFFFFF;margin:0.3rem 0 0 0;font-size:1.4rem;">EUA8 Manager</h2>'
