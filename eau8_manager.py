@@ -53,12 +53,14 @@ st.markdown(css, unsafe_allow_html=True)
 
 LOGO_AMAZON = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png"
 
-sidebar_html = '<div class="sidebar-logo">'
-sidebar_html += '<img src="' + LOGO_AMAZON + '" width="150" style="margin-bottom:0.5rem;">'
-sidebar_html += '<h2 style="color:#FFFFFF;margin:0.3rem 0 0 0;font-size:1.4rem;">EUA8 Manager</h2>'
-sidebar_html += '<p style="color:#FF9900;margin:0;font-size:0.85rem;font-weight:500;">First Mile Operations</p>'
-sidebar_html += '</div>'
-st.sidebar.markdown(sidebar_html, unsafe_allow_html=True)
+st.sidebar.image("logo.png", width=150)
+sb_t = '<div style="text-align:center;">'
+sb_t += '<h2 style="color:#FFFFFF;margin:0.3rem 0;font-size:1.4rem;">EUA8 Manager</h2>'
+sb_t += '<p style="color:#FF9900;margin:0;font-size:0.85rem;">First Mile Operations</p>'
+sb_t += '</div>'
+st.sidebar.markdown(sb_t, unsafe_allow_html=True)
+st.sidebar.markdown("---")
+
 
 PASTA_DADOS = "[PASSWORD]"
 PASTA_FOTOS = "validacoes_fotos"
@@ -188,13 +190,17 @@ info_sb += "</div>"
 st.sidebar.markdown(info_sb, unsafe_allow_html=True)
 
 
-if menu == "Dashboard":
-    header = '<div class="main-header">'
-    header += '<img src="' + LOGO_AMAZON + '" width="200" style="margin-bottom:0.5rem;">'
-    header += '<h1>EUA8 Manager</h1>'
-    header += '<p>First Mile Operations | Amazon Logistics</p>'
+col_logo, col_titulo = st.columns([1, 3])
+with col_logo:
+    st.image("logo.png", width=180)
+with col_titulo:
+    header = '<div style="padding:1rem 0;">'
+    header += '<h1 style="color:#FFFFFF;font-size:2.2rem;margin:0;">EUA8 Manager</h1>'
+    header += '<p style="color:#FF9900;font-size:1rem;margin:0.3rem 0 0 0;">First Mile Operations | Amazon Logistics</p>'
     header += '</div>'
     st.markdown(header, unsafe_allow_html=True)
+st.markdown('<hr style="border-color:#FF9900;">', unsafe_allow_html=True)
+
     st.markdown("### Dashboard Operacional")
     funcionarios = carregar_funcionarios()
     validacoes = carregar_validacoes()
