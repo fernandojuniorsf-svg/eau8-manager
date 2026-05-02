@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -20,9 +21,7 @@ st.set_page_config(
 css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 * {font-family: 'Inter', sans-serif;}
-
 .main-header {
     text-align: center;
     padding: 1.5rem 1rem;
@@ -31,143 +30,24 @@ css = """
     margin-bottom: 1.5rem;
     border-bottom: 4px solid #FF9900;
 }
-.main-header h1 {
-    color: #FFFFFF;
-    font-size: 2.2rem;
-    font-weight: 700;
-    margin: 0;
-}
-.main-header p {
-    color: #FF9900;
-    font-size: 1rem;
-    margin: 0.3rem 0 0 0;
-    font-weight: 500;
-}
-
-.metric-card {
-    background: linear-gradient(135deg, #232F3E, #37475A);
-    border-radius: 12px;
-    padding: 1.2rem;
-    text-align: center;
-    border-left: 4px solid #FF9900;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin-bottom: 1rem;
-}
-.metric-card h3 {
-    color: #FF9900;
-    font-size: 2rem;
-    margin: 0;
-    font-weight: 700;
-}
-.metric-card p {
-    color: #FFFFFF;
-    font-size: 0.85rem;
-    margin: 0.3rem 0 0 0;
-    font-weight: 400;
-}
-
-.section-header {
-    background: linear-gradient(90deg, #FF9900, #FFB84D);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin: 1.5rem 0 0.5rem 0;
-}
-
-.info-box {
-    background: #232F3E;
-    border-radius: 10px;
-    padding: 1rem;
-    border-left: 4px solid #FF9900;
-    margin: 0.5rem 0;
-    color: #FFFFFF;
-}
-
-.sidebar-logo {
-    text-align: center;
-    padding: 1rem 0;
-    border-bottom: 2px solid #FF9900;
-    margin-bottom: 1rem;
-}
-
-.footer {
-    text-align: center;
-    color: #999;
-    font-size: 0.75rem;
-    padding: 2rem 0 1rem 0;
-    border-top: 1px solid #333;
-    margin-top: 2rem;
-}
-
-div[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #232F3E 0%, #1A242F 100%);
-}
-div[data-testid="stSidebar"] .stMarkdown p,
-div[data-testid="stSidebar"] .stMarkdown li,
-div[data-testid="stSidebar"] .stRadio label {
-    color: #FFFFFF;
-}
-div[data-testid="stSidebar"] .stRadio label:hover {
-    color: #FF9900;
-}
-div[data-testid="stSidebar"] hr {
-    border-color: #FF9900;
-}
-
-.stButton > button[kind="primary"] {
-    background: linear-gradient(90deg, #FF9900, #FFB84D);
-    color: #232F3E;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-}
-.stButton > button[kind="primary"]:hover {
-    background: linear-gradient(90deg, #FFB84D, #FF9900);
-    color: #000;
-}
-
-.stButton > button[kind="secondary"] {
-    background: transparent;
-    color: #FF9900;
-    border: 2px solid #FF9900;
-    font-weight: 600;
-    border-radius: 8px;
-}
-.stButton > button[kind="secondary"]:hover {
-    background: #FF9900;
-    color: #232F3E;
-}
-
-div[data-testid="stMetric"] {
-    background: linear-gradient(135deg, #232F3E, #37475A);
-    border-radius: 12px;
-    padding: 1rem;
-    border-left: 4px solid #FF9900;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-div[data-testid="stMetric"] label {
-    color: #AAAAAA;
-}
-div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-    color: #FF9900;
-    font-weight: 700;
-}
-
-.stTabs [data-baseweb="tab-list"] button {
-    color: #FFFFFF;
-    font-weight: 500;
-}
-.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
-    color: #FF9900;
-    border-bottom-color: #FF9900;
-}
-
-div[data-testid="stExpander"] {
-    border: 1px solid #37475A;
-    border-radius: 8px;
-    border-left: 3px solid #FF9900;
-}
+.main-header h1 {color: #FFFFFF; font-size: 2.2rem; font-weight: 700; margin: 0;}
+.main-header p {color: #FF9900; font-size: 1rem; margin: 0.3rem 0 0 0; font-weight: 500;}
+.sidebar-logo {text-align: center; padding: 1rem 0; border-bottom: 2px solid #FF9900; margin-bottom: 1rem;}
+.footer {text-align: center; color: #999; font-size: 0.75rem; padding: 2rem 0 1rem 0; border-top: 1px solid #333; margin-top: 2rem;}
+div[data-testid="stSidebar"] {background: linear-gradient(180deg, #232F3E 0%, #1A242F 100%);}
+div[data-testid="stSidebar"] .stMarkdown p, div[data-testid="stSidebar"] .stMarkdown li, div[data-testid="stSidebar"] .stRadio label {color: #FFFFFF;}
+div[data-testid="stSidebar"] .stRadio label:hover {color: #FF9900;}
+div[data-testid="stSidebar"] hr {border-color: #FF9900;}
+.stButton > button[kind="primary"] {background: linear-gradient(90deg, #FF9900, #FFB84D); color: #232F3E; font-weight: 700; border: none; border-radius: 8px;}
+.stButton > button[kind="primary"]:hover {background: linear-gradient(90deg, #FFB84D, #FF9900); color: #000;}
+.stButton > button[kind="secondary"] {background: transparent; color: #FF9900; border: 2px solid #FF9900; font-weight: 600; border-radius: 8px;}
+.stButton > button[kind="secondary"]:hover {background: #FF9900; color: #232F3E;}
+div[data-testid="stMetric"] {background: linear-gradient(135deg, #232F3E, #37475A); border-radius: 12px; padding: 1rem; border-left: 4px solid #FF9900; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+div[data-testid="stMetric"] label {color: #AAAAAA;}
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {color: #FF9900; font-weight: 700;}
+.stTabs [data-baseweb="tab-list"] button {color: #FFFFFF; font-weight: 500;}
+.stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {color: #FF9900; border-bottom-color: #FF9900;}
+div[data-testid="stExpander"] {border: 1px solid #37475A; border-radius: 8px; border-left: 3px solid #FF9900;}
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
@@ -180,6 +60,108 @@ sidebar_html += '<h2 style="color:#FFFFFF;margin:0.3rem 0 0 0;font-size:1.4rem;"
 sidebar_html += '<p style="color:#FF9900;margin:0;font-size:0.85rem;font-weight:500;">First Mile Operations</p>'
 sidebar_html += '</div>'
 st.sidebar.markdown(sidebar_html, unsafe_allow_html=True)
+
+PASTA_DADOS = "[PASSWORD]"
+PASTA_FOTOS = "validacoes_fotos"
+PASTA_ESCALAS = "escalas"
+PASTA_MOTORISTAS = "motoristas_fotos"
+os.makedirs(PASTA_DADOS, exist_ok=True)
+os.makedirs(PASTA_FOTOS, exist_ok=True)
+os.makedirs(PASTA_ESCALAS, exist_ok=True)
+os.makedirs(PASTA_MOTORISTAS, exist_ok=True)
+
+ARQ_FUNCIONARIOS = os.path.join(PASTA_DADOS, "funcionarios.json")
+ARQ_VALIDACOES = os.path.join(PASTA_DADOS, "validacoes.json")
+ARQ_ESCALAS = os.path.join(PASTA_DADOS, "escalas.json")
+ARQ_MOTORISTAS = os.path.join(PASTA_DADOS, "motoristas.json")
+ARQ_FORECAST = os.path.join(PASTA_DADOS, "forecast.json")
+
+POSICOES = [
+    "Receive (Recebimento)",
+    "Stow (Armazenamento)",
+    "Depart (Expedicao)",
+    "Pallet Building",
+    "Scanning",
+    "Problem Solve",
+    "Water Spider",
+    "Loading (Carregamento)",
+    "Unloading (Descarga)",
+    "Quality Audit"
+]
+
+TURNOS = ["Tarde (14h-20h)"]
+
+TIPOS_VALIDACAO = [
+    "Pallet Montado",
+    "Veiculo Carregado",
+    "Estacao Organizada",
+    "Conferencia de Volumes",
+    "Verificacao de Seguranca",
+    "Auditoria de Qualidade"
+]
+
+TIPOS_VEICULO = [
+    "Carreta (28 pallets)",
+    "Truck (16 pallets)",
+    "VUC (6 pallets)",
+    "Van",
+    "Outro"
+]
+
+
+def carregar_dados(arquivo, padrao=None):
+    if padrao is None:
+        padrao = []
+    if os.path.exists(arquivo):
+        with open(arquivo, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return padrao
+
+
+def salvar_dados(arquivo, dados):
+    with open(arquivo, "w", encoding="utf-8") as f:
+        json.dump(dados, f, ensure_ascii=False, indent=2, default=str)
+
+
+def carregar_funcionarios():
+    return carregar_dados(ARQ_FUNCIONARIOS, [])
+
+
+def salvar_funcionarios(func):
+    salvar_dados(ARQ_FUNCIONARIOS, func)
+
+
+def carregar_validacoes():
+    return carregar_dados(ARQ_VALIDACOES, [])
+
+
+def salvar_validacoes(val):
+    salvar_dados(ARQ_VALIDACOES, val)
+
+
+def carregar_escalas():
+    return carregar_dados(ARQ_ESCALAS, [])
+
+
+def salvar_escalas(esc):
+    salvar_dados(ARQ_ESCALAS, esc)
+
+
+def carregar_motoristas():
+    return carregar_dados(ARQ_MOTORISTAS, [])
+
+
+def salvar_motoristas(mot):
+    salvar_dados(ARQ_MOTORISTAS, mot)
+
+
+def carregar_forecast():
+    return carregar_dados(ARQ_FORECAST, [])
+
+
+def salvar_forecast(fc):
+    salvar_dados(ARQ_FORECAST, fc)
+
 
 menu = st.sidebar.radio(
     "Menu Principal",
@@ -198,13 +180,14 @@ menu = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 agora = datetime.now().strftime("%d/%m/%Y %H:%M")
-info_sidebar = "<div style='color:#AAAAAA;font-size:0.8rem;'>"
-info_sidebar += "<p>Data: <strong style='color:#FF9900;'>" + agora + "</strong></p>"
-info_sidebar += "<p>Lider: <strong style='color:#FF9900;'>Fernando</strong></p>"
-info_sidebar += "<p>Site: <strong style='color:#FF9900;'>EUA8</strong></p>"
-info_sidebar += "<p>Turno: <strong style='color:#FF9900;'>Tarde (14h-20h)</strong></p>"
-info_sidebar += "</div>"
-st.sidebar.markdown(info_sidebar, unsafe_allow_html=True)
+info_sb = "<div style='color:#AAAAAA;font-size:0.8rem;'>"
+info_sb += "<p>Data: <strong style='color:#FF9900;'>" + agora + "</strong></p>"
+info_sb += "<p>Lider: <strong style='color:#FF9900;'>Fernando</strong></p>"
+info_sb += "<p>Site: <strong style='color:#FF9900;'>EUA8</strong></p>"
+info_sb += "<p>Turno: <strong style='color:#FF9900;'>Tarde (14h-20h)</strong></p>"
+info_sb += "</div>"
+st.sidebar.markdown(info_sb, unsafe_allow_html=True)
+
 
 if menu == "Dashboard":
     header = '<div class="main-header">'
@@ -419,7 +402,7 @@ elif menu == "Gerador de Escala":
                             alocado = func
                             break
                     if not alocado and pool:
-                        alocado = pool[0]
+                        alocado = pool
                     if alocado:
                         item_esc = {}
                         item_esc["posicao"] = posicao
@@ -532,50 +515,8 @@ elif menu == "Gerador de Escala":
                         st.dataframe(df_e, use_container_width=True, hide_index=True)
             else:
                 st.info("Nenhuma escala gerada ainda.")
-                
 
-elif menu == "Registro de Motorista":
-    st.markdown("### Registro de Motorista")
-    motoristas = carregar_motoristas()
-    tab1, tab2 = st.tabs(["Novo Registro", "Historico de Motoristas"])
-    with tab1:
-        st.markdown("#### Registrar Chegada / Saida")
-        tipo_reg = st.radio("Tipo de Registro:", ["Chegada", "Saida"])
-        st.markdown("---")
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("#### Dados do Motorista")
-            nome_mot = st.text_input("Nome do Motorista")
-            tel_mot = st.text_input("Telefone (opcional)", placeholder="11999999999")
-            placa = st.text_input("Placa do Veiculo", placeholder="[LICENSE_PLATE]")
-            tipo_veic = st.selectbox("Tipo de Veiculo", TIPOS_VEICULO)
-            st.markdown("---")
-            st.markdown("#### Horario")
-            horario_modo = st.radio("Modo do horario:", ["Automatico (agora)", "Manual (digitar)"])
-            if horario_modo == "Automatico (agora)":
-                horario_reg = datetime.now().strftime("%H:%M")
-                st.info("Horario automatico: " + horario_reg)
-            else:
-                horario_reg = st.text_input("Digite o horario (HH:MM)", placeholder="14:30")
-        with c2:
-            st.markdown("#### Foto do Motorista / Veiculo")
-            fonte_foto = st.radio("Origem da foto:", ["Upload", "Camera"], key="foto_mot_fonte")
-            foto_mot = None
-            if fonte_foto == "Upload":
-                foto_mot = st.file_uploader("Selecione a foto", type=["jpg", "jpeg", "png"], key="up_mot")
-            else:
-                foto_mot = st.camera_input("Tire uma foto", key="cam_mot")
-            st.markdown("---")
-            st.markdown("#### Assinatura (opcional)")
-            tem_assinatura = st.checkbox("Motorista vai assinar?")
-            assinatura_texto = ""
-            if tem_assinatura:
-                assinatura_texto = st.text_input("Nome completo como assinatura")
-        obs_mot = st.text_area("Observacoes", placeholder="Ex: Carga com avaria, motorista sem crachha...")
-        st.markdown("---")
-        if st.button("Registrar " + tipo_reg, type="primary", use_container_width=True):
-            if nome_mot and placa:
-                registro = {}
+
                 registro["nome"] = nome_mot
                 registro["telefone"] = tel_mot
                 registro["placa"] = placa.upper()
@@ -771,7 +712,7 @@ elif menu == "Validacao por Foto (IA)":
                                 det["objeto"] = classe
                                 det["confianca"] = str(round(conf * 100, 1)) + "%"
                                 deteccoes.append(det)
-                        img_res = resultados[0].plot()
+                        img_res = resultados.plot()
                         st.image(img_res, channels="BGR", use_container_width=True)
                         if deteccoes:
                             st.success(str(len(deteccoes)) + " objeto(s) detectado(s)!")
@@ -872,6 +813,7 @@ elif menu == "Validacao por Foto (IA)":
                         st.dataframe(pd.DataFrame(v["deteccoes"]), use_container_width=True, hide_index=True)
         else:
             st.info("Nenhuma validacao registrada ainda.")
+
 
 
 elif menu == "Enviar por WhatsApp":
