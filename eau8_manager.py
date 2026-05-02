@@ -189,18 +189,20 @@ info_sb += "<p>Turno: <strong style='color:#FF9900;'>Tarde (14h-20h)</strong></p
 info_sb += "</div>"
 st.sidebar.markdown(info_sb, unsafe_allow_html=True)
 
+if menu == "Dashboard":
+    col_logo, col_titulo = st.columns([1, 3])
+    with col_logo:
+        st.image("logo.png", width=180)
+    with col_titulo:
+        header = '<div style="padding:1rem 0;">'
+        header += '<h1 style="color:#FFFFFF;font-size:2.2rem;margin:0;">EUA8 Manager</h1>'
+        header += '<p style="color:#FF9900;font-size:1rem;margin:0.3rem 0 0 0;">First Mile Operations | Amazon Logistics</p>'
+        header += '</div>'
+        st.markdown(header, unsafe_allow_html=True)
+    st.markdown('<hr style="border-color:#FF9900;">', unsafe_allow_html=True)
+    st.markdown("### Dashboard Operacional")
 
-col_logo, col_titulo = st.columns([1, 3])
-with col_logo:
-    st.image("logo.png", width=180)
-with col_titulo:
-    header = '<div style="padding:1rem 0;">'
-    header += '<h1 style="color:#FFFFFF;font-size:2.2rem;margin:0;">EUA8 Manager</h1>'
-    header += '<p style="color:#FF9900;font-size:1rem;margin:0.3rem 0 0 0;">First Mile Operations | Amazon Logistics</p>'
-    header += '</div>'
-    st.markdown(header, unsafe_allow_html=True)
-st.markdown('<hr style="border-color:#FF9900;">', unsafe_allow_html=True)
-st.markdown("### Dashboard Operacional")
+
     funcionarios = carregar_funcionarios()
     validacoes = carregar_validacoes()
     escalas = carregar_escalas()
