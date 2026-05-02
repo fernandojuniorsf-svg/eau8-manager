@@ -51,7 +51,7 @@ div[data-testid="stExpander"] {border: 1px solid #37475A; border-radius: 8px; bo
 """
 st.markdown(css, unsafe_allow_html=True)
 
-LOGO_AMAZON = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png"
+LOGO_AMAZON = "https://d1.awsstatic.com/logos/aws-logo-lockups/poweredbyaws/PB_AWS_logo_RGB_stacked_REV_SQ.91cd4af40773cbfbd15577a3c2b8a346fe3e8fa2.png"
 
 sidebar_html = '<div class="sidebar-logo">'
 sidebar_html += '<img src="' + LOGO_AMAZON + '" width="150" style="margin-bottom:0.5rem;">'
