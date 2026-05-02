@@ -12,7 +12,7 @@ NL = chr(10)
 
 st.set_page_config(
     page_title="EUA8 Manager | Amazon Logistics",
-    page_icon="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png",
+    page_icon="📦",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -32,7 +32,6 @@ css = """
 .main-header h1 {color: #FFFFFF; font-size: 2.2rem; font-weight: 700; margin: 0;}
 .main-header p {color: #FF9900; font-size: 1rem; margin: 0.3rem 0 0 0; font-weight: 500;}
 .sidebar-logo {text-align: center; padding: 1rem 0; border-bottom: 2px solid #FF9900; margin-bottom: 1rem;}
-.footer {text-align: center; color: #999; font-size: 0.75rem; padding: 2rem 0 1rem 0; border-top: 1px solid #333; margin-top: 2rem;}
 div[data-testid="stSidebar"] {background: linear-gradient(180deg, #232F3E 0%, #1A242F 100%);}
 div[data-testid="stSidebar"] .stMarkdown p, div[data-testid="stSidebar"] .stMarkdown li, div[data-testid="stSidebar"] .stRadio label {color: #FFFFFF;}
 div[data-testid="stSidebar"] .stRadio label:hover {color: #FF9900;}
@@ -51,18 +50,14 @@ div[data-testid="stExpander"] {border: 1px solid #37475A; border-radius: 8px; bo
 """
 st.markdown(css, unsafe_allow_html=True)
 
-LOGO_AMAZON = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Amazon_logo.svg/1200px-Amazon_logo.svg.png"
+sidebar_html = '<div class="sidebar-logo">'
+sidebar_html += '<h2 style="color:#FF9900;margin:0;font-size:1.8rem;">EUA8 Manager</h2>'
+sidebar_html += '<p style="color:#FFFFFF;margin:0.3rem 0 0 0;font-size:0.85rem;">First Mile Operations</p>'
+sidebar_html += '<p style="color:#AAAAAA;margin:0.2rem 0 0 0;font-size:0.75rem;">Amazon Logistics</p>'
+sidebar_html += '</div>'
+st.sidebar.markdown(sidebar_html, unsafe_allow_html=True)
 
-st.sidebar.image("logo.png", width=150)
-sb_t = '<div style="text-align:center;">'
-sb_t += '<h2 style="color:#FFFFFF;margin:0.3rem 0;font-size:1.4rem;">EUA8 Manager</h2>'
-sb_t += '<p style="color:#FF9900;margin:0;font-size:0.85rem;">First Mile Operations</p>'
-sb_t += '</div>'
-st.sidebar.markdown(sb_t, unsafe_allow_html=True)
-st.sidebar.markdown("---")
-
-
-PASTA_DADOS = "[PASSWORD]"
+PASTA_DADOS = [PASSWORD]8"
 PASTA_FOTOS = "validacoes_fotos"
 PASTA_ESCALAS = "escalas"
 PASTA_MOTORISTAS = "motoristas_fotos"
@@ -189,20 +184,14 @@ info_sb += "<p>Turno: <strong style='color:#FF9900;'>Tarde (14h-20h)</strong></p
 info_sb += "</div>"
 st.sidebar.markdown(info_sb, unsafe_allow_html=True)
 
+
 if menu == "Dashboard":
-    col_logo, col_titulo = st.columns([1, 3])
-    with col_logo:
-        st.image("logo.png", width=180)
-    with col_titulo:
-        header = '<div style="padding:1rem 0;">'
-        header += '<h1 style="color:#FFFFFF;font-size:2.2rem;margin:0;">EUA8 Manager</h1>'
-        header += '<p style="color:#FF9900;font-size:1rem;margin:0.3rem 0 0 0;">First Mile Operations | Amazon Logistics</p>'
-        header += '</div>'
-        st.markdown(header, unsafe_allow_html=True)
-    st.markdown('<hr style="border-color:#FF9900;">', unsafe_allow_html=True)
+    header = '<div class="main-header">'
+    header += '<h1>EUA8 Manager</h1>'
+    header += '<p>First Mile Operations | Amazon Logistics</p>'
+    header += '</div>'
+    st.markdown(header, unsafe_allow_html=True)
     st.markdown("### Dashboard Operacional")
-
-
     funcionarios = carregar_funcionarios()
     validacoes = carregar_validacoes()
     escalas = carregar_escalas()
@@ -536,7 +525,7 @@ elif menu == "Registro de Motorista":
             st.markdown("#### Dados do Motorista")
             nome_mot = st.text_input("Nome do Motorista")
             tel_mot = st.text_input("Telefone (opcional)", placeholder="11999999999")
-            placa = st.text_input("Placa do Veiculo", placeholder="[LICENSE_PLATE]")
+            placa = st.text_input("Placa do Veiculo", placeholder="ABC1D23")
             tipo_veic = st.selectbox("Tipo de Veiculo", TIPOS_VEICULO)
             st.markdown("---")
             st.markdown("#### Horario")
@@ -560,7 +549,7 @@ elif menu == "Registro de Motorista":
             assinatura_texto = ""
             if tem_assinatura:
                 assinatura_texto = st.text_input("Nome completo como assinatura")
-        obs_mot = st.text_area("Observacoes", placeholder="Ex: Carga com avaria, motorista sem crachha...")
+        obs_mot = st.text_area("Observacoes", placeholder="Ex: Carga com avaria, motorista sem cracha...")
         st.markdown("---")
         if st.button("Registrar " + tipo_reg, type="primary", use_container_width=True):
             if nome_mot and placa:
@@ -637,7 +626,7 @@ elif menu == "Registro de Motorista":
                 st.info("Nenhum motorista registrado nessa data.")
         else:
             st.info("Nenhum motorista registrado ainda.")
-elif menu == "Forecast / Volume":
+            elif menu == "Forecast / Volume":
     st.markdown("### Forecast / Volume Previsto")
     forecasts = carregar_forecast()
     tab1, tab2, tab3 = st.tabs(["Cadastro Manual", "Upload CSV/Excel", "Historico"])
@@ -1228,7 +1217,7 @@ elif menu == "Configuracoes":
 
 
 rodape = "<div style='text-align: center; color: #666; font-size: 0.8rem;'>"
-rodape += "EUA8 Manager v5.0 | First Mile Operations | Desenvolvido por Fernando"
+rodape += "EUA8 Manager v6.0 | First Mile Operations | Desenvolvido por Fernando"
 rodape += "</div>"
 st.markdown("---")
 st.markdown(rodape, unsafe_allow_html=True)
