@@ -240,8 +240,6 @@ if menu == "Dashboard":
                 st.markdown("- [" + stat + "] **" + f["nome"] + "** - " + f.get("tipo", "Fixo"))
         else:
             st.info("Nenhum funcionario cadastrado.")
-
-
 elif menu == "Cadastro de Funcionarios":
     st.markdown("### Cadastro de Funcionarios")
     funcionarios = carregar_funcionarios()
