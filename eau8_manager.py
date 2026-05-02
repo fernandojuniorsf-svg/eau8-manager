@@ -56,7 +56,6 @@ sidebar_html += '<p style="color:#FFFFFF;margin:0.3rem 0 0 0;font-size:0.85rem;"
 sidebar_html += '<p style="color:#AAAAAA;margin:0.2rem 0 0 0;font-size:0.75rem;">Amazon Logistics</p>'
 sidebar_html += '</div>'
 st.sidebar.markdown(sidebar_html, unsafe_allow_html=True)
-
 PASTA_DADOS = [PASSWORD]8"
 PASTA_FOTOS = "validacoes_fotos"
 PASTA_ESCALAS = "escalas"
