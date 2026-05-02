@@ -57,7 +57,7 @@ sidebar_html += '<p style="color:#AAAAAA;margin:0.2rem 0 0 0;font-size:0.75rem;"
 sidebar_html += '</div>'
 st.sidebar.markdown(sidebar_html, unsafe_allow_html=True)
 
-PASTA_DADOS = [PASSWORD]"
+PASTA_DADOS = "[PASSWORD]"
 PASTA_FOTOS = "validacoes_fotos"
 PASTA_ESCALAS = "escalas"
 PASTA_MOTORISTAS = "motoristas_fotos"
