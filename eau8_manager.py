@@ -200,7 +200,7 @@ with col_titulo:
     header += '</div>'
     st.markdown(header, unsafe_allow_html=True)
 st.markdown('<hr style="border-color:#FF9900;">', unsafe_allow_html=True)
-    st.markdown("### Dashboard Operacional")
+
     funcionarios = carregar_funcionarios()
     validacoes = carregar_validacoes()
     escalas = carregar_escalas()
