@@ -853,8 +853,6 @@ elif menu == "Validacao por Foto (IA)":
 elif menu == "Enviar por WhatsApp":
     st.markdown("### Enviar por WhatsApp")
     pywhatkit_ok = False
-    try:
-    pywhatkit_ok = False
     tab1, tab2, tab3, tab4 = st.tabs(["Enviar Escala", "Mensagem Personalizada", "Mensagens Rapidas", "Contatos Salvos"])
     with tab1:
         st.markdown("#### Enviar Ultima Escala")
