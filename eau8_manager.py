@@ -1742,72 +1742,30 @@ elif menu == "Configuracoes":
         st.markdown("#### Informacoes do Site")
         st.markdown("- **Site:** EUA8")
         st.markdown("- **Operacao:** First Mile / Cross Dock")
-        st.markdown("- **Lider:** Fernando")
-        st.markdown("- **Turno:** Tarde (14h - 20h)")
-        st.markdown("- **Veiculos:** Carretas (28p), Trucks (16p), VUCs (6p)")
+        st.markdown("- **Turno:** Tarde (14h-20h)")
+        st.markdown("- **Regiao:** Sao Paulo")
     with tab2:
-        st.markdown("#### Gerenciamento de Dados")
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("**Arquivos de Dados:**")
-            st.markdown("- Funcionarios: " + ARQ_FUNCIONARIOS)
-            st.markdown("- Validacoes: " + ARQ_VALIDACOES)
-            st.markdown("- Escalas: " + ARQ_ESCALAS)
-            st.markdown("- Motoristas: " + ARQ_MOTORISTAS)
-            st.markdown("- Forecast: " + ARQ_FORECAST)
-        with c2:
-            st.markdown("**Limpar Dados:**")
-            if st.button("Limpar Validacoes", type="secondary"):
-                salvar_validacoes([])
-                st.success("Validacoes limpas!")
-                st.rerun()
-            if st.button("Limpar Escalas", type="secondary"):
-                salvar_escalas([])
-                st.success("Escalas limpas!")
-                st.rerun()
-            if st.button("Limpar Motoristas", type="secondary"):
-                salvar_motoristas([])
-                st.success("Motoristas limpos!")
-                st.rerun()
-            if st.button("Limpar Forecasts", type="secondary"):
-                salvar_forecast([])
-ARQ_ABSENTEISMO = os.path.join("dados_eau8", "absenteismo.json")
-ARQ_DESEMPENHO = os.path.join("dados_eau8", "desempenho.json")
-
-
-def carregar_absenteismo():
-    if os.path.exists(ARQ_ABSENTEISMO):
-        with open(ARQ_ABSENTEISMO, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
-
-def salvar_absenteismo(dados):
-    with open(ARQ_ABSENTEISMO, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=2)
-
-
-def carregar_desempenho():
-    if os.path.exists(ARQ_DESEMPENHO):
-        with open(ARQ_DESEMPENHO, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
-
-def salvar_desempenho(dados):
-    with open(ARQ_DESEMPENHO, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=2)
-st.success("Forecasts limpos!")
-st.rerun()
+        st.markdown("#### Sobre o Sistema")
+        st.markdown("- **App:** EUA8 Manager")
+        st.markdown("- **Versao:** 6.0")
+        st.markdown("- **Desenvolvido por:** Fernando Junior")
+        st.markdown("- **Stack:** Python + Streamlit")
     with tab3:
-        st.markdown("#### Como usar o EUA8 Manager")
-        st.markdown("1. **Cadastre seus funcionarios** - Nome, telefone, habilidades e turno")
-        st.markdown("2. **Cadastre o forecast** - Volume previsto manual ou por upload")
-        st.markdown("3. **Gere a escala** - Escolha data e edite antes de salvar")
-        st.markdown("4. **Registre motoristas** - Chegada e saida com foto e placa")
-        st.markdown("5. **Valide com fotos** - Tire fotos e a IA identifica objetos")
-        st.markdown("6. **Envie por WhatsApp** - Compartilhe com o time")
-        st.markdown("7. **Acompanhe nos relatorios** - Exporte em CSV")
+        st.markdown("#### Ajuda")
+        st.markdown("Duvidas? Fale com o administrador do sistema.")
+        st.markdown("**Funcionalidades:**")
+        st.markdown("- Dashboard com metricas e graficos")
+        st.markdown("- Cadastro e gestao de funcionarios")
+        st.markdown("- Gerador de escala automatico")
+        st.markdown("- Registro de motoristas com foto")
+        st.markdown("- Forecast / Volume previsto")
+        st.markdown("- Validacao por foto com IA")
+        st.markdown("- Scanner QR Code / Codigo de barras")
+        st.markdown("- Envio por WhatsApp")
+        st.markdown("- Controle de absenteismo")
+        st.markdown("- Desempenho por funcao")
+        st.markdown("- Relatorios e exportacao")
+        st.markdown("- Gerenciamento de usuarios")
 
 
 rodape = "<div style='text-align: center; color: #666; font-size: 0.8rem;'>"
