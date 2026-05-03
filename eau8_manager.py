@@ -1172,5 +1172,3 @@ rodape = "<div style='text-align: center; color: #666; padding: 20px;'>" + SITE 
 st.markdown("---")
 st.markdown(rodape, unsafe_allow_html=True)
 
-            st.info("Nenhum motorista registrado.")
-
