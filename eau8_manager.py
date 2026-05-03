@@ -1057,7 +1057,7 @@ elif menu == "Validacao por Foto (IA)":
                             det["objeto"] = d["objeto"]
                             det["confianca"] = "demo"
                             deteccoes.append(det)
-                                        st.markdown("---")
+                            st.markdown("---")
             st.markdown("#### Contagem Manual da Equipe")
             st.markdown("*Preencha o que a equipe contou no local:*")
             cm1, cm2, cm3, cm4 = st.columns(4)
