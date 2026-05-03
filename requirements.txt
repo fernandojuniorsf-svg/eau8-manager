@@ -2,7 +2,5 @@ streamlit
 pandas
 numpy
 Pillow
-ultralytics
 openpyxl
-opencv-python-headless
-pyzbar
+ultralytics
