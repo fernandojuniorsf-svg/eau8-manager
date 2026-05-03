@@ -1,42 +1,19 @@
 import streamlit as st
-st.write("TESTE 1 - Streamlit OK")
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta, date
+from zoneinfo import ZoneInfo
+FUSO_BR = ZoneInfo("America/Sao_Paulo")
+import json
+import os
+import random
+from PIL import Image
+import io
 
-try:
-    import pandas as pd
-    st.write("TESTE 2 - Pandas OK")
-except Exception as e:
-    st.error("ERRO Pandas: " + str(e))
+NL = chr(10)
+import hashlib
 
-try:
-    import numpy as np
-    st.write("TESTE 3 - Numpy OK")
-except Exception as e:
-    st.error("ERRO Numpy: " + str(e))
-
-try:
-    import json
-    import os
-    import io
-    import hashlib
-    import random
-    from datetime import datetime, timedelta, date
-    from zoneinfo import ZoneInfo
-    from PIL import Image
-    st.write("TESTE 4 - Imports basicos OK")
-except Exception as e:
-    st.error("ERRO Imports basicos: " + str(e))
-
-try:
-    from ultralytics import YOLO
-    yolo_ok = True
-    st.write("TESTE 5 - YOLO OK")
-except Exception as e:
-    yolo_ok = False
-    st.write("TESTE 5 - YOLO nao instalado (OK, modo demo)")
-
-st.write("TESTE 6 - TODOS IMPORTS OK!")
-st.stop()
-
+ARQ_USUARIOS = os.path.join("dados_eau8", "usuarios.json")
 
 
 def hash_senha(senha):
@@ -1765,30 +1742,46 @@ elif menu == "Configuracoes":
         st.markdown("#### Informacoes do Site")
         st.markdown("- **Site:** EUA8")
         st.markdown("- **Operacao:** First Mile / Cross Dock")
-        st.markdown("- **Turno:** Tarde (14h-20h)")
-        st.markdown("- **Regiao:** Sao Paulo")
+        st.markdown("- **Lider:** Fernando")
+        st.markdown("- **Turno:** Tarde (14h - 20h)")
+        st.markdown("- **Veiculos:** Carretas (28p), Trucks (16p), VUCs (6p)")
     with tab2:
-        st.markdown("#### Sobre o Sistema")
-        st.markdown("- **App:** EUA8 Manager")
-        st.markdown("- **Versao:** 6.0")
-        st.markdown("- **Desenvolvido por:** Fernando Junior")
-        st.markdown("- **Stack:** Python + Streamlit")
+        st.markdown("#### Gerenciamento de Dados")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("**Arquivos de Dados:**")
+            st.markdown("- Funcionarios: " + ARQ_FUNCIONARIOS)
+            st.markdown("- Validacoes: " + ARQ_VALIDACOES)
+            st.markdown("- Escalas: " + ARQ_ESCALAS)
+            st.markdown("- Motoristas: " + ARQ_MOTORISTAS)
+            st.markdown("- Forecast: " + ARQ_FORECAST)
+        with c2:
+            st.markdown("**Limpar Dados:**")
+            if st.button("Limpar Validacoes", type="secondary"):
+                salvar_validacoes([])
+                st.success("Validacoes limpas!")
+                st.rerun()
+            if st.button("Limpar Escalas", type="secondary"):
+                salvar_escalas([])
+                st.success("Escalas limpas!")
+                st.rerun()
+            if st.button("Limpar Motoristas", type="secondary"):
+                salvar_motoristas([])
+                st.success("Motoristas limpos!")
+                st.rerun()
+            if st.button("Limpar Forecasts", type="secondary"):
+                salvar_forecast([])
+                st.success("Forecasts limpos!")
+                st.rerun()
     with tab3:
-        st.markdown("#### Ajuda")
-        st.markdown("Duvidas? Fale com o administrador do sistema.")
-        st.markdown("**Funcionalidades:**")
-        st.markdown("- Dashboard com metricas e graficos")
-        st.markdown("- Cadastro e gestao de funcionarios")
-        st.markdown("- Gerador de escala automatico")
-        st.markdown("- Registro de motoristas com foto")
-        st.markdown("- Forecast / Volume previsto")
-        st.markdown("- Validacao por foto com IA")
-        st.markdown("- Scanner QR Code / Codigo de barras")
-        st.markdown("- Envio por WhatsApp")
-        st.markdown("- Controle de absenteismo")
-        st.markdown("- Desempenho por funcao")
-        st.markdown("- Relatorios e exportacao")
-        st.markdown("- Gerenciamento de usuarios")
+        st.markdown("#### Como usar o EUA8 Manager")
+        st.markdown("1. **Cadastre seus funcionarios** - Nome, telefone, habilidades e turno")
+        st.markdown("2. **Cadastre o forecast** - Volume previsto manual ou por upload")
+        st.markdown("3. **Gere a escala** - Escolha data e edite antes de salvar")
+        st.markdown("4. **Registre motoristas** - Chegada e saida com foto e placa")
+        st.markdown("5. **Valide com fotos** - Tire fotos e a IA identifica objetos")
+        st.markdown("6. **Envie por WhatsApp** - Compartilhe com o time")
+        st.markdown("7. **Acompanhe nos relatorios** - Exporte em CSV")
 
 
 rodape = "<div style='text-align: center; color: #666; font-size: 0.8rem;'>"
