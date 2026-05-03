@@ -1,21 +1,42 @@
 import streamlit as st
-st.write("APP INICIOU")
-import streamlit as st
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta, date
-from zoneinfo import ZoneInfo
-FUSO_BR = ZoneInfo("America/Sao_Paulo")
-import json
-import os
-import random
-from PIL import Image
-import io
+st.write("TESTE 1 - Streamlit OK")
 
-NL = chr(10)
-import hashlib
+try:
+    import pandas as pd
+    st.write("TESTE 2 - Pandas OK")
+except Exception as e:
+    st.error("ERRO Pandas: " + str(e))
 
-ARQ_USUARIOS = os.path.join("dados_eau8", "usuarios.json")
+try:
+    import numpy as np
+    st.write("TESTE 3 - Numpy OK")
+except Exception as e:
+    st.error("ERRO Numpy: " + str(e))
+
+try:
+    import json
+    import os
+    import io
+    import hashlib
+    import random
+    from datetime import datetime, timedelta, date
+    from zoneinfo import ZoneInfo
+    from PIL import Image
+    st.write("TESTE 4 - Imports basicos OK")
+except Exception as e:
+    st.error("ERRO Imports basicos: " + str(e))
+
+try:
+    from ultralytics import YOLO
+    yolo_ok = True
+    st.write("TESTE 5 - YOLO OK")
+except Exception as e:
+    yolo_ok = False
+    st.write("TESTE 5 - YOLO nao instalado (OK, modo demo)")
+
+st.write("TESTE 6 - TODOS IMPORTS OK!")
+st.stop()
+
 
 
 def hash_senha(senha):
