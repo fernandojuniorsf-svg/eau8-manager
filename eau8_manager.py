@@ -612,22 +612,54 @@ elif menu == "Registro de Motorista":
                 cols_mot = ["nome", "placa", "tipo_veiculo", "horario_chegada", "horario_saida", "observacoes"]
                 cols_ok = [c for c in cols_mot if c in df_mot.columns]
                 st.dataframe(df_mot[cols_ok], use_container_width=True, hide_index=True)
-                for m in mot_filtro:
-                    label = m.get("nome", "") + " - " + m.get("placa", "")
-                    with st.expander(label):
-                        st.markdown("**Veiculo:** " + m.get("tipo_veiculo", ""))
-                        st.markdown("**Chegada:** " + m.get("horario_chegada", "N/A") + " (" + m.get("modo_horario_chegada", "") + ")")
-                        st.markdown("**Saida:** " + m.get("horario_saida", "N/A") + " (" + m.get("modo_horario_saida", "") + ")")
-                        st.markdown("**Telefone:** " + m.get("telefone", "N/A"))
-                        st.markdown("**Assinatura:** " + m.get("assinatura", "Sem assinatura"))
-                        st.markdown("**Obs:** " + m.get("observacoes", ""))
-                        fp = os.path.join(PASTA_MOTORISTAS, m.get("foto", ""))
-                        if m.get("foto", "") and os.path.exists(fp):
-                            st.image(fp, width=300)
             else:
                 st.info("Nenhum motorista registrado nessa data.")
+            st.markdown("---")
+            st.markdown("#### Editar / Excluir Motorista")
+            opcoes_mot = []
+            for i, m in enumerate(motoristas):
+                label = m.get("nome", "") + " - " + m.get("placa", "") + " - " + m.get("data_chegada", "")[:10]
+                opcoes_mot.append(label)
+            sel_mot = st.selectbox("Selecione o registro", opcoes_mot, key="sel_mot_edit")
+            idx_mot = opcoes_mot.index(sel_mot)
+            mot_edit = motoristas[idx_mot]
+            with st.form("form_edit_mot"):
+                cm1, cm2 = st.columns(2)
+                with cm1:
+                    novo_nome_mot = st.text_input("Nome", value=mot_edit.get("nome", ""))
+                    nova_placa = st.text_input("Placa", value=mot_edit.get("placa", ""))
+                    novo_tipo_veic = st.selectbox(
+                        "Tipo de Veiculo",
+                        TIPOS_VEICULO,
+                        index=TIPOS_VEICULO.index(mot_edit.get("tipo_veiculo", TIPOS_VEICULO)) if mot_edit.get("tipo_veiculo", "") in TIPOS_VEICULO else 0
+                    )
+                with cm2:
+                    novo_h_cheg = st.text_input("Horario Chegada (HH:MM)", value=mot_edit.get("horario_chegada", ""))
+                    novo_h_said = st.text_input("Horario Saida (HH:MM)", value=mot_edit.get("horario_saida", ""))
+                    nova_obs_mot = st.text_input("Observacoes", value=mot_edit.get("observacoes", ""))
+                col_s, col_e = st.columns(2)
+                with col_s:
+                    btn_salvar_mot = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                with col_e:
+                    btn_excluir_mot = st.form_submit_button("Excluir Registro", use_container_width=True)
+                if btn_salvar_mot:
+                    motoristas[idx_mot]["nome"] = novo_nome_mot
+                    motoristas[idx_mot]["placa"] = nova_placa.upper()
+                    motoristas[idx_mot]["tipo_veiculo"] = novo_tipo_veic
+                    motoristas[idx_mot]["horario_chegada"] = novo_h_cheg
+                    motoristas[idx_mot]["horario_saida"] = novo_h_said
+                    motoristas[idx_mot]["observacoes"] = nova_obs_mot
+                    salvar_motoristas(motoristas)
+                    st.success("Registro atualizado!")
+                    st.rerun()
+                if btn_excluir_mot:
+                    motoristas.pop(idx_mot)
+                    salvar_motoristas(motoristas)
+                    st.success("Registro excluido!")
+                    st.rerun()
         else:
             st.info("Nenhum motorista registrado ainda.")
+
 
 elif menu == "Forecast / Volume":
     st.markdown("### Forecast / Volume Previsto")
