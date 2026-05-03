@@ -901,29 +901,28 @@ elif menu == "Scanner QR/Barcode":
                         st.session_state["scanner_lista"].append(novo_item)
                         st.success("Adicionado! Total: " + str(len(st.session_state["scanner_lista"])))
         else:
-            with st.form("form_manual_scan"):
-                codigo_manual = st.text_input("Digite o codigo", placeholder="Ex: BR123456789")
-                btn_add = st.form_submit_button("Adicionar", use_container_width=True)
-                if btn_add and codigo_manual:
-                    ja_existe = False
-                    for item in st.session_state["scanner_lista"]:
-                        if item.get("codigo") == codigo_manual:
-                            ja_existe = True
-                            break
-                    if ja_existe:
-                        st.warning("Codigo **" + codigo_manual + "** ja foi lido!")
-                    else:
-                        novo_item = {}
-                        novo_item["numero"] = len(st.session_state["scanner_lista"]) + 1
-                        novo_item["codigo"] = codigo_manual
-                        novo_item["destino"] = destino
-                        novo_item["data"] = data_scan.strftime("%d/%m/%Y")
-                        novo_item["hora"] = datetime.now().strftime("%H:%M:%S")
-                        novo_item["tipo"] = "MANUAL"
-                        st.session_state["scanner_lista"].append(novo_item)
-                        st.success("Adicionado! Total: " + str(len(st.session_state["scanner_lista"])))
-                elif btn_add:
-                    st.error("Digite um codigo!")
+            st.info("Clique no campo abaixo e use o scanner externo (pistola).")
+            st.info("O scanner vai digitar o codigo e apertar Enter automaticamente!")
+            codigo_manual = st.text_input("Codigo (scanner ou teclado)", placeholder="Aponte o scanner aqui...", key="scan_input")
+            if codigo_manual:
+                ja_existe = False
+                for item in st.session_state["scanner_lista"]:
+                    if item.get("codigo") == codigo_manual:
+                        ja_existe = True
+                        break
+                if ja_existe:
+                    st.warning("Codigo **" + codigo_manual + "** ja foi lido!")
+                else:
+                    novo_item = {}
+                    novo_item["numero"] = len(st.session_state["scanner_lista"]) + 1
+                    novo_item["codigo"] = codigo_manual
+                    novo_item["destino"] = destino
+                    novo_item["data"] = data_scan.strftime("%d/%m/%Y")
+                    novo_item["hora"] = datetime.now().strftime("%H:%M:%S")
+                    novo_item["tipo"] = "SCANNER/MANUAL"
+                    st.session_state["scanner_lista"].append(novo_item)
+                    st.success("Adicionado: " + codigo_manual + " | Total: " + str(len(st.session_state["scanner_lista"])))
+
         st.markdown("---")
         st.markdown("#### Codigos Lidos (" + str(len(st.session_state["scanner_lista"])) + ")")
         if st.session_state["scanner_lista"]:
