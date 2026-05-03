@@ -11,6 +11,72 @@ from PIL import Image
 import io
 
 NL = chr(10)
+import hashlib
+
+ARQ_USUARIOS = os.path.join("dados_eau8", "usuarios.json")
+
+
+def hash_senha(senha):
+    return hashlib.sha256(senha.encode()).hexdigest()
+
+
+def carregar_usuarios():
+    if os.path.exists(ARQ_USUARIOS):
+        with open(ARQ_USUARIOS, "r", encoding="utf-8") as f:
+            return json.load(f)
+    admin = {}
+    admin["usuario"] = "fernando"
+    admin["senha"] = hash_senha("[PASSWORD]")
+    admin["nome"] = "Fernando Junior"
+    admin["perfil"] = "Admin"
+    admin["status"] = "Ativo"
+    admin["criado_em"] = "2026-05-03"
+    salvar_usuarios([admin])
+    return [admin]
+
+
+def salvar_usuarios(usuarios):
+    with open(ARQ_USUARIOS, "w", encoding="utf-8") as f:
+        json.dump(usuarios, f, ensure_ascii=False, indent=2)
+
+
+PERFIS_ACESSO = {
+    "Admin": [
+        "Dashboard",
+        "Cadastro de Funcionarios",
+        "Gerador de Escala",
+        "Registro de Motorista",
+        "Forecast / Volume",
+        "Validacao por Foto (IA)",
+        "Scanner QR/Barcode",
+        "Enviar por WhatsApp",
+        "Relatorios",
+        "Configuracoes",
+        "Gerenciar Usuarios"
+    ],
+    "Supervisor": [
+        "Dashboard",
+        "Cadastro de Funcionarios",
+        "Gerador de Escala",
+        "Registro de Motorista",
+        "Forecast / Volume",
+        "Validacao por Foto (IA)",
+        "Scanner QR/Barcode",
+        "Enviar por WhatsApp",
+        "Relatorios"
+    ],
+    "Operador": [
+        "Dashboard",
+        "Registro de Motorista",
+        "Validacao por Foto (IA)",
+        "Scanner QR/Barcode"
+    ],
+    "Visualizador": [
+        "Dashboard",
+        "Relatorios"
+    ]
+}
+
 
 st.set_page_config(
     page_title="EUA8 Manager | Amazon Logistics",
@@ -51,6 +117,50 @@ div[data-testid="stExpander"] {border: 1px solid #37475A; border-radius: 8px; bo
 </style>
 """
 st.markdown(css, unsafe_allow_html=True)
+if "logado" not in st.session_state:
+    st.session_state["logado"] = False
+    st.session_state["usuario_logado"] = None
+    st.session_state["perfil_logado"] = None
+
+if not st.session_state["logado"]:
+    st.markdown("")
+    col_login_e, col_login_c, col_login_d = st.columns([1, 2, 1])
+    with col_login_c:
+        login_header = '<div class="main-header">'
+        login_header += '<h1>EUA8 Manager</h1>'
+        login_header += '<p>First Mile Operations | Amazon Logistics</p>'
+        login_header += '</div>'
+        st.markdown(login_header, unsafe_allow_html=True)
+        st.markdown("### Login")
+        with st.form("form_login"):
+            usuario_input = st.text_input("Usuario", placeholder="Digite seu usuario")
+            senha_input = st.text_input("Senha", type="password", placeholder="Digite sua senha")
+            btn_login = st.form_submit_button("Entrar", use_container_width=True)
+            if btn_login:
+                if usuario_input and senha_input:
+                    usuarios = carregar_usuarios()
+                    encontrou = False
+                    for u in usuarios:
+                        if u["usuario"] == usuario_input.lower().strip() and u["senha"] == hash_senha(senha_input):
+                            if u.get("status", "Ativo") != "Ativo":
+                                st.error("Usuario inativo. Fale com o administrador.")
+                                encontrou = True
+                                break
+                            st.session_state["logado"] = True
+                            st.session_state["usuario_logado"] = u["usuario"]
+                            st.session_state["nome_logado"] = u["nome"]
+                            st.session_state["perfil_logado"] = u["perfil"]
+                            encontrou = True
+                            st.rerun()
+                            break
+                    if not encontrou:
+                        st.error("Usuario ou senha incorretos!")
+                else:
+                    st.error("Preencha usuario e senha!")
+        st.markdown("")
+        st.markdown("<div style='text-align:center;color:#666;font-size:0.8rem;'>Usuario padrao: fernando | Senha: [PASSWORD]</div>", unsafe_allow_html=True)
+    st.stop()
+
 
 sidebar_html = '<div class="sidebar-logo">'
 sidebar_html += '<h2 style="color:#FF9900;margin:0;font-size:1.8rem;">EUA8 Manager</h2>'
@@ -58,6 +168,52 @@ sidebar_html += '<p style="color:#FFFFFF;margin:0.3rem 0 0 0;font-size:0.85rem;"
 sidebar_html += '<p style="color:#AAAAAA;margin:0.2rem 0 0 0;font-size:0.75rem;">Amazon Logistics</p>'
 sidebar_html += '</div>'
 st.sidebar.markdown(sidebar_html, unsafe_allow_html=True)
+
+nome_logado = st.session_state.get("nome_logado", "Usuario")
+perfil_logado = st.session_state.get("perfil_logado", "Operador")
+user_info = "<div style='color:#FFFFFF;font-size:0.85rem;padding:0.5rem 0;'>"
+user_info += "Bem-vindo, <strong style='color:#FF9900;'>" + nome_logado + "</strong><br>"
+user_info += "<span style='color:#AAAAAA;font-size:0.75rem;'>Perfil: " + perfil_logado + "</span>"
+user_info += "</div>"
+st.sidebar.markdown(user_info, unsafe_allow_html=True)
+st.sidebar.markdown("---")
+
+menus_permitidos = PERFIS_ACESSO.get(perfil_logado, [])
+
+todos_menus = [
+    "Dashboard",
+    "Cadastro de Funcionarios",
+    "Gerador de Escala",
+    "Registro de Motorista",
+    "Forecast / Volume",
+    "Validacao por Foto (IA)",
+    "Scanner QR/Barcode",
+    "Enviar por WhatsApp",
+    "Relatorios",
+    "Configuracoes",
+    "Gerenciar Usuarios"
+]
+
+menus_visiveis = [m for m in todos_menus if m in menus_permitidos]
+
+menu = st.sidebar.radio("Menu Principal", menus_visiveis)
+
+st.sidebar.markdown("---")
+agora = datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")
+info_sb = "<div style='color:#AAAAAA;font-size:0.8rem;'>"
+info_sb += "<p>Data: <strong style='color:#FF9900;'>" + agora + "</strong></p>"
+info_sb += "<p>Site: <strong style='color:#FF9900;'>EUA8</strong></p>"
+info_sb += "<p>Turno: <strong style='color:#FF9900;'>Tarde (14h-20h)</strong></p>"
+info_sb += "</div>"
+st.sidebar.markdown(info_sb, unsafe_allow_html=True)
+st.sidebar.markdown("---")
+if st.sidebar.button("Sair", use_container_width=True):
+    st.session_state["logado"] = False
+    st.session_state["usuario_logado"] = None
+    st.session_state["perfil_logado"] = None
+    st.session_state["nome_logado"] = None
+    st.rerun()
+
 
 PASTA_DADOS = "[PASSWORD]"
 PASTA_FOTOS = "validacoes_fotos"
@@ -1393,6 +1549,109 @@ elif menu == "Relatorios":
             )
         else:
             st.info("Nenhum motorista registrado.")
+
+elif menu == "Gerenciar Usuarios":
+    st.markdown("### Gerenciar Usuarios")
+    if st.session_state.get("perfil_logado") != "Admin":
+        st.error("Acesso negado! Somente administradores.")
+    else:
+        usuarios = carregar_usuarios()
+        tab1, tab2, tab3 = st.tabs(["Novo Usuario", "Lista / Editar", "Remover"])
+        with tab1:
+            st.markdown("#### Cadastrar Novo Usuario")
+            with st.form("form_novo_user"):
+                cu1, cu2 = st.columns(2)
+                with cu1:
+                    novo_user = st.text_input("Usuario (login)", placeholder="Ex: joao.silva")
+                    novo_nome_user = st.text_input("Nome Completo", placeholder="Ex: Joao da Silva")
+                with cu2:
+                    nova_senha_user = st.text_input("Senha", type="password")
+                    novo_perfil = st.selectbox("Perfil de Acesso", ["Admin", "Supervisor", "Operador", "Visualizador"])
+                st.markdown("---")
+                st.markdown("**Acessos por perfil:**")
+                for perfil_nome, acessos in PERFIS_ACESSO.items():
+                    st.markdown("- **" + perfil_nome + ":** " + ", ".join(acessos))
+                btn_criar = st.form_submit_button("Criar Usuario", use_container_width=True)
+                if btn_criar:
+                    if novo_user and novo_nome_user and nova_senha_user:
+                        ja_existe = False
+                        for u in usuarios:
+                            if u["usuario"] == novo_user.lower().strip():
+                                ja_existe = True
+                                break
+                        if ja_existe:
+                            st.error("Usuario ja existe!")
+                        else:
+                            novo_u = {}
+                            novo_u["usuario"] = novo_user.lower().strip()
+                            novo_u["senha"] = hash_senha(nova_senha_user)
+                            novo_u["nome"] = novo_nome_user
+                            novo_u["perfil"] = novo_perfil
+                            novo_u["status"] = "Ativo"
+                            novo_u["criado_em"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")
+                            usuarios.append(novo_u)
+                            salvar_usuarios(usuarios)
+                            st.success(novo_nome_user + " criado com perfil " + novo_perfil + "!")
+                            st.rerun()
+                    else:
+                        st.error("Preencha todos os campos!")
+        with tab2:
+            st.markdown("#### Lista de Usuarios")
+            if usuarios:
+                df_users = pd.DataFrame(usuarios)
+                cols_u = ["usuario", "nome", "perfil", "status", "criado_em"]
+                cols_ok = [c for c in cols_u if c in df_users.columns]
+                st.dataframe(df_users[cols_ok], use_container_width=True, hide_index=True)
+                st.markdown("---")
+                st.markdown("#### Editar Usuario")
+                nomes_u = [u["usuario"] + " (" + u["nome"] + ")" for u in usuarios]
+                sel_u = st.selectbox("Selecione", nomes_u, key="sel_user_edit")
+                idx_u = nomes_u.index(sel_u)
+                user_edit = usuarios[idx_u]
+                with st.form("form_edit_user"):
+                    eu1, eu2 = st.columns(2)
+                    with eu1:
+                        edit_nome = st.text_input("Nome", value=user_edit.get("nome", ""))
+                        edit_perfil = st.selectbox(
+                            "Perfil",
+                            ["Admin", "Supervisor", "Operador", "Visualizador"],
+                            index=["Admin", "Supervisor", "Operador", "Visualizador"].index(user_edit.get("perfil", "Operador"))
+                        )
+                    with eu2:
+                        edit_status = st.selectbox(
+                            "Status",
+                            ["Ativo", "Inativo"],
+                            index=["Ativo", "Inativo"].index(user_edit.get("status", "Ativo")) if user_edit.get("status", "Ativo") in ["Ativo", "Inativo"] else 0
+                        )
+                        nova_senha_edit = st.text_input("Nova Senha (deixe vazio pra manter)", type="password")
+                    btn_edit_user = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                    if btn_edit_user:
+                        usuarios[idx_u]["nome"] = edit_nome
+                        usuarios[idx_u]["perfil"] = edit_perfil
+                        usuarios[idx_u]["status"] = edit_status
+                        if nova_senha_edit:
+                            usuarios[idx_u]["senha"] = hash_senha(nova_senha_edit)
+                        salvar_usuarios(usuarios)
+                        st.success("Usuario atualizado!")
+                        st.rerun()
+        with tab3:
+            st.markdown("#### Remover Usuario")
+            if len(usuarios) > 1:
+                nomes_rem_u = [u["usuario"] + " (" + u["nome"] + ")" for u in usuarios if u["usuario"] != st.session_state.get("usuario_logado")]
+                if nomes_rem_u:
+                    sel_rem_u = st.selectbox("Selecione", nomes_rem_u, key="sel_rem_user")
+                    st.warning("Esta acao nao pode ser desfeita!")
+                    if st.button("Remover Usuario", type="secondary"):
+                        user_rem = sel_rem_u.split(" (")
+                        usuarios = [u for u in usuarios if u["usuario"] != user_rem]
+                        salvar_usuarios(usuarios)
+                        st.success("Usuario removido!")
+                        st.rerun()
+                else:
+                    st.info("Nao ha usuarios para remover.")
+            else:
+                st.warning("Voce e o unico admin. Nao pode se remover!")
+
 
 
 elif menu == "Configuracoes":
