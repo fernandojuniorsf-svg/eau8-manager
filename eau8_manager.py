@@ -168,6 +168,7 @@ menu = st.sidebar.radio(
         "Registro de Motorista",
         "Forecast / Volume",
         "Validacao por Foto (IA)",
+        "Scanner QR/Barcode",
         "Enviar por WhatsApp",
         "Relatorios",
         "Configuracoes"
@@ -848,6 +849,122 @@ elif menu == "Validacao por Foto (IA)":
                         st.dataframe(pd.DataFrame(v["deteccoes"]), use_container_width=True, hide_index=True)
         else:
             st.info("Nenhuma validacao registrada ainda.")
+elif menu == "Scanner QR/Barcode":
+    st.markdown("### Scanner QR Code / Codigo de Barras")
+    st.markdown("*Escaneie, gere o Excel e envie no grupo*")
+    if "scanner_lista" not in st.session_state:
+        st.session_state["scanner_lista"] = []
+    tab1, tab2 = st.tabs(["Escanear", "Historico de Arquivos"])
+    with tab1:
+        c1, c2 = st.columns(2)
+        with c1:
+            destino = st.text_input("Destino (digite na mao)", placeholder="Ex: ELP8, ESP8, DSP4...")
+        with c2:
+            data_scan = st.date_input("Data", value=date.today(), key="dt_scan")
+        st.markdown("---")
+        st.markdown("#### Ler Codigo")
+        modo_scan = st.radio("Modo de leitura:", ["Camera (celular)", "Digitar codigo manual"])
+        if modo_scan == "Camera (celular)":
+            foto_scan = st.camera_input("Aponte pra QR Code ou Codigo de Barras")
+            if foto_scan is not None:
+                img_scan = Image.open(foto_scan)
+                img_np = np.array(img_scan)
+                codigo_lido = None
+                try:
+                    from pyzbar.pyzbar import decode as pyzbar_decode
+                    resultados_scan = pyzbar_decode(img_np)
+                    if resultados_scan:
+                        codigo_lido = resultados_scan.data.decode("utf-8")
+                        tipo_codigo = resultados_scan.type
+                        st.success("Codigo lido: **" + codigo_lido + "** (" + tipo_codigo + ")")
+                    else:
+                        st.warning("Nenhum codigo encontrado na foto. Tente novamente.")
+                except Exception as e:
+                    st.error("Erro ao ler: " + str(e))
+                    st.info("Tente digitar o codigo manualmente.")
+                if codigo_lido:
+                    ja_existe = False
+                    for item in st.session_state["scanner_lista"]:
+                        if item.get("codigo") == codigo_lido:
+                            ja_existe = True
+                            break
+                    if ja_existe:
+                        st.warning("Codigo **" + codigo_lido + "** ja foi lido!")
+                    else:
+                        novo_item = {}
+                        novo_item["numero"] = len(st.session_state["scanner_lista"]) + 1
+                        novo_item["codigo"] = codigo_lido
+                        novo_item["destino"] = destino
+                        novo_item["data"] = data_scan.strftime("%d/%m/%Y")
+                        novo_item["hora"] = datetime.now().strftime("%H:%M:%S")
+                        novo_item["tipo"] = tipo_codigo
+                        st.session_state["scanner_lista"].append(novo_item)
+                        st.success("Adicionado! Total: " + str(len(st.session_state["scanner_lista"])))
+        else:
+            with st.form("form_manual_scan"):
+                codigo_manual = st.text_input("Digite o codigo", placeholder="Ex: BR123456789")
+                btn_add = st.form_submit_button("Adicionar", use_container_width=True)
+                if btn_add and codigo_manual:
+                    ja_existe = False
+                    for item in st.session_state["scanner_lista"]:
+                        if item.get("codigo") == codigo_manual:
+                            ja_existe = True
+                            break
+                    if ja_existe:
+                        st.warning("Codigo **" + codigo_manual + "** ja foi lido!")
+                    else:
+                        novo_item = {}
+                        novo_item["numero"] = len(st.session_state["scanner_lista"]) + 1
+                        novo_item["codigo"] = codigo_manual
+                        novo_item["destino"] = destino
+                        novo_item["data"] = data_scan.strftime("%d/%m/%Y")
+                        novo_item["hora"] = datetime.now().strftime("%H:%M:%S")
+                        novo_item["tipo"] = "MANUAL"
+                        st.session_state["scanner_lista"].append(novo_item)
+                        st.success("Adicionado! Total: " + str(len(st.session_state["scanner_lista"])))
+                elif btn_add:
+                    st.error("Digite um codigo!")
+        st.markdown("---")
+        st.markdown("#### Codigos Lidos (" + str(len(st.session_state["scanner_lista"])) + ")")
+        if st.session_state["scanner_lista"]:
+            df_scan = pd.DataFrame(st.session_state["scanner_lista"])
+            st.dataframe(df_scan, use_container_width=True, hide_index=True)
+            st.markdown("---")
+            col_excel, col_limpar = st.columns(2)
+            with col_excel:
+                if destino:
+                    nome_excel = destino.upper().replace(" ", "_") + "_" + data_scan.strftime("%d-%m-%Y") + ".xlsx"
+                else:
+                    nome_excel = "scan_" + data_scan.strftime("%d-%m-%Y") + ".xlsx"
+                buffer_excel = io.BytesIO()
+                df_scan.to_excel(buffer_excel, index=False, sheet_name="Leituras")
+                buffer_excel.seek(0)
+                st.download_button(
+                    label="Baixar Excel: " + nome_excel,
+                    data=buffer_excel,
+                    file_name=nome_excel,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    use_container_width=True
+                )
+            with col_limpar:
+                if st.button("Limpar Lista", type="secondary", use_container_width=True):
+                    st.session_state["scanner_lista"] = []
+                    st.success("Lista limpa!")
+                    st.rerun()
+            st.markdown("---")
+            st.markdown("#### Resumo")
+            st.markdown("- **Total de codigos:** " + str(len(st.session_state["scanner_lista"])))
+            st.markdown("- **Destino:** " + destino)
+            st.markdown("- **Data:** " + data_scan.strftime("%d/%m/%Y"))
+            st.markdown("- **Nome do arquivo:** " + nome_excel)
+            st.info("Baixe o Excel e envie no grupo do WhatsApp!")
+        else:
+            st.info("Nenhum codigo lido ainda. Escaneie ou digite acima!")
+    with tab2:
+        st.markdown("#### Historico")
+        st.info("Os arquivos Excel sao gerados por download. Salve-os no celular/PC para ter o historico.")
+
+
 
 
 elif menu == "Enviar por WhatsApp":
