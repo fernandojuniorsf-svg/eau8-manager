@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta, date
+from zoneinfo import ZoneInfo
+FUSO_BR = ZoneInfo("America/Sao_Paulo")
 import json
 import os
 import random
@@ -176,7 +178,7 @@ menu = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-agora = datetime.now().strftime("%d/%m/%Y %H:%M")
+agora = datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")
 info_sb = "<div style='color:#AAAAAA;font-size:0.8rem;'>"
 info_sb += "<p>Data: <strong style='color:#FF9900;'>" + agora + "</strong></p>"
 info_sb += "<p>Lider: <strong style='color:#FF9900;'>Fernando</strong></p>"
@@ -204,7 +206,7 @@ if menu == "Dashboard":
         ativos = len([f for f in funcionarios if f.get("status", "Ativo") == "Ativo"])
         st.metric("Funcionarios Ativos", ativos, "/" + str(total_func) + " total")
     with col2:
-        hoje = datetime.now().strftime("%Y-%m-%d")
+        hoje = datetime.now(FUSO_BR).strftime("%Y-%m-%d")
         val_hoje = len([v for v in validacoes if v.get("data", "")[:10] == hoje])
         st.metric("Validacoes Hoje", val_hoje)
     with col3:
@@ -213,7 +215,7 @@ if menu == "Dashboard":
         mot_hoje = len([m for m in motoristas if m.get("data_chegada", "")[:10] == hoje])
         st.metric("Motoristas Hoje", mot_hoje)
     st.markdown("---")
-    hoje_fc = datetime.now().strftime("%Y-%m-%d")
+    hoje_fc = datetime.now(FUSO_BR).strftime("%Y-%m-%d")
     fc_hoje = [f for f in forecasts if f.get("data", "") == hoje_fc]
     if fc_hoje:
         ultimo_fc = fc_hoje[-1]
@@ -268,7 +270,7 @@ elif menu == "Cadastro de Funcionarios":
                 novo["habilidades"] = habilidades
                 novo["turno_preferencial"] = turno_pref
                 novo["status"] = status
-                novo["data_cadastro"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                novo["data_cadastro"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")
                 funcionarios.append(novo)
                 salvar_funcionarios(funcionarios)
                 st.success(nome + " cadastrado(a) com sucesso!")
@@ -465,7 +467,7 @@ elif menu == "Gerador de Escala":
                         escala_salvar["turno"] = turno_edit
                         escala_salvar["volume"] = volume_edit
                         escala_salvar["escala"] = escala_final
-                        escala_salvar["gerada_em"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                        escala_salvar["gerada_em"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")
                         escalas = carregar_escalas()
                         escalas.append(escala_salvar)
                         salvar_escalas(escalas)
@@ -531,7 +533,7 @@ elif menu == "Registro de Motorista":
             st.markdown("#### Horario")
             horario_modo = st.radio("Modo do horario:", ["Automatico (agora)", "Manual (digitar)"])
             if horario_modo == "Automatico (agora)":
-                horario_reg = datetime.now().strftime("%H:%M")
+                horario_reg = datetime.now(FUSO_BR).strftime("%H:%M")
                 st.info("Horario automatico: " + horario_reg)
             else:
                 horario_reg = st.text_input("Digite o horario (HH:MM)", placeholder="14:30")
@@ -560,13 +562,13 @@ elif menu == "Registro de Motorista":
                 registro["tipo_veiculo"] = tipo_veic
                 registro["tipo_registro"] = tipo_reg
                 if tipo_reg == "Chegada":
-                    registro["data_chegada"] = datetime.now().strftime("%Y-%m-%d") + " " + horario_reg
+                    registro["data_chegada"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d") + " " + horario_reg
                     registro["horario_chegada"] = horario_reg
                     registro["modo_horario_chegada"] = horario_modo
                     registro["data_saida"] = ""
                     registro["horario_saida"] = ""
                 else:
-                    registro["data_saida"] = datetime.now().strftime("%Y-%m-%d") + " " + horario_reg
+                    registro["data_saida"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d") + " " + horario_reg
                     registro["horario_saida"] = horario_reg
                     registro["modo_horario_saida"] = horario_modo
                     registro["data_chegada"] = ""
@@ -574,17 +576,17 @@ elif menu == "Registro de Motorista":
                 registro["observacoes"] = obs_mot
                 registro["assinatura"] = assinatura_texto
                 registro["registrado_por"] = "Fernando"
-                registro["data_registro"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                registro["data_registro"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M:%S")
                 nome_foto_mot = ""
                 if foto_mot is not None:
                     img_mot = Image.open(foto_mot)
-                    nome_foto_mot = "mot_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".jpg"
+                    nome_foto_mot = "mot_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
                     caminho_mot = os.path.join(PASTA_MOTORISTAS, nome_foto_mot)
                     img_mot.save(caminho_mot)
                 registro["foto"] = nome_foto_mot
                 encontrou = False
                 for i, m in enumerate(motoristas):
-                    if m.get("placa", "") == placa.upper() and m.get("data_chegada", "")[:10] == datetime.now().strftime("%Y-%m-%d"):
+                    if m.get("placa", "") == placa.upper() and m.get("data_chegada", "")[:10] == datetime.now(FUSO_BR).strftime("%Y-%m-%d"):
                         if tipo_reg == "Saida" and m.get("data_saida", "") == "":
                             motoristas[i]["data_saida"] = registro["data_saida"]
                             motoristas[i]["horario_saida"] = registro["horario_saida"]
@@ -646,7 +648,7 @@ elif menu == "Forecast / Volume":
                 novo_fc["data"] = data_fc.strftime("%Y-%m-%d")
                 novo_fc["volume"] = volume_fc
                 novo_fc["observacao"] = obs_fc
-                novo_fc["cadastrado_em"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                novo_fc["cadastrado_em"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")
                 novo_fc["origem"] = "manual"
                 forecasts.append(novo_fc)
                 salvar_forecast(forecasts)
@@ -672,7 +674,7 @@ elif menu == "Forecast / Volume":
                         novo_fc["data"] = str(row.get("data", ""))
                         novo_fc["volume"] = int(row.get("volume", 0))
                         novo_fc["observacao"] = str(row.get("observacao", ""))
-                        novo_fc["cadastrado_em"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+                        novo_fc["cadastrado_em"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")
                         novo_fc["origem"] = "upload"
                         forecasts.append(novo_fc)
                         count += 1
@@ -803,11 +805,11 @@ elif menu == "Validacao por Foto (IA)":
                             deteccoes.append(det)
             st.markdown("---")
             if st.button("Salvar Validacao", type="primary", use_container_width=True):
-                nome_foto = "val_" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".jpg"
+                nome_foto = "val_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
                 caminho_foto = os.path.join(PASTA_FOTOS, nome_foto)
                 image.save(caminho_foto)
                 registro = {}
-                registro["data"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                registro["data"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M:%S")
                 registro["tipo"] = tipo_val
                 registro["local"] = local_val
                 registro["observacoes"] = obs
@@ -896,7 +898,7 @@ elif menu == "Scanner QR/Barcode":
                         novo_item["codigo"] = codigo_lido
                         novo_item["destino"] = destino
                         novo_item["data"] = data_scan.strftime("%d/%m/%Y")
-                        novo_item["hora"] = datetime.now().strftime("%H:%M:%S")
+                        novo_item["hora"] = datetime.now(FUSO_BR).strftime("%H:%M:%S")
                         novo_item["tipo"] = tipo_codigo
                         st.session_state["scanner_lista"].append(novo_item)
                         st.success("Adicionado! Total: " + str(len(st.session_state["scanner_lista"])))
@@ -918,7 +920,7 @@ elif menu == "Scanner QR/Barcode":
                     novo_item["codigo"] = codigo_manual
                     novo_item["destino"] = destino
                     novo_item["data"] = data_scan.strftime("%d/%m/%Y")
-                    novo_item["hora"] = datetime.now().strftime("%H:%M:%S")
+                    novo_item["hora"] = datetime.now(FUSO_BR).strftime("%H:%M:%S")
                     novo_item["tipo"] = "SCANNER/MANUAL"
                     st.session_state["scanner_lista"].append(novo_item)
                     st.success("Adicionado: " + codigo_manual + " | Total: " + str(len(st.session_state["scanner_lista"])))
@@ -1061,7 +1063,7 @@ elif menu == "Enviar por WhatsApp":
             st.info("Cadastre funcionarios primeiro!")
     with tab3:
         st.markdown("#### Mensagens Rapidas para o Grupo")
-        hoje_str = datetime.now().strftime("%d/%m/%Y")
+        hoje_str = datetime.now(FUSO_BR).strftime("%d/%m/%Y")
         t1_linhas = [
             "*BOM TURNO, TIME EUA8!*",
             "Data: " + hoje_str,
