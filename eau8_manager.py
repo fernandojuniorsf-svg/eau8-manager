@@ -683,7 +683,7 @@ elif menu == "Forecast / Volume":
                     st.rerun()
             except Exception as e:
                 st.error("Erro ao ler arquivo: " + str(e))
-        with tab3:
+    with tab3:
         st.markdown("#### Historico de Forecasts")
         if forecasts:
             df_fc = pd.DataFrame(forecasts)
