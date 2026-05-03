@@ -1771,6 +1771,33 @@ elif menu == "Configuracoes":
                 st.rerun()
             if st.button("Limpar Forecasts", type="secondary"):
                 salvar_forecast([])
+ARQ_ABSENTEISMO = os.path.join("dados_eau8", "absenteismo.json")
+ARQ_DESEMPENHO = os.path.join("dados_eau8", "desempenho.json")
+
+
+def carregar_absenteismo():
+    if os.path.exists(ARQ_ABSENTEISMO):
+        with open(ARQ_ABSENTEISMO, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def salvar_absenteismo(dados):
+    with open(ARQ_ABSENTEISMO, "w", encoding="utf-8") as f:
+        json.dump(dados, f, ensure_ascii=False, indent=2)
+
+
+def carregar_desempenho():
+    if os.path.exists(ARQ_DESEMPENHO):
+        with open(ARQ_DESEMPENHO, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def salvar_desempenho(dados):
+    with open(ARQ_DESEMPENHO, "w", encoding="utf-8") as f:
+        json.dump(dados, f, ensure_ascii=False, indent=2)
+
                 st.success("Forecasts limpos!")
                 st.rerun()
     with tab3:
