@@ -597,9 +597,11 @@ elif menu == "Registro de Motorista":
                     salvar_motoristas(motoristas)
                     st.success("Excluido!")
                     st.rerun()
-                else:
+        else:
             st.info("Nenhum motorista.")
-        elif menu == "Absenteismo":
+
+
+elif menu == "Absenteismo":
     st.markdown("### Controle de Absenteismo")
     funcionarios = carregar_funcionarios()
     absenteismo = carregar_absenteismo()
@@ -1116,7 +1118,4 @@ elif menu == "Gerenciar Usuarios":
 
 st.markdown("---")
 st.markdown("<div style='text-align:center;color:#666;font-size:0.8rem;'>EUA8 Manager v7.0 | First Mile Operations | Amazon Logistics | " + datetime.now(FUSO_BR).strftime("%Y") + "</div>", unsafe_allow_html=True)
-
-
-            st.info("Nenhum motorista.")
 
