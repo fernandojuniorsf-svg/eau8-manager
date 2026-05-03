@@ -12,7 +12,12 @@ import io
 
 NL = chr(10)
 import hashlib
-
+if not os.path.exists("dados_eau8"):
+    os.makedirs("dados_eau8")
+if not os.path.exists("fotos_validacao"):
+    os.makedirs("fotos_validacao")
+if not os.path.exists("fotos_motoristas"):
+    os.makedirs("fotos_motoristas")
 ARQ_USUARIOS = os.path.join("dados_eau8", "usuarios.json")
 
 
