@@ -1190,9 +1190,11 @@ elif menu == "Validacao por Foto (IA)":
                 lista = [v for v in lista if v.get("data", "")[:10] == fd.strftime("%Y-%m-%d")]
             v_sorted = sorted(lista, key=lambda x: x.get("data", ""), reverse=True)
             for v in v_sorted[:20]:
+                total_ia = v.get("total_objetos_ia", v.get("total_objetos", 0))
+                total_eq = v.get("total_objetos_manual", 0)
                 label = v.get("tipo", "") + " - "
                 label += v.get("data", "")[:16] + " - "
-                label += str(v.get("total_objetos", 0)) + " obj"
+                label += "IA: " + str(total_ia) + " obj | Equipe: " + str(total_eq) + " obj"
                 with st.expander(label):
                     st.markdown("**Observacoes:** " + v.get("observacoes", "Nenhuma"))
                     st.markdown("**Validado por:** " + v.get("validado_por", "N/A"))
