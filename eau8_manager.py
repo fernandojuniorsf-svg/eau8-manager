@@ -683,19 +683,54 @@ elif menu == "Forecast / Volume":
                     st.rerun()
             except Exception as e:
                 st.error("Erro ao ler arquivo: " + str(e))
-    with tab3:
+        with tab3:
         st.markdown("#### Historico de Forecasts")
         if forecasts:
             df_fc = pd.DataFrame(forecasts)
             cols_fc = ["data", "volume", "observacao", "origem", "cadastrado_em"]
             cols_ok = [c for c in cols_fc if c in df_fc.columns]
             st.dataframe(df_fc[cols_ok].sort_values("data", ascending=False), use_container_width=True, hide_index=True)
-            if st.button("Limpar Forecasts", type="secondary"):
+            st.markdown("---")
+            st.markdown("#### Editar Forecast")
+            opcoes_fc = []
+            for i, fc in enumerate(forecasts):
+                label = fc.get("data", "") + " - " + str(fc.get("volume", 0)) + " pacotes"
+                opcoes_fc.append(label)
+            sel_fc = st.selectbox("Selecione o forecast", opcoes_fc, key="sel_fc_edit")
+            idx_fc = opcoes_fc.index(sel_fc)
+            fc_edit = forecasts[idx_fc]
+            with st.form("form_edit_fc"):
+                ce1, ce2 = st.columns(2)
+                with ce1:
+                    nova_data_fc = st.text_input("Data (YYYY-MM-DD)", value=fc_edit.get("data", ""))
+                    novo_vol = st.number_input("Volume", min_value=0, max_value=50000, value=int(fc_edit.get("volume", 0)), step=100)
+                with ce2:
+                    nova_obs_fc = st.text_input("Observacao", value=fc_edit.get("observacao", ""))
+                col_salvar_fc, col_excluir_fc = st.columns(2)
+                with col_salvar_fc:
+                    btn_salvar_fc = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                with col_excluir_fc:
+                    btn_excluir_fc = st.form_submit_button("Excluir Este Forecast", use_container_width=True)
+                if btn_salvar_fc:
+                    forecasts[idx_fc]["data"] = nova_data_fc
+                    forecasts[idx_fc]["volume"] = novo_vol
+                    forecasts[idx_fc]["observacao"] = nova_obs_fc
+                    salvar_forecast(forecasts)
+                    st.success("Forecast atualizado!")
+                    st.rerun()
+                if btn_excluir_fc:
+                    forecasts.pop(idx_fc)
+                    salvar_forecast(forecasts)
+                    st.success("Forecast excluido!")
+                    st.rerun()
+            st.markdown("---")
+            if st.button("Limpar Todos os Forecasts", type="secondary"):
                 salvar_forecast([])
                 st.success("Forecasts limpos!")
                 st.rerun()
         else:
             st.info("Nenhum forecast cadastrado.")
+
 
 
 elif menu == "Validacao por Foto (IA)":
