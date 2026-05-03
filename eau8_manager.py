@@ -1001,8 +1001,11 @@ elif menu == "Validacao por Foto (IA)":
                                 det["objeto"] = classe
                                 det["confianca"] = str(round(conf * 100, 1)) + "%"
                                 deteccoes.append(det)
-                            img_res = np.array(resultados.plot())
-                            st.image(img_res, channels="BGR", use_container_width=True)
+                            try:
+                                img_res = np.array(resultados.plot())
+                                st.image(img_res, channels="BGR", use_container_width=True)
+                            except Exception:
+                                st.image(image, use_container_width=True, caption="Imagem sem anotacoes")
                         if deteccoes:
                             st.success(str(len(deteccoes)) + " objeto(s) detectado(s)!")
                             df_d = pd.DataFrame(deteccoes)
