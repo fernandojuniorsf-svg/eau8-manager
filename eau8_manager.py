@@ -598,7 +598,8 @@ elif menu == "Registro de Motorista":
                     st.success("Excluido!")
                     st.rerun()
         else:
-elif menu == "Absenteismo":
+
+        elif menu == "Absenteismo":
     st.markdown("### Controle de Absenteismo")
     funcionarios = carregar_funcionarios()
     absenteismo = carregar_absenteismo()
