@@ -1057,6 +1057,98 @@ elif menu == "Validacao por Foto (IA)":
                             det["objeto"] = d["objeto"]
                             det["confianca"] = "demo"
                             deteccoes.append(det)
+                                        st.markdown("---")
+            st.markdown("#### Contagem Manual da Equipe")
+            st.markdown("*Preencha o que a equipe contou no local:*")
+            cm1, cm2, cm3, cm4 = st.columns(4)
+            with cm1:
+                manual_pallets = st.number_input("Pallets", min_value=0, max_value=500, value=0, step=1, key="m_pallets")
+            with cm2:
+                manual_caixas = st.number_input("Caixas", min_value=0, max_value=5000, value=0, step=1, key="m_caixas")
+            with cm3:
+                manual_sacas = st.number_input("Sacas", min_value=0, max_value=5000, value=0, step=1, key="m_sacas")
+            with cm4:
+                manual_pacotes = st.number_input("Pacotes", min_value=0, max_value=10000, value=0, step=1, key="m_pacotes")
+            cm5, cm6, cm7, cm8 = st.columns(4)
+            with cm5:
+                manual_envelopes = st.number_input("Envelopes", min_value=0, max_value=5000, value=0, step=1, key="m_envelopes")
+            with cm6:
+                manual_bags = st.number_input("Bags", min_value=0, max_value=500, value=0, step=1, key="m_bags")
+            with cm7:
+                manual_outros = st.number_input("Outros", min_value=0, max_value=5000, value=0, step=1, key="m_outros")
+            with cm8:
+                manual_obs_cont = st.text_input("Obs da contagem", placeholder="Ex: 2 avariados", key="m_obs")
+            contagem_manual = {}
+            contagem_manual["pallets"] = manual_pallets
+            contagem_manual["caixas"] = manual_caixas
+            contagem_manual["sacas"] = manual_sacas
+            contagem_manual["pacotes"] = manual_pacotes
+            contagem_manual["envelopes"] = manual_envelopes
+            contagem_manual["bags"] = manual_bags
+            contagem_manual["outros"] = manual_outros
+            contagem_manual["obs"] = manual_obs_cont
+            total_manual = manual_pallets + manual_caixas + manual_sacas + manual_pacotes + manual_envelopes + manual_bags + manual_outros
+            st.markdown("---")
+            st.markdown("#### Comparativo: IA x Equipe")
+            mapa_ia = {}
+            mapa_ia["pallet"] = "pallets"
+            mapa_ia["box"] = "caixas"
+            mapa_ia["caixa"] = "caixas"
+            mapa_ia["carton"] = "caixas"
+            mapa_ia["suitcase"] = "sacas"
+            mapa_ia["backpack"] = "bags"
+            mapa_ia["handbag"] = "bags"
+            mapa_ia["envelope"] = "envelopes"
+            mapa_ia["package"] = "pacotes"
+            mapa_ia["person"] = "outros"
+            mapa_ia["truck"] = "outros"
+            mapa_ia["car"] = "outros"
+            contagem_ia_mapeada = {}
+            contagem_ia_mapeada["pallets"] = 0
+            contagem_ia_mapeada["caixas"] = 0
+            contagem_ia_mapeada["sacas"] = 0
+            contagem_ia_mapeada["pacotes"] = 0
+            contagem_ia_mapeada["envelopes"] = 0
+            contagem_ia_mapeada["bags"] = 0
+            contagem_ia_mapeada["outros"] = 0
+            for det in deteccoes:
+                obj_nome = det.get("objeto", "").lower()
+                categoria = mapa_ia.get(obj_nome, "outros")
+                contagem_ia_mapeada[categoria] += 1
+            linhas_comp = []
+            categorias = ["pallets", "caixas", "sacas", "pacotes", "envelopes", "bags", "outros"]
+            for cat in categorias:
+                qtd_ia = contagem_ia_mapeada.get(cat, 0)
+                qtd_manual = contagem_manual.get(cat, 0)
+                diff = qtd_ia - qtd_manual
+                if diff > 0:
+                    diff_txt = "+" + str(diff)
+                elif diff < 0:
+                    diff_txt = str(diff)
+                else:
+                    diff_txt = "0"
+                if qtd_ia > 0 or qtd_manual > 0:
+                    linha = {}
+                    linha["Item"] = cat.upper()
+                    linha["IA (auto)"] = qtd_ia
+                    linha["Equipe (manual)"] = qtd_manual
+                    linha["Diferenca"] = diff_txt
+                    linhas_comp.append(linha)
+            total_ia = sum(contagem_ia_mapeada.values())
+            linha_total = {}
+            linha_total["Item"] = "TOTAL"
+            linha_total["IA (auto)"] = total_ia
+            linha_total["Equipe (manual)"] = total_manual
+            diff_total = total_ia - total_manual
+            if diff_total > 0:
+                linha_total["Diferenca"] = "+" + str(diff_total)
+            elif diff_total < 0:
+                linha_total["Diferenca"] = str(diff_total)
+            else:
+                linha_total["Diferenca"] = "0"
+            linhas_comp.append(linha_total)
+            df_comp = pd.DataFrame(linhas_comp)
+            st.dataframe(df_comp, use_container_width=True, hide_index=True)
             st.markdown("---")
             if st.button("Salvar Validacao", type="primary", use_container_width=True):
                 nome_foto = "val_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
