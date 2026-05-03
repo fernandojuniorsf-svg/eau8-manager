@@ -505,11 +505,59 @@ elif menu == "Gerador de Escala":
             escalas = carregar_escalas()
             if escalas:
                 esc_sorted = sorted(escalas, key=lambda x: x.get("data", ""), reverse=True)
-                for esc in esc_sorted[:10]:
+                opcoes_esc = []
+                for i, esc in enumerate(esc_sorted):
                     label = esc["data"] + " - " + esc["turno"] + " - " + str(esc.get("volume", ""))
-                    with st.expander(label):
-                        df_e = pd.DataFrame(esc["escala"])
-                        st.dataframe(df_e, use_container_width=True, hide_index=True)
+                    opcoes_esc.append(label)
+                sel_esc = st.selectbox("Selecione a escala", opcoes_esc, key="sel_esc_edit")
+                idx_esc = opcoes_esc.index(sel_esc)
+                esc_sel = esc_sorted[idx_esc]
+                st.markdown("---")
+                st.markdown("**Data:** " + esc_sel["data"] + " | **Turno:** " + esc_sel["turno"] + " | **Volume:** " + str(esc_sel.get("volume", "")))
+                df_esc_edit = pd.DataFrame(esc_sel["escala"])
+                nomes_todos = [f["nome"] for f in carregar_funcionarios()]
+                df_editado_hist = st.data_editor(
+                    df_esc_edit,
+                    use_container_width=True,
+                    hide_index=True,
+                    num_rows="dynamic",
+                    column_config={
+                        "posicao": st.column_config.SelectboxColumn(
+                            "Posicao",
+                            options=POSICOES,
+                            required=True
+                        ),
+                        "funcionario": st.column_config.SelectboxColumn(
+                            "Funcionario",
+                            options=nomes_todos,
+                            required=True
+                        ),
+                        "telefone": st.column_config.TextColumn("Telefone"),
+                        "tipo": st.column_config.SelectboxColumn(
+                            "Tipo",
+                            options=["Fixo", "Freelancer"]
+                        ),
+                    },
+                    key="editor_esc_hist"
+                )
+                col_s_esc, col_e_esc = st.columns(2)
+                with col_s_esc:
+                    if st.button("Salvar Alteracoes na Escala", type="primary", use_container_width=True):
+                        todas_escalas = carregar_escalas()
+                        for i, e in enumerate(todas_escalas):
+                            if e.get("data") == esc_sel.get("data") and e.get("gerada_em") == esc_sel.get("gerada_em"):
+                                todas_escalas[i]["escala"] = df_editado_hist.to_dict("records")
+                                break
+                        salvar_escalas(todas_escalas)
+                        st.success("Escala atualizada!")
+                        st.rerun()
+                with col_e_esc:
+                    if st.button("Excluir Esta Escala", type="secondary", use_container_width=True):
+                        todas_escalas = carregar_escalas()
+                        todas_escalas = [e for e in todas_escalas if not (e.get("data") == esc_sel.get("data") and e.get("gerada_em") == esc_sel.get("gerada_em"))]
+                        salvar_escalas(todas_escalas)
+                        st.success("Escala excluida!")
+                        st.rerun()
             else:
                 st.info("Nenhuma escala gerada ainda.")
 
