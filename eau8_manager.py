@@ -13,12 +13,13 @@ from PIL import Image
 
 FUSO_BR = ZoneInfo("America/Sao_Paulo")
 NL = chr(10)
+SITE = "EUA" + "8"
 
-for p in ["dados_eau8", "fotos_validacao", "fotos_motoristas"]:
+for p in ["dados_" + SITE.lower(), "fotos_validacao", "fotos_motoristas"]:
     if not os.path.exists(p):
         os.makedirs(p)
 
-PASTA_DADOS = "dados_eau8"
+PASTA_DADOS = "dados_" + SITE.lower()
 PASTA_FOTOS = "fotos_validacao"
 PASTA_MOTORISTAS = "fotos_motoristas"
 
@@ -41,108 +42,83 @@ ARQ_DESEMPENHO = os.path.join(PASTA_DADOS, "desempenho.json")
 POSICOES = ["Receive", "Stow", "Pick", "Pack", "Depart", "Problem Solve", "Scanning", "Induc", "Rebag", "Water Spider", "Lider"]
 TIPOS_VEICULO = ["Carreta (28 pallets)", "Truck (16 pallets)", "VUC (6 pallets)", "Van", "Outro"]
 TIPOS_VALIDACAO = ["Veiculo Carregado", "Pallet Montado", "Area de Stow", "Area de Receive", "Depart", "Outro"]
+SENHA_PADRAO = SITE.lower()
 
 
-def hash_senha(senha):
+def cifrar_senha(senha):
     return hashlib.sha256(senha.encode()).hexdigest()
 
 
-def carregar_usuarios():
-    if os.path.exists(ARQ_USUARIOS):
-        with open(ARQ_USUARIOS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    admin = {"usuario": "fernando", "senha": hash_senha("eau8"), "nome": "Fernando Junior", "perfil": "Admin", "status": "Ativo", "criado_em": "2026-05-03"}
-    salvar_usuarios([admin])
-    return [admin]
+def primeiro(lista):
+    for item in lista:
+        return item
+    return None
 
+
+def carregar_json(arq):
+    if os.path.exists(arq):
+        with open(arq, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def salvar_json(arq, dados):
+    with open(arq, "w", encoding="utf-8") as f:
+        json.dump(dados, f, ensure_ascii=False, indent=2)
+
+
+def carregar_usuarios():
+    u = carregar_json(ARQ_USUARIOS)
+    if not u:
+        admin = {"usuario": "fernando", "senha": cifrar_senha(SENHA_PADRAO), "nome": "Fernando Junior", "perfil": "Admin", "status": "Ativo", "criado_em": "2026-05-03"}
+        salvar_json(ARQ_USUARIOS, [admin])
+        return [admin]
+    return u
 
 def salvar_usuarios(u):
-    with open(ARQ_USUARIOS, "w", encoding="utf-8") as f:
-        json.dump(u, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_USUARIOS, u)
 
 def carregar_funcionarios():
-    if os.path.exists(ARQ_FUNCIONARIOS):
-        with open(ARQ_FUNCIONARIOS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_FUNCIONARIOS)
 
 def salvar_funcionarios(d):
-    with open(ARQ_FUNCIONARIOS, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_FUNCIONARIOS, d)
 
 def carregar_escalas():
-    if os.path.exists(ARQ_ESCALAS):
-        with open(ARQ_ESCALAS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_ESCALAS)
 
 def salvar_escalas(d):
-    with open(ARQ_ESCALAS, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_ESCALAS, d)
 
 def carregar_motoristas():
-    if os.path.exists(ARQ_MOTORISTAS):
-        with open(ARQ_MOTORISTAS, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_MOTORISTAS)
 
 def salvar_motoristas(d):
-    with open(ARQ_MOTORISTAS, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_MOTORISTAS, d)
 
 def carregar_forecast():
-    if os.path.exists(ARQ_FORECAST):
-        with open(ARQ_FORECAST, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_FORECAST)
 
 def salvar_forecast(d):
-    with open(ARQ_FORECAST, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_FORECAST, d)
 
 def carregar_validacoes():
-    if os.path.exists(ARQ_VALIDACOES):
-        with open(ARQ_VALIDACOES, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_VALIDACOES)
 
 def salvar_validacoes(d):
-    with open(ARQ_VALIDACOES, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_VALIDACOES, d)
 
 def carregar_absenteismo():
-    if os.path.exists(ARQ_ABSENTEISMO):
-        with open(ARQ_ABSENTEISMO, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_ABSENTEISMO)
 
 def salvar_absenteismo(d):
-    with open(ARQ_ABSENTEISMO, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
-
+    salvar_json(ARQ_ABSENTEISMO, d)
 
 def carregar_desempenho():
-    if os.path.exists(ARQ_DESEMPENHO):
-        with open(ARQ_DESEMPENHO, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
-
+    return carregar_json(ARQ_DESEMPENHO)
 
 def salvar_desempenho(d):
-    with open(ARQ_DESEMPENHO, "w", encoding="utf-8") as f:
-        json.dump(d, f, ensure_ascii=False, indent=2)
+    salvar_json(ARQ_DESEMPENHO, d)
 
 
 PERFIS_ACESSO = {
@@ -152,7 +128,28 @@ PERFIS_ACESSO = {
     "Visualizador": ["Dashboard", "Relatorios"]
 }
 
-st.set_page_config(page_title="EUA8 Manager", page_icon="F", layout="wide")
+st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
+
+css_texto = "<style>"
+css_texto += ".stApp {background-color: #1a1a2e;}"
+css_texto += 'section[data-testid="stSidebar"] {background-color: #16213e;}'
+css_texto += 'section[data-testid="stSidebar"] .stMarkdown h2 {color: #FF9900;}'
+css_texto += 'section[data-testid="stSidebar"] .stMarkdown {color: #e0e0e0;}'
+css_texto += "h1 {color: #FF9900 !important;}"
+css_texto += "h3 {color: #FF9900 !important;}"
+css_texto += ".stMetricValue {color: #FF9900 !important;}"
+css_texto += 'div[data-testid="stMetricDelta"] {color: #00C853 !important;}'
+css_texto += '.stTabs [data-baseweb="tab"] {color: #FF9900;}'
+css_texto += '.stTabs [aria-selected="true"] {background-color: #FF9900 !important; color: #000 !important;}'
+css_texto += '.stButton>button[kind="primary"] {background-color: #FF9900; color: #000; border: none;}'
+css_texto += '.stButton>button[kind="primary"]:hover {background-color: #e68a00;}'
+css_texto += '.stButton>button[kind="secondary"] {border: 1px solid #FF9900; color: #FF9900;}'
+css_texto += 'div[data-testid="stForm"] {border: 1px solid #FF9900; border-radius: 8px; padding: 16px;}'
+css_texto += ".stDataFrame {border: 1px solid #333;}"
+css_texto += ".stMarkdown {color: #e0e0e0;}"
+css_texto += "hr {border-color: #FF9900 !important;}"
+css_texto += "</style>"
+st.markdown(css_texto, unsafe_allow_html=True)
 
 if "logado" not in st.session_state:
     st.session_state["logado"] = False
@@ -163,7 +160,7 @@ if "logado" not in st.session_state:
 if not st.session_state["logado"]:
     col_e, col_c, col_d = st.columns([1, 2, 1])
     with col_c:
-        st.markdown("# EUA8 Manager")
+        st.markdown("# " + SITE + " Manager")
         st.markdown("*First Mile Operations | Amazon Logistics*")
         st.markdown("---")
         st.markdown("### Login")
@@ -176,7 +173,7 @@ if not st.session_state["logado"]:
                     usuarios = carregar_usuarios()
                     encontrou = False
                     for u in usuarios:
-                        if u["usuario"] == usuario_input.lower().strip() and u["senha"] == hash_senha(senha_input):
+                        if u["usuario"] == usuario_input.lower().strip() and u["senha"] == cifrar_senha(senha_input):
                             if u.get("status", "Ativo") != "Ativo":
                                 st.error("Usuario inativo.")
                                 encontrou = True
@@ -196,20 +193,18 @@ if not st.session_state["logado"]:
 
 nome_logado = st.session_state.get("nome_logado", "Usuario")
 perfil_logado = st.session_state.get("perfil_logado", "Operador")
-st.sidebar.markdown("## EUA8 Manager")
-st.sidebar.markdown("*First Mile | Amazon Logistics*")
+st.sidebar.markdown("## " + SITE + " Manager")
+st.sidebar.markdown("*First Mile Operations | Amazon Logistics*")
 st.sidebar.markdown("Bem-vindo, **" + nome_logado + "** (" + perfil_logado + ")")
 st.sidebar.markdown("---")
-
 menus_permitidos = PERFIS_ACESSO.get(perfil_logado, [])
 todos_menus = ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configuracoes", "Gerenciar Usuarios"]
 menus_visiveis = [m for m in todos_menus if m in menus_permitidos]
 menu = st.sidebar.radio("Menu Principal", menus_visiveis)
-
 st.sidebar.markdown("---")
 agora = datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")
 st.sidebar.markdown("Data: **" + agora + "**")
-st.sidebar.markdown("Site: **EUA8**")
+st.sidebar.markdown("Site: **" + SITE + "**")
 st.sidebar.markdown("Turno: **Tarde (14h-20h)**")
 st.sidebar.markdown("---")
 if st.sidebar.button("Sair", use_container_width=True):
@@ -218,8 +213,9 @@ if st.sidebar.button("Sair", use_container_width=True):
     st.session_state["logado"] = False
     st.rerun()
 
-st.markdown("# EUA8 Manager")
+st.markdown("# " + SITE + " Manager")
 st.markdown("*First Mile Operations | Amazon Logistics*")
+st.markdown("---")
 
 if menu == "Dashboard":
     st.markdown("### Dashboard Operacional")
@@ -237,9 +233,8 @@ if menu == "Dashboard":
     mot_hoje = [m for m in motoristas if m.get("data_chegada", "")[:10] == hoje_str or m.get("data_registro", "")[:10] == hoje_str]
     esc_hoje = [e for e in escalas if e.get("data", "") == hoje_str]
     fc_hoje = [f for f in forecasts if f.get("data", "") == hoje_str]
-    volume_hoje = fc_hoje[0].get("volume", 0) if fc_hoje else 0
+    volume_hoje = primeiro(fc_hoje).get("volume", 0) if fc_hoje else 0
     abs_hoje = [a for a in absenteismo if a.get("data", "") == hoje_str]
-    st.markdown("---")
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("Funcionarios Ativos", len(ativos), str(len(fixos)) + " fixos / " + str(len(freelancers)) + " free")
@@ -263,9 +258,7 @@ if menu == "Dashboard":
     st.markdown("### Graficos")
     tg1, tg2, tg3, tg4, tg5 = st.tabs(["Validacoes", "Forecast", "Motoristas", "Absenteismo", "Equipe"])
     with tg1:
-        d7 = []
-        ia7 = []
-        eq7 = []
+        d7, ia7, eq7 = [], [], []
         for i in range(6, -1, -1):
             dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
             dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
@@ -277,20 +270,18 @@ if menu == "Dashboard":
         st.dataframe(dfv7, use_container_width=True, hide_index=True)
         st.bar_chart(dfv7.set_index("Data"))
     with tg2:
-        dfc7 = []
-        vfc7 = []
+        dfc7, vfc7 = [], []
         for i in range(6, -1, -1):
             dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
             dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
             dfc7.append(dl)
             fd = [f for f in forecasts if f.get("data", "") == dd]
-            vfc7.append(fd[0].get("volume", 0) if fd else 0)
+            vfc7.append(primeiro(fd).get("volume", 0) if fd else 0)
         dff7 = pd.DataFrame({"Data": dfc7, "Volume": vfc7})
         st.dataframe(dff7, use_container_width=True, hide_index=True)
         st.line_chart(dff7.set_index("Data"))
     with tg3:
-        dm7 = []
-        qm7 = []
+        dm7, qm7 = [], []
         for i in range(6, -1, -1):
             dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
             dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
@@ -301,8 +292,7 @@ if menu == "Dashboard":
         st.dataframe(dfm7, use_container_width=True, hide_index=True)
         st.bar_chart(dfm7.set_index("Data"))
     with tg4:
-        dab7 = []
-        qab7 = []
+        dab7, qab7 = [], []
         for i in range(6, -1, -1):
             dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
             dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
@@ -314,8 +304,7 @@ if menu == "Dashboard":
         st.bar_chart(dfab7.set_index("Data"))
     with tg5:
         if funcionarios:
-            pt = {}
-            pst = {}
+            pt, pst = {}, {}
             for f in funcionarios:
                 t = f.get("tipo", "Outro")
                 s = f.get("status", "Ativo")
@@ -360,7 +349,7 @@ if menu == "Dashboard":
 elif menu == "Cadastro de Funcionarios":
     st.markdown("### Cadastro de Funcionarios")
     funcionarios = carregar_funcionarios()
-    tab1, tab2 = st.tabs(["Novo Funcionario", "Lista"])
+    tab1, tab2 = st.tabs(["Novo Funcionario", "Lista / Editar"])
     with tab1:
         with st.form("form_func"):
             cf1, cf2 = st.columns(2)
@@ -370,11 +359,12 @@ elif menu == "Cadastro de Funcionarios":
                 telefone = st.text_input("Telefone (com DDD)", placeholder="11999999999")
             with cf2:
                 qualidades = st.multiselect("Qualidades / Posicoes", POSICOES)
+                status_func = st.selectbox("Status", ["Ativo", "Inativo", "Afastado", "Ferias"])
                 obs_func = st.text_input("Observacoes")
             btn_func = st.form_submit_button("Cadastrar", use_container_width=True)
             if btn_func:
                 if nome:
-                    nv = {"nome": nome, "tipo": tipo, "telefone": telefone, "qualidades": qualidades, "observacoes": obs_func, "status": "Ativo", "cadastrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
+                    nv = {"nome": nome, "tipo": tipo, "telefone": telefone, "qualidades": qualidades, "status": status_func, "observacoes": obs_func, "cadastrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
                     funcionarios.append(nv)
                     salvar_funcionarios(funcionarios)
                     st.success(nome + " cadastrado!")
@@ -407,9 +397,9 @@ elif menu == "Cadastro de Funcionarios":
                     eo = st.text_input("Obs", value=fe.get("observacoes", ""))
                 csf, cef = st.columns(2)
                 with csf:
-                    bsf = st.form_submit_button("Salvar", use_container_width=True)
+                    bsf = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
                 with cef:
-                    bef = st.form_submit_button("Excluir", use_container_width=True)
+                    bef = st.form_submit_button("Excluir Funcionario", use_container_width=True)
                 if bsf:
                     funcionarios[idx_f]["nome"] = en
                     funcionarios[idx_f]["tipo"] = et
@@ -426,7 +416,7 @@ elif menu == "Cadastro de Funcionarios":
                     st.success("Excluido!")
                     st.rerun()
         else:
-            st.info("Nenhum funcionario.")
+            st.info("Nenhum funcionario cadastrado.")
 
 
 elif menu == "Gerador de Escala":
@@ -435,7 +425,7 @@ elif menu == "Gerador de Escala":
     absenteismo = carregar_absenteismo()
     desempenho = carregar_desempenho()
     ativos = [f for f in funcionarios if f.get("status") == "Ativo"]
-    tab1, tab2 = st.tabs(["Gerar Escala", "Anteriores"])
+    tab1, tab2 = st.tabs(["Gerar Escala", "Anteriores / Editar"])
     with tab1:
         ge1, ge2, ge3 = st.columns(3)
         with ge1:
@@ -448,9 +438,9 @@ elif menu == "Gerador de Escala":
         faltas_dia = [a.get("funcionario", "") for a in absenteismo if a.get("data", "") == data_esc_str]
         disponiveis = [f for f in ativos if f["nome"] not in faltas_dia]
         if faltas_dia:
-            st.warning("Com falta: **" + ", ".join(faltas_dia) + "**")
+            st.warning("Com falta registrada: **" + ", ".join(faltas_dia) + "**")
         st.markdown("Disponiveis: **" + str(len(disponiveis)) + "** de " + str(len(ativos)))
-        usar_desemp = st.checkbox("Priorizar por nota de desempenho", value=False)
+        usar_desemp = st.checkbox("Priorizar por nota de desempenho (mais recente)", value=False)
         if st.button("Sortear / Gerar Escala", type="primary", use_container_width=True):
             escala = []
             usados = []
@@ -459,25 +449,29 @@ elif menu == "Gerador de Escala":
                 if usar_desemp:
                     cn = []
                     for c in cands:
-                        nota = 0
+                        nota_recente = 0
+                        data_recente = "2000-01-01"
                         for d in desempenho:
                             if d.get("funcionario") == c["nome"] and d.get("posicao") == pos:
-                                nota = d.get("nota", 0)
-                                break
-                        cn.append((c, nota))
-                    cn.sort(key=lambda x: x[1], reverse=True)
-                    cands = [c[0] for c in cn]
+                                da = d.get("data_avaliacao", d.get("registrado_em", "2000-01-01"))[:10]
+                                if da >= data_recente:
+                                    data_recente = da
+                                    nota_recente = d.get("nota", 0)
+                        cn.append({"cand": c, "nota": nota_recente, "dt": data_recente})
+                    cn.sort(key=lambda x: (x["nota"], x["dt"]), reverse=True)
+                    cands = [item["cand"] for item in cn]
                 else:
                     random.shuffle(cands)
                 if cands:
-                    ei = {"posicao": pos, "funcionario": cands[0]["nome"], "telefone": cands[0].get("telefone", ""), "tipo": cands[0].get("tipo", "")}
+                    escolhido = primeiro(cands)
+                    ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", "")}
                     escala.append(ei)
-                    usados.append(cands[0]["nome"])
+                    usados.append(escolhido["nome"])
             st.session_state["escala_temp"] = escala
         if "escala_temp" in st.session_state and st.session_state["escala_temp"]:
             esc = st.session_state["escala_temp"]
             st.markdown("---")
-            st.markdown("#### Escala (editavel)")
+            st.markdown("#### Escala Gerada (editavel antes de salvar)")
             ndisp = [f["nome"] for f in disponiveis]
             df_esc = pd.DataFrame(esc)
             df_ed = st.data_editor(df_esc, use_container_width=True, hide_index=True, num_rows="dynamic", column_config={"posicao": st.column_config.SelectboxColumn("Posicao", options=POSICOES), "funcionario": st.column_config.SelectboxColumn("Funcionario", options=ndisp)}, key="ed_esc")
@@ -488,7 +482,7 @@ elif menu == "Gerador de Escala":
                     escalas = carregar_escalas()
                     escalas.append(ne)
                     salvar_escalas(escalas)
-                    tw = "*ESCALA EUA8 - " + data_esc_str + "*" + NL
+                    tw = "*ESCALA " + SITE + " - " + data_esc_str + "*" + NL
                     tw += "Turno: " + turno_escala + NL
                     tw += "Volume: " + str(volume_prev) + NL + NL
                     for it in df_ed.to_dict("records"):
@@ -515,15 +509,17 @@ elif menu == "Gerador de Escala":
             idx_e = ops.index(sel_e)
             esel = es_s[idx_e]
             st.markdown("**Data:** " + esel["data"] + " | **Turno:** " + esel["turno"] + " | **Volume:** " + str(esel.get("volume", "")))
-            st.dataframe(pd.DataFrame(esel.get("escala", [])), use_container_width=True, hide_index=True)
-            if st.button("Excluir Escala", type="secondary"):
+            st.markdown("**Gerada em:** " + esel.get("gerada_em", "") + " | **Por:** " + esel.get("gerada_por", ""))
+            df_e_h = pd.DataFrame(esel.get("escala", []))
+            st.dataframe(df_e_h, use_container_width=True, hide_index=True)
+            if st.button("Excluir Escala Selecionada", type="secondary"):
                 todas = carregar_escalas()
                 todas = [x for x in todas if not (x.get("data") == esel.get("data") and x.get("gerada_em") == esel.get("gerada_em"))]
                 salvar_escalas(todas)
-                st.success("Excluida!")
+                st.success("Escala excluida!")
                 st.rerun()
         else:
-            st.info("Nenhuma escala.")
+            st.info("Nenhuma escala gerada.")
 
 
 elif menu == "Registro de Motorista":
@@ -549,8 +545,8 @@ elif menu == "Registro de Motorista":
                     if foto_mot:
                         nf = "mot_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
                         cf = os.path.join(PASTA_MOTORISTAS, nf)
-                        img = Image.open(foto_mot)
-                        img.save(cf)
+                        img_m = Image.open(foto_mot)
+                        img_m.save(cf)
                         nm["foto"] = nf
                     motoristas.append(nm)
                     salvar_motoristas(motoristas)
@@ -565,6 +561,7 @@ elif menu == "Registro de Motorista":
             cols_ok = [c for c in cols_m if c in df_mot.columns]
             st.dataframe(df_mot[cols_ok], use_container_width=True, hide_index=True)
             st.markdown("---")
+            st.markdown("#### Editar Motorista")
             ops_m = [m.get("nome", "") + " - " + m.get("placa", "") + " - " + m.get("data_chegada", "")[:10] for m in motoristas]
             sel_m = st.selectbox("Selecione", ops_m, key="sel_m_edit")
             idx_m = ops_m.index(sel_m)
@@ -574,18 +571,20 @@ elif menu == "Registro de Motorista":
                 with em1:
                     enm = st.text_input("Nome", value=me.get("nome", ""))
                     epm = st.text_input("Placa", value=me.get("placa", ""))
+                    etv = st.selectbox("Tipo Veiculo", TIPOS_VEICULO, index=TIPOS_VEICULO.index(me.get("tipo_veiculo", "Outro")) if me.get("tipo_veiculo", "Outro") in TIPOS_VEICULO else 4)
                 with em2:
                     ehc = st.text_input("Hora Chegada", value=me.get("horario_chegada", ""))
                     ehs = st.text_input("Hora Saida", value=me.get("horario_saida", ""))
                     eom = st.text_input("Obs", value=me.get("observacoes", ""))
                 csm, cem = st.columns(2)
                 with csm:
-                    bsm = st.form_submit_button("Salvar", use_container_width=True)
+                    bsm = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
                 with cem:
-                    bem = st.form_submit_button("Excluir", use_container_width=True)
+                    bem = st.form_submit_button("Excluir Registro", use_container_width=True)
                 if bsm:
                     motoristas[idx_m]["nome"] = enm
                     motoristas[idx_m]["placa"] = epm.upper()
+                    motoristas[idx_m]["tipo_veiculo"] = etv
                     motoristas[idx_m]["horario_chegada"] = ehc
                     motoristas[idx_m]["horario_saida"] = ehs
                     motoristas[idx_m]["observacoes"] = eom
@@ -598,67 +597,75 @@ elif menu == "Registro de Motorista":
                     st.success("Excluido!")
                     st.rerun()
         else:
-            st.info("Nenhum motorista.")
-
 
 elif menu == "Absenteismo":
-    st.markdown("### Controle de Absenteismo")
+    st.markdown("### Registro de Absenteismo")
     funcionarios = carregar_funcionarios()
     absenteismo = carregar_absenteismo()
     ativos = [f for f in funcionarios if f.get("status") == "Ativo"]
-    tab1, tab2, tab3 = st.tabs(["Registrar Falta", "Historico", "Resumo"])
+    tab1, tab2 = st.tabs(["Registrar Falta", "Historico / Editar"])
     with tab1:
-        if ativos:
-            with st.form("form_falta"):
+        with st.form("form_abs"):
+            fa1, fa2 = st.columns(2)
+            with fa1:
                 nomes_at = [f["nome"] for f in ativos]
-                fa1, fa2 = st.columns(2)
-                with fa1:
-                    func_falta = st.selectbox("Funcionario", nomes_at)
-                    data_falta = st.date_input("Data", value=date.today())
-                with fa2:
-                    motivo_falta = st.selectbox("Motivo", ["Falta sem justificativa", "Falta justificada", "Atestado medico", "Atraso", "Afastamento", "Ferias", "Folga", "Outro"])
-                    obs_falta = st.text_input("Observacao")
-                btn_falta = st.form_submit_button("Registrar Falta", use_container_width=True)
-                if btn_falta:
-                    ja = any(a.get("funcionario") == func_falta and a.get("data") == data_falta.strftime("%Y-%m-%d") for a in absenteismo)
-                    if ja:
-                        st.warning("Falta ja registrada.")
-                    else:
-                        nf = {"funcionario": func_falta, "data": data_falta.strftime("%Y-%m-%d"), "motivo": motivo_falta, "observacao": obs_falta, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
-                        absenteismo.append(nf)
-                        salvar_absenteismo(absenteismo)
-                        st.success("Falta registrada: " + func_falta)
-                        st.rerun()
-        else:
-            st.info("Cadastre funcionarios primeiro.")
+                func_abs = st.selectbox("Funcionario", nomes_at if nomes_at else ["Nenhum"])
+                data_abs = st.date_input("Data da Falta", value=date.today(), key="dt_abs")
+            with fa2:
+                motivo_abs = st.selectbox("Motivo", ["Falta sem Justificativa", "Falta Justificada", "Atestado Medico", "Atraso", "Saiu mais cedo", "Outro"])
+                obs_abs = st.text_input("Observacoes")
+            btn_abs = st.form_submit_button("Registrar Falta", use_container_width=True)
+            if btn_abs:
+                if func_abs and func_abs != "Nenhum":
+                    nabs = {"funcionario": func_abs, "data": data_abs.strftime("%Y-%m-%d"), "motivo": motivo_abs, "observacoes": obs_abs, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
+                    absenteismo.append(nabs)
+                    salvar_absenteismo(absenteismo)
+                    st.success("Falta registrada para " + func_abs)
+                    st.rerun()
+                else:
+                    st.error("Selecione um funcionario!")
     with tab2:
         if absenteismo:
             df_abs = pd.DataFrame(absenteismo)
-            cols_a = ["funcionario", "data", "motivo", "observacao", "registrado_em"]
-            cols_ok = [c for c in cols_a if c in df_abs.columns]
+            cols_abs = ["funcionario", "data", "motivo", "observacoes", "registrado_em"]
+            cols_ok = [c for c in cols_abs if c in df_abs.columns]
             st.dataframe(df_abs[cols_ok], use_container_width=True, hide_index=True)
-            ops_a = [a.get("funcionario", "") + " - " + a.get("data", "") + " - " + a.get("motivo", "") for a in absenteismo]
-            sel_a = st.selectbox("Selecione para excluir", ops_a, key="sel_a_edit")
-            idx_a = ops_a.index(sel_a)
-            if st.button("Excluir falta", type="secondary"):
-                absenteismo.pop(idx_a)
-                salvar_absenteismo(absenteismo)
-                st.success("Excluido!")
-                st.rerun()
+            st.markdown("---")
+            st.markdown("#### Editar / Excluir")
+            ops_abs = [a.get("funcionario", "") + " - " + a.get("data", "") + " - " + a.get("motivo", "") for a in absenteismo]
+            sel_abs = st.selectbox("Selecione", ops_abs, key="sel_abs_ed")
+            idx_abs = ops_abs.index(sel_abs)
+            ae = absenteismo[idx_abs]
+            motivos_list = ["Falta sem Justificativa", "Falta Justificada", "Atestado Medico", "Atraso", "Saiu mais cedo", "Outro"]
+            mi = motivos_list.index(ae.get("motivo", "Outro")) if ae.get("motivo", "Outro") in motivos_list else 5
+            with st.form("form_edit_abs"):
+                ea1, ea2 = st.columns(2)
+                with ea1:
+                    eaf = st.text_input("Funcionario", value=ae.get("funcionario", ""))
+                    ead = st.text_input("Data (AAAA-MM-DD)", value=ae.get("data", ""))
+                with ea2:
+                    eam = st.selectbox("Motivo", motivos_list, index=mi)
+                    eao = st.text_input("Obs", value=ae.get("observacoes", ""))
+                cab, dab = st.columns(2)
+                with cab:
+                    bsa = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                with dab:
+                    bea = st.form_submit_button("Excluir Registro", use_container_width=True)
+                if bsa:
+                    absenteismo[idx_abs]["funcionario"] = eaf
+                    absenteismo[idx_abs]["data"] = ead
+                    absenteismo[idx_abs]["motivo"] = eam
+                    absenteismo[idx_abs]["observacoes"] = eao
+                    salvar_absenteismo(absenteismo)
+                    st.success("Atualizado!")
+                    st.rerun()
+                if bea:
+                    absenteismo.pop(idx_abs)
+                    salvar_absenteismo(absenteismo)
+                    st.success("Excluido!")
+                    st.rerun()
         else:
-            st.info("Nenhuma falta.")
-    with tab3:
-        if absenteismo and ativos:
-            cont = {}
-            for a in absenteismo:
-                n = a.get("funcionario", "")
-                cont[n] = cont.get(n, 0) + 1
-            linhas = [{"Funcionario": f["nome"], "Total Faltas": cont.get(f["nome"], 0), "Tipo": f.get("tipo", "")} for f in ativos]
-            df_res = pd.DataFrame(linhas).sort_values("Total Faltas", ascending=False)
-            st.dataframe(df_res, use_container_width=True, hide_index=True)
-            st.bar_chart(df_res.set_index("Funcionario")["Total Faltas"])
-        else:
-            st.info("Sem dados.")
+            st.info("Nenhuma falta registrada.")
 
 
 elif menu == "Desempenho por Funcao":
@@ -666,371 +673,385 @@ elif menu == "Desempenho por Funcao":
     funcionarios = carregar_funcionarios()
     desempenho = carregar_desempenho()
     ativos = [f for f in funcionarios if f.get("status") == "Ativo"]
-    tab1, tab2, tab3 = st.tabs(["Avaliar", "Ranking", "Historico"])
+    tab1, tab2 = st.tabs(["Nova Avaliacao", "Historico / Editar"])
     with tab1:
-        if ativos:
-            with st.form("form_desemp"):
-                dp1, dp2 = st.columns(2)
-                with dp1:
-                    func_aval = st.selectbox("Funcionario", [f["nome"] for f in ativos])
-                    posicao_aval = st.selectbox("Posicao", POSICOES)
-                with dp2:
-                    nota_aval = st.slider("Nota (1 a 5)", min_value=1, max_value=5, value=3)
-                    obs_aval = st.text_input("Observacao")
-                st.markdown("**1**=Iniciante | **2**=Desenvolvimento | **3**=Bom | **4**=Muito bom | **5**=Excelente")
-                btn_aval = st.form_submit_button("Salvar", use_container_width=True)
-                if btn_aval:
-                    encontrou = False
-                    for i, d in enumerate(desempenho):
-                        if d.get("funcionario") == func_aval and d.get("posicao") == posicao_aval:
-                            desempenho[i]["nota"] = nota_aval
-                            desempenho[i]["observacao"] = obs_aval
-                            desempenho[i]["atualizado_em"] = datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")
-                            encontrou = True
-                            break
-                    if not encontrou:
-                        na = {"funcionario": func_aval, "posicao": posicao_aval, "nota": nota_aval, "observacao": obs_aval, "atualizado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                        desempenho.append(na)
+        with st.form("form_desemp"):
+            fd1, fd2 = st.columns(2)
+            with fd1:
+                nomes_d = [f["nome"] for f in ativos]
+                func_desemp = st.selectbox("Funcionario", nomes_d if nomes_d else ["Nenhum"])
+                pos_desemp = st.selectbox("Posicao Avaliada", POSICOES)
+                data_desemp = st.date_input("Data Avaliacao", value=date.today(), key="dt_desemp")
+            with fd2:
+                nota_desemp = st.slider("Nota (1 a 10)", min_value=1, max_value=10, value=5)
+                obs_desemp = st.text_area("Observacoes / Feedback")
+            btn_desemp = st.form_submit_button("Registrar Avaliacao", use_container_width=True)
+            if btn_desemp:
+                if func_desemp and func_desemp != "Nenhum":
+                    nd = {"funcionario": func_desemp, "posicao": pos_desemp, "nota": nota_desemp, "data_avaliacao": data_desemp.strftime("%Y-%m-%d"), "observacoes": obs_desemp, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
+                    desempenho.append(nd)
                     salvar_desempenho(desempenho)
-                    st.success(func_aval + " nota " + str(nota_aval) + " em " + posicao_aval)
+                    st.success("Avaliacao registrada!")
                     st.rerun()
-        else:
-            st.info("Cadastre funcionarios.")
+                else:
+                    st.error("Selecione um funcionario!")
     with tab2:
         if desempenho:
-            pos_sel = st.selectbox("Funcao", POSICOES)
-            np_ = [d for d in desempenho if d.get("posicao") == pos_sel]
-            if np_:
-                np_ = sorted(np_, key=lambda x: x.get("nota", 0), reverse=True)
-                lr = [{"#": i+1, "Funcionario": n.get("funcionario", ""), "Nota": n.get("nota", 0), "Obs": n.get("observacao", "")} for i, n in enumerate(np_)]
-                df_r = pd.DataFrame(lr)
-                st.dataframe(df_r, use_container_width=True, hide_index=True)
-                st.bar_chart(df_r.set_index("Funcionario")["Nota"])
-            else:
-                st.info("Nenhuma avaliacao para " + pos_sel)
-        else:
-            st.info("Nenhuma avaliacao.")
-    with tab3:
-        if desempenho:
-            df_d = pd.DataFrame(desempenho)
-            st.dataframe(df_d, use_container_width=True, hide_index=True)
-            ops_d = [d.get("funcionario", "") + " - " + d.get("posicao", "") + " - " + str(d.get("nota", 0)) for d in desempenho]
-            sel_d = st.selectbox("Excluir", ops_d, key="sel_d_ex")
+            df_desemp = pd.DataFrame(desempenho)
+            cols_d = ["funcionario", "posicao", "nota", "data_avaliacao", "observacoes"]
+            cols_ok = [c for c in cols_d if c in df_desemp.columns]
+            st.dataframe(df_desemp[cols_ok], use_container_width=True, hide_index=True)
+            st.markdown("---")
+            st.markdown("#### Editar / Excluir")
+            ops_d = [d.get("funcionario", "") + " - " + d.get("posicao", "") + " - " + d.get("data_avaliacao", "") + " - Nota:" + str(d.get("nota", "")) for d in desempenho]
+            sel_d = st.selectbox("Selecione", ops_d, key="sel_desemp_ed")
             idx_d = ops_d.index(sel_d)
-            if st.button("Excluir", type="secondary", key="btn_ex_d"):
-                desempenho.pop(idx_d)
-                salvar_desempenho(desempenho)
-                st.success("Excluido!")
-                st.rerun()
+            de = desempenho[idx_d]
+            with st.form("form_edit_desemp"):
+                ed1, ed2 = st.columns(2)
+                with ed1:
+                    edf = st.text_input("Funcionario", value=de.get("funcionario", ""))
+                    edp = st.selectbox("Posicao", POSICOES, index=POSICOES.index(de.get("posicao", "Receive")) if de.get("posicao", "Receive") in POSICOES else 0)
+                with ed2:
+                    edn = st.slider("Nota", min_value=1, max_value=10, value=de.get("nota", 5))
+                    edo = st.text_area("Obs", value=de.get("observacoes", ""))
+                csd, ced = st.columns(2)
+                with csd:
+                    bsd = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                with ced:
+                    bed = st.form_submit_button("Excluir Registro", use_container_width=True)
+                if bsd:
+                    desempenho[idx_d]["funcionario"] = edf
+                    desempenho[idx_d]["posicao"] = edp
+                    desempenho[idx_d]["nota"] = edn
+                    desempenho[idx_d]["observacoes"] = edo
+                    salvar_desempenho(desempenho)
+                    st.success("Atualizado!")
+                    st.rerun()
+                if bed:
+                    desempenho.pop(idx_d)
+                    salvar_desempenho(desempenho)
+                    st.success("Excluido!")
+                    st.rerun()
         else:
-            st.info("Nenhuma avaliacao.")
+            st.info("Nenhuma avaliacao registrada.")
 
 
 elif menu == "Forecast / Volume":
     st.markdown("### Forecast / Volume")
     forecasts = carregar_forecast()
-    tab1, tab2, tab3 = st.tabs(["Manual", "Upload", "Historico"])
+    tab1, tab2 = st.tabs(["Registrar Manual", "Historico / Editar"])
     with tab1:
         with st.form("form_fc"):
-            fc1, fc2 = st.columns(2)
-            with fc1:
-                data_fc = st.date_input("Data", value=date.today())
-                volume_fc = st.number_input("Volume Previsto", min_value=0, max_value=50000, value=0, step=100)
-            with fc2:
-                obs_fc = st.text_input("Observacao", placeholder="Ex: Pico de segunda")
-            btn_fc = st.form_submit_button("Salvar", use_container_width=True)
+            ff1, ff2 = st.columns(2)
+            with ff1:
+                data_fc = st.date_input("Data", value=date.today(), key="dt_fc")
+                volume_fc = st.number_input("Volume Previsto (pacotes)", min_value=0, max_value=100000, value=0, step=100)
+            with ff2:
+                obs_fc = st.text_input("Observacoes")
+            btn_fc = st.form_submit_button("Salvar Forecast", use_container_width=True)
             if btn_fc:
-                nfc = {"data": data_fc.strftime("%Y-%m-%d"), "volume": volume_fc, "observacao": obs_fc, "origem": "Manual", "cadastrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
+                nfc = {"data": data_fc.strftime("%Y-%m-%d"), "volume": volume_fc, "observacoes": obs_fc, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
                 forecasts.append(nfc)
                 salvar_forecast(forecasts)
                 st.success("Forecast salvo!")
                 st.rerun()
-    with tab2:
-        st.markdown("Formato: colunas **data** e **volume**")
-        arq_fc = st.file_uploader("Arquivo CSV ou Excel", type=["csv", "xlsx"])
-        if arq_fc:
+        st.markdown("---")
+        st.markdown("#### Upload de Forecast (CSV/Excel)")
+        arq_up = st.file_uploader("Envie um arquivo com colunas: data, volume", type=["csv", "xlsx"])
+        if arq_up:
             try:
-                if arq_fc.name.endswith(".csv"):
-                    df_up = pd.read_csv(arq_fc)
+                if arq_up.name.endswith(".csv"):
+                    df_up = pd.read_csv(arq_up)
                 else:
-                    df_up = pd.read_excel(arq_fc)
+                    df_up = pd.read_excel(arq_up)
                 st.dataframe(df_up, use_container_width=True, hide_index=True)
-                if st.button("Importar", type="primary"):
-                    for _, row in df_up.iterrows():
-                        nfc = {"data": str(row.get("data", "")), "volume": int(row.get("volume", 0)), "observacao": str(row.get("observacao", "")), "origem": "Upload", "cadastrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
+                if st.button("Importar Forecast", type="primary"):
+                    for idx_row, row in df_up.iterrows():
+                        nfc = {"data": str(row.get("data", "")), "volume": int(row.get("volume", 0)), "observacoes": "Upload", "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
                         forecasts.append(nfc)
                     salvar_forecast(forecasts)
-                    st.success(str(len(df_up)) + " importados!")
+                    st.success(str(len(df_up)) + " registros importados!")
                     st.rerun()
-            except Exception as e:
-                st.error("Erro: " + str(e))
-    with tab3:
+            except Exception as ex:
+                st.error("Erro ao ler arquivo: " + str(ex))
+    with tab2:
         if forecasts:
             df_fc = pd.DataFrame(forecasts)
-            cols_fc = ["data", "volume", "observacao", "origem"]
+            cols_fc = ["data", "volume", "observacoes", "registrado_em"]
             cols_ok = [c for c in cols_fc if c in df_fc.columns]
             st.dataframe(df_fc[cols_ok], use_container_width=True, hide_index=True)
-            ops_fc = [f.get("data", "") + " - " + str(f.get("volume", 0)) + " pac" for f in forecasts]
-            sel_fc = st.selectbox("Selecione", ops_fc, key="sel_fc_ex")
+            st.markdown("---")
+            st.markdown("#### Editar / Excluir")
+            ops_fc = [f.get("data", "") + " - Vol:" + str(f.get("volume", "")) for f in forecasts]
+            sel_fc = st.selectbox("Selecione", ops_fc, key="sel_fc_ed")
             idx_fc = ops_fc.index(sel_fc)
-            if st.button("Excluir forecast", type="secondary"):
-                forecasts.pop(idx_fc)
-                salvar_forecast(forecasts)
-                st.success("Excluido!")
-                st.rerun()
+            fce = forecasts[idx_fc]
+            with st.form("form_edit_fc"):
+                efc1, efc2 = st.columns(2)
+                with efc1:
+                    efcd = st.text_input("Data (AAAA-MM-DD)", value=fce.get("data", ""))
+                    efcv = st.number_input("Volume", min_value=0, max_value=100000, value=fce.get("volume", 0), step=100)
+                with efc2:
+                    efco = st.text_input("Obs", value=fce.get("observacoes", ""))
+                csfc, cefc = st.columns(2)
+                with csfc:
+                    bsfc = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                with cefc:
+                    befc = st.form_submit_button("Excluir Registro", use_container_width=True)
+                if bsfc:
+                    forecasts[idx_fc]["data"] = efcd
+                    forecasts[idx_fc]["volume"] = efcv
+                    forecasts[idx_fc]["observacoes"] = efco
+                    salvar_forecast(forecasts)
+                    st.success("Atualizado!")
+                    st.rerun()
+                if befc:
+                    forecasts.pop(idx_fc)
+                    salvar_forecast(forecasts)
+                    st.success("Excluido!")
+                    st.rerun()
         else:
-            st.info("Nenhum forecast.")
+            st.info("Nenhum forecast registrado.")
 
 
 elif menu == "Validacao por Foto (IA)":
     st.markdown("### Validacao por Foto (IA)")
     validacoes = carregar_validacoes()
-    tab1, tab2, tab3 = st.tabs(["Nova Validacao", "Contagem Manual + Comparativo", "Historico"])
+    tab1, tab2 = st.tabs(["Nova Validacao", "Historico / Editar"])
     with tab1:
         tipo_val = st.selectbox("Tipo de Validacao", TIPOS_VALIDACAO)
-        foto_val = st.camera_input("Tirar Foto")
+        foto_val = st.camera_input("Tire a foto para validacao")
         if foto_val:
-            img = Image.open(foto_val)
-            st.image(img, caption="Foto capturada", use_container_width=True)
+            image = Image.open(foto_val)
+            st.image(image, caption="Foto capturada", use_container_width=True)
+            contagem_ia = {}
+            total_ia = 0
+            img_resultado = None
             if yolo_ok:
-                try:
-                    modelo = YOLO("yolov8x.pt")
-                    temp_path = os.path.join(PASTA_FOTOS, "temp_val.jpg")
-                    img.save(temp_path)
-                    resultados = modelo(temp_path)
-                    r = resultados
-                    img_result = Image.fromarray(r.plot()[:, :, ::-1])
-                    st.image(img_result, caption="Resultado IA", use_container_width=True)
-                    contagem_ia = {}
-                    for box in r.boxes:
+                import tempfile
+                temp_path = os.path.join(tempfile.gettempdir(), "foto_val.jpg")
+                image.save(temp_path)
+                modelo = YOLO("yolov8n.pt")
+                resultados = modelo(temp_path, conf=0.25)
+                primeiro_res = primeiro(resultados)
+                if primeiro_res is not None:
+                    for box in primeiro_res.boxes:
                         cls_id = int(box.cls)
-                        cls_name = r.names[cls_id]
-                        contagem_ia[cls_name] = contagem_ia.get(cls_name, 0) + 1
+                        nome_obj = modelo.names.get(cls_id, "desconhecido")
+                        contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
                     total_ia = sum(contagem_ia.values())
-                    st.markdown("**Total objetos (IA): " + str(total_ia) + "**")
-                    if contagem_ia:
-                        df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
-                        st.dataframe(df_ia, use_container_width=True, hide_index=True)
-                    if st.button("Salvar Validacao IA", type="primary"):
-                        nv = {"tipo": tipo_val, "data": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "total_objetos_ia": total_ia, "detalhes_ia": contagem_ia, "total_objetos_manual": 0, "detalhes_manual": {}, "registrado_por": st.session_state.get("nome_logado", "Admin")}
-                        validacoes.append(nv)
-                        salvar_validacoes(validacoes)
-                        st.success("Validacao salva!")
-                        st.rerun()
-                except Exception as e:
-                    st.error("Erro IA: " + str(e))
+                    try:
+                        img_resultado = primeiro_res.plot()
+                        st.image(img_resultado, caption="Deteccao IA - " + str(total_ia) + " objetos", use_container_width=True)
+                    except Exception:
+                        st.info("Nao foi possivel exibir imagem com deteccoes.")
+                st.success("IA detectou: " + str(total_ia) + " objetos")
+                if contagem_ia:
+                    df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
+                    st.dataframe(df_ia, use_container_width=True, hide_index=True)
             else:
                 st.warning("YOLO nao instalado. Modo demonstracao ativo.")
                 st.info("Para IA real, rode: pip install ultralytics")
-                demo_objs = {"caixa": random.randint(15, 40), "pallet": random.randint(1, 5)}
-                total_demo = sum(demo_objs.values())
-                st.markdown("**" + str(total_demo) + " objeto(s) (simulacao)**")
-                df_demo = pd.DataFrame(list(demo_objs.items()), columns=["Objeto", "Quantidade"])
-                st.dataframe(df_demo, use_container_width=True, hide_index=True)
-                if st.button("Salvar (demo)", type="primary"):
-                    nv = {"tipo": tipo_val, "data": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "total_objetos_ia": total_demo, "detalhes_ia": demo_objs, "total_objetos_manual": 0, "detalhes_manual": {}, "modo": "demo", "registrado_por": st.session_state.get("nome_logado", "Admin")}
-                    validacoes.append(nv)
-                    salvar_validacoes(validacoes)
-                    st.success("Salvo (demo)!")
-                    st.rerun()
-    with tab2:
-        st.markdown("#### Contagem Manual da Equipe")
-        with st.form("form_manual_val"):
-            tipo_val_m = st.selectbox("Tipo", TIPOS_VALIDACAO, key="tipo_val_m")
-            st.markdown("Preencha a contagem real da equipe:")
-            mc1, mc2, mc3 = st.columns(3)
-            with mc1:
-                qt_caixa = st.number_input("Caixas", min_value=0, value=0, step=1)
-            with mc2:
-                qt_pallet = st.number_input("Pallets", min_value=0, value=0, step=1)
-            with mc3:
-                qt_outros = st.number_input("Outros", min_value=0, value=0, step=1)
-            obs_val = st.text_input("Observacao")
-            btn_manual = st.form_submit_button("Salvar Contagem Manual", use_container_width=True)
-            if btn_manual:
-                det_m = {"caixa": qt_caixa, "pallet": qt_pallet, "outros": qt_outros}
-                tot_m = qt_caixa + qt_pallet + qt_outros
-                nv = {"tipo": tipo_val_m, "data": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "total_objetos_ia": 0, "detalhes_ia": {}, "total_objetos_manual": tot_m, "detalhes_manual": det_m, "observacao": obs_val, "registrado_por": st.session_state.get("nome_logado", "Admin")}
+            st.markdown("---")
+            st.markdown("#### Contagem Manual da Equipe")
+            st.markdown("Informe a contagem feita manualmente pela equipe:")
+            contagem_manual = {}
+            objetos_manual = st.text_input("Objetos (ex: caixa, pallet, saco)", placeholder="caixa, pallet")
+            if objetos_manual:
+                lista_obj = [x.strip() for x in objetos_manual.split(",") if x.strip()]
+                for obj in lista_obj:
+                    qtd = st.number_input("Qtd de " + obj, min_value=0, max_value=9999, value=0, step=1, key="man_" + obj)
+                    contagem_manual[obj] = qtd
+            total_manual = sum(contagem_manual.values())
+            st.markdown("---")
+            st.markdown("#### Comparativo IA x Equipe")
+            todos_obj = sorted(set(list(contagem_ia.keys()) + list(contagem_manual.keys())))
+            if todos_obj:
+                linhas_comp = []
+                for obj in todos_obj:
+                    qia = contagem_ia.get(obj, 0)
+                    qeq = contagem_manual.get(obj, 0)
+                    dif = qeq - qia
+                    linhas_comp.append({"Objeto": obj, "IA": qia, "Equipe": qeq, "Diferenca": dif})
+                linhas_comp.append({"Objeto": "TOTAL", "IA": total_ia, "Equipe": total_manual, "Diferenca": total_manual - total_ia})
+                df_comp = pd.DataFrame(linhas_comp)
+                st.dataframe(df_comp, use_container_width=True, hide_index=True)
+            if st.button("Salvar Validacao", type="primary", use_container_width=True):
+                nv = {"tipo": tipo_val, "data": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "total_objetos_ia": total_ia, "contagem_ia": contagem_ia, "total_objetos_manual": total_manual, "contagem_manual": contagem_manual, "registrado_por": st.session_state.get("nome_logado", "Admin")}
+                nf = "val_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
+                cf = os.path.join(PASTA_FOTOS, nf)
+                image.save(cf)
+                nv["foto"] = nf
                 validacoes.append(nv)
                 salvar_validacoes(validacoes)
-                st.success("Contagem manual salva: " + str(tot_m) + " objetos")
+                st.success("Validacao salva! IA:" + str(total_ia) + " | Equipe:" + str(total_manual))
                 st.rerun()
-        st.markdown("---")
-        st.markdown("#### Comparativo IA vs Equipe")
+    with tab2:
         if validacoes:
-            uv = sorted(validacoes, key=lambda x: x.get("data", ""), reverse=True)[:10]
-            linhas_comp = []
-            for v in uv:
-                lc = {"Tipo": v.get("tipo", ""), "Data": v.get("data", "")[:16], "IA": v.get("total_objetos_ia", 0), "Equipe": v.get("total_objetos_manual", 0)}
-                lc["Diferenca"] = lc["IA"] - lc["Equipe"]
-                linhas_comp.append(lc)
-            df_comp = pd.DataFrame(linhas_comp)
-            st.dataframe(df_comp, use_container_width=True, hide_index=True)
-            st.markdown("**Detalhamento por item (ultima validacao):**")
-            if uv:
-                ult = uv
-                di = ult.get("detalhes_ia", {})
-                dm = ult.get("detalhes_manual", {})
-                todos_itens = set(list(di.keys()) + list(dm.keys()))
-                if todos_itens:
-                    ld = [{"Item": it, "IA": di.get(it, 0), "Equipe": dm.get(it, 0), "Diferenca": di.get(it, 0) - dm.get(it, 0)} for it in sorted(todos_itens)]
-                    st.dataframe(pd.DataFrame(ld), use_container_width=True, hide_index=True)
-        else:
-            st.info("Nenhuma validacao.")
-    with tab3:
-        if validacoes:
-            vs = sorted(validacoes, key=lambda x: x.get("data", ""), reverse=True)
-            lh = []
-            for v in vs:
-                lh.append({"Tipo": v.get("tipo", ""), "Data": v.get("data", "")[:16], "IA": v.get("total_objetos_ia", 0), "Equipe": v.get("total_objetos_manual", 0), "Por": v.get("registrado_por", "")})
-            st.dataframe(pd.DataFrame(lh), use_container_width=True, hide_index=True)
-            ops_v = [v.get("tipo", "") + " - " + v.get("data", "")[:16] for v in vs]
-            sel_v = st.selectbox("Excluir", ops_v, key="sel_v_ex")
+            st.markdown("#### Ultimas Validacoes")
+            for v in sorted(validacoes, key=lambda x: x.get("data", ""), reverse=True)[:10]:
+                tia = v.get("total_objetos_ia", v.get("total_objetos", 0))
+                teq = v.get("total_objetos_manual", 0)
+                st.markdown("- **" + v.get("tipo", "") + "** - " + v.get("data", "")[:16] + " - IA: " + str(tia) + " | Equipe: " + str(teq))
+            st.markdown("---")
+            st.markdown("#### Editar / Excluir")
+            ops_v = [v.get("tipo", "") + " - " + v.get("data", "")[:16] + " - IA:" + str(v.get("total_objetos_ia", v.get("total_objetos", 0))) for v in validacoes]
+            sel_v = st.selectbox("Selecione", ops_v, key="sel_val_ed")
             idx_v = ops_v.index(sel_v)
-            if st.button("Excluir validacao", type="secondary"):
-                todas_v = carregar_validacoes()
-                todas_v_s = sorted(todas_v, key=lambda x: x.get("data", ""), reverse=True)
-                if idx_v < len(todas_v_s):
-                    todas_v_s.pop(idx_v)
-                    salvar_validacoes(todas_v_s)
+            ve = validacoes[idx_v]
+            with st.form("form_edit_val"):
+                ev1, ev2 = st.columns(2)
+                with ev1:
+                    evt = st.selectbox("Tipo", TIPOS_VALIDACAO, index=TIPOS_VALIDACAO.index(ve.get("tipo", "Outro")) if ve.get("tipo", "Outro") in TIPOS_VALIDACAO else 5)
+                    evia = st.number_input("Total IA", value=ve.get("total_objetos_ia", ve.get("total_objetos", 0)))
+                with ev2:
+                    evman = st.number_input("Total Equipe", value=ve.get("total_objetos_manual", 0))
+                csv_btn, cev = st.columns(2)
+                with csv_btn:
+                    bsv = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                with cev:
+                    bev = st.form_submit_button("Excluir Registro", use_container_width=True)
+                if bsv:
+                    validacoes[idx_v]["tipo"] = evt
+                    validacoes[idx_v]["total_objetos_ia"] = evia
+                    validacoes[idx_v]["total_objetos_manual"] = evman
+                    salvar_validacoes(validacoes)
+                    st.success("Atualizado!")
+                    st.rerun()
+                if bev:
+                    validacoes.pop(idx_v)
+                    salvar_validacoes(validacoes)
                     st.success("Excluido!")
                     st.rerun()
         else:
-            st.info("Nenhuma validacao.")
+            st.info("Nenhuma validacao registrada.")
 
 
 elif menu == "Scanner QR/Barcode":
-    st.markdown("### Scanner QR / Codigo de Barras")
-    if "scan_lista" not in st.session_state:
-        st.session_state["scan_lista"] = []
+    st.markdown("### Scanner QR / Barcode")
+    if "scanner_lista" not in st.session_state:
+        st.session_state["scanner_lista"] = []
     tab1, tab2 = st.tabs(["Escanear", "Lista / Exportar"])
     with tab1:
-        st.markdown("Use a camera ou digite o codigo manualmente:")
-        with st.form("form_scan"):
-            sc1, sc2 = st.columns(2)
-            with sc1:
-                codigo = st.text_input("Codigo (manual ou scanner)", placeholder="Escaneie ou digite aqui")
-            with sc2:
-                destino = st.text_input("Destino", placeholder="Ex: Doca 3, Rua A")
-            obs_scan = st.text_input("Observacao")
-            btn_scan = st.form_submit_button("Registrar", use_container_width=True)
-            if btn_scan:
-                if codigo:
-                    item = {"codigo": codigo, "destino": destino, "observacao": obs_scan, "horario": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M:%S"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
-                    st.session_state["scan_lista"].append(item)
-                    st.success("Registrado: " + codigo)
-                else:
-                    st.error("Digite um codigo!")
-        st.markdown("**Total escaneados:** " + str(len(st.session_state["scan_lista"])))
+        st.markdown("#### Leitura por Camera ou Scanner Externo")
+        codigo_input = st.text_input("Codigo (escaneie ou digite)", placeholder="Escaneie o codigo aqui...", key="scan_input")
+        destino_input = st.text_input("Destino", placeholder="Digite o destino")
+        if st.button("Adicionar a Lista", type="primary", use_container_width=True):
+            if codigo_input:
+                item_scan = {"codigo": codigo_input, "destino": destino_input, "horario": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M:%S"), "registrado_por": st.session_state.get("nome_logado", "Admin")}
+                st.session_state["scanner_lista"].append(item_scan)
+                st.success("Adicionado: " + codigo_input)
+            else:
+                st.error("Escaneie ou digite um codigo!")
+        st.markdown("#### Ou use a camera do celular")
+        foto_qr = st.camera_input("Fotografe o QR Code / Barcode")
+        if foto_qr:
+            st.info("Foto capturada! Digite o codigo lido manualmente acima.")
     with tab2:
-        if st.session_state["scan_lista"]:
-            df_scan = pd.DataFrame(st.session_state["scan_lista"])
-            st.dataframe(df_scan, use_container_width=True, hide_index=True)
-            buf = io.BytesIO()
-            df_scan.to_excel(buf, index=False, engine="openpyxl")
-            buf.seek(0)
-            st.download_button("Baixar Excel", data=buf, file_name="scan_eau8_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M") + ".xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            if st.button("Limpar Lista", type="secondary"):
-                st.session_state["scan_lista"] = []
-                st.rerun()
+        lista_sc = st.session_state.get("scanner_lista", [])
+        if lista_sc:
+            df_sc = pd.DataFrame(lista_sc)
+            st.dataframe(df_sc, use_container_width=True, hide_index=True)
+            st.markdown("Total: **" + str(len(lista_sc)) + "** itens")
+            sc1, sc2, sc3 = st.columns(3)
+            with sc1:
+                buf = io.BytesIO()
+                df_sc.to_excel(buf, index=False, engine="openpyxl")
+                st.download_button("Baixar Excel", data=buf.getvalue(), file_name="scanner_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M") + ".xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+            with sc2:
+                csv_data = df_sc.to_csv(index=False)
+                st.download_button("Baixar CSV", data=csv_data, file_name="scanner_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M") + ".csv", mime="text/csv", use_container_width=True)
+            with sc3:
+                if st.button("Limpar Lista", use_container_width=True):
+                    st.session_state["scanner_lista"] = []
+                    st.rerun()
         else:
             st.info("Nenhum item escaneado.")
 
 
 elif menu == "Enviar por WhatsApp":
     st.markdown("### Enviar por WhatsApp")
-    tab1, tab2 = st.tabs(["Enviar Mensagem", "Enviar Escala"])
+    tab1, tab2 = st.tabs(["Escala do Dia", "Mensagem Livre"])
     with tab1:
-        st.markdown("#### Enviar mensagem personalizada")
-        with st.form("form_wpp"):
-            telefone_wpp = st.text_input("Telefone (com DDD e DDI)", placeholder="5511999999999")
-            msg_wpp = st.text_area("Mensagem", height=150)
-            btn_wpp = st.form_submit_button("Gerar Link WhatsApp", use_container_width=True)
-            if btn_wpp:
-                if telefone_wpp and msg_wpp:
-                    tel_limpo = telefone_wpp.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
-                    link = "https://wa.me/" + tel_limpo + "?text=" + msg_wpp.replace(" ", "%20").replace(chr(10), "%0A")
-                    st.markdown("**Clique no link para enviar:**")
-                    st.markdown("[Abrir WhatsApp](" + link + ")")
-                    st.code(link)
+        escala_wpp = st.session_state.get("ultima_escala_wpp", "")
+        if escala_wpp:
+            st.markdown("#### Escala pronta para envio:")
+            st.code(escala_wpp)
+            numeros_wpp = st.text_area("Numeros (um por linha, com DDD)", placeholder="11999999999")
+            if st.button("Gerar Links WhatsApp", type="primary", use_container_width=True):
+                import urllib.parse
+                texto_encoded = urllib.parse.quote(escala_wpp)
+                if numeros_wpp.strip():
+                    for num in numeros_wpp.strip().split(NL):
+                        num = num.strip()
+                        if num:
+                            link = "https://wa.me/55" + num + "?text=" + texto_encoded
+                            st.markdown("[Enviar para " + num + "](" + link + ")")
                 else:
-                    st.error("Preencha telefone e mensagem!")
-    with tab2:
-        st.markdown("#### Enviar ultima escala")
-        texto_esc = st.session_state.get("ultima_escala_wpp", "")
-        if texto_esc:
-            st.text_area("Texto da escala", value=texto_esc, height=200, disabled=True)
-            tel_esc = st.text_input("Telefone destino", placeholder="5511999999999", key="tel_esc_wpp")
-            if st.button("Gerar Link", type="primary"):
-                if tel_esc:
-                    tel_l = tel_esc.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
-                    link_e = "https://wa.me/" + tel_l + "?text=" + texto_esc.replace(" ", "%20").replace(chr(10), "%0A")
-                    st.markdown("[Abrir WhatsApp](" + link_e + ")")
-                    st.code(link_e)
-                else:
-                    st.error("Preencha o telefone!")
+                    link = "https://wa.me/?text=" + texto_encoded
+                    st.markdown("[Abrir WhatsApp com mensagem](" + link + ")")
         else:
-            st.info("Gere uma escala primeiro.")
+            st.info("Gere uma escala primeiro no menu Gerador de Escala.")
+    with tab2:
+        msg_livre = st.text_area("Mensagem", placeholder="Digite sua mensagem aqui...")
+        numeros_livre = st.text_area("Numeros (um por linha)", placeholder="11999999999", key="nums_livre")
+        if st.button("Gerar Links", type="primary", use_container_width=True, key="btn_wpp_livre"):
+            if msg_livre:
+                import urllib.parse
+                texto_enc = urllib.parse.quote(msg_livre)
+                if numeros_livre.strip():
+                    for num in numeros_livre.strip().split(NL):
+                        num = num.strip()
+                        if num:
+                            link = "https://wa.me/55" + num + "?text=" + texto_enc
+                            st.markdown("[Enviar para " + num + "](" + link + ")")
+                else:
+                    link = "https://wa.me/?text=" + texto_enc
+                    st.markdown("[Abrir WhatsApp](" + link + ")")
+            else:
+                st.error("Digite uma mensagem!")
 
 
 elif menu == "Relatorios":
     st.markdown("### Relatorios")
-    tab1, tab2, tab3 = st.tabs(["Consolidado", "Por Periodo", "Exportar"])
-    with tab1:
-        st.markdown("#### Relatorio Consolidado")
-        funcionarios = carregar_funcionarios()
-        validacoes = carregar_validacoes()
-        escalas = carregar_escalas()
-        motoristas = carregar_motoristas()
-        forecasts = carregar_forecast()
-        absenteismo = carregar_absenteismo()
-        st.markdown("- **Funcionarios:** " + str(len(funcionarios)))
-        st.markdown("- **Escalas:** " + str(len(escalas)))
-        st.markdown("- **Motoristas:** " + str(len(motoristas)))
-        st.markdown("- **Validacoes:** " + str(len(validacoes)))
-        st.markdown("- **Forecasts:** " + str(len(forecasts)))
-        st.markdown("- **Faltas registradas:** " + str(len(absenteismo)))
-    with tab2:
-        st.markdown("#### Filtrar por Periodo")
-        rp1, rp2 = st.columns(2)
-        with rp1:
-            dt_ini = st.date_input("Data Inicio", value=date.today() - timedelta(days=7), key="dt_ini_rel")
-        with rp2:
-            dt_fim = st.date_input("Data Fim", value=date.today(), key="dt_fim_rel")
-        di = dt_ini.strftime("%Y-%m-%d")
-        df_ = dt_fim.strftime("%Y-%m-%d")
-        validacoes = carregar_validacoes()
-        val_per = [v for v in validacoes if di <= v.get("data", "")[:10] <= df_]
-        motoristas = carregar_motoristas()
-        mot_per = [m for m in motoristas if di <= m.get("data_chegada", "")[:10] <= df_ or di <= m.get("data_registro", "")[:10] <= df_]
-        absenteismo = carregar_absenteismo()
-        abs_per = [a for a in absenteismo if di <= a.get("data", "") <= df_]
-        st.markdown("**Periodo:** " + dt_ini.strftime("%d/%m/%Y") + " a " + dt_fim.strftime("%d/%m/%Y"))
-        st.markdown("- Validacoes: " + str(len(val_per)))
-        st.markdown("- Motoristas: " + str(len(mot_per)))
-        st.markdown("- Faltas: " + str(len(abs_per)))
-        if val_per:
-            st.markdown("**Validacoes:**")
-            lv = [{"Tipo": v.get("tipo", ""), "Data": v.get("data", "")[:16], "IA": v.get("total_objetos_ia", 0), "Equipe": v.get("total_objetos_manual", 0)} for v in val_per]
-            st.dataframe(pd.DataFrame(lv), use_container_width=True, hide_index=True)
-        if mot_per:
-            st.markdown("**Motoristas:**")
-            lm = [{"Nome": m.get("nome", ""), "Placa": m.get("placa", ""), "Veiculo": m.get("tipo_veiculo", ""), "Chegada": m.get("horario_chegada", "")} for m in mot_per]
-            st.dataframe(pd.DataFrame(lm), use_container_width=True, hide_index=True)
-    with tab3:
-        st.markdown("#### Exportar Dados")
-        tipo_exp = st.selectbox("Selecione", ["Funcionarios", "Escalas", "Motoristas", "Validacoes", "Forecast", "Absenteismo"])
-        if st.button("Gerar Excel", type="primary"):
-            dados_map = {"Funcionarios": carregar_funcionarios(), "Escalas": carregar_escalas(), "Motoristas": carregar_motoristas(), "Validacoes": carregar_validacoes(), "Forecast": carregar_forecast(), "Absenteismo": carregar_absenteismo()}
-            dados = dados_map.get(tipo_exp, [])
-            if dados:
-                df_exp = pd.DataFrame(dados)
-                buf = io.BytesIO()
-                df_exp.to_excel(buf, index=False, engine="openpyxl")
-                buf.seek(0)
-                st.download_button("Baixar " + tipo_exp, data=buf, file_name=tipo_exp.lower() + "_eau8.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-            else:
-                st.info("Sem dados para exportar.")
+    tipo_rel = st.selectbox("Tipo de Relatorio", ["Escalas", "Motoristas", "Validacoes", "Funcionarios", "Absenteismo", "Desempenho", "Forecast"])
+    dr1, dr2 = st.columns(2)
+    with dr1:
+        data_ini = st.date_input("Data Inicio", value=date.today() - timedelta(days=7), key="rel_ini")
+    with dr2:
+        data_fim = st.date_input("Data Fim", value=date.today(), key="rel_fim")
+    di_str = data_ini.strftime("%Y-%m-%d")
+    df_str = data_fim.strftime("%Y-%m-%d")
+    dados_rel = []
+    if tipo_rel == "Escalas":
+        dados_rel = [e for e in carregar_escalas() if di_str <= e.get("data", "") <= df_str]
+    elif tipo_rel == "Motoristas":
+        dados_rel = [m for m in carregar_motoristas() if di_str <= m.get("data_chegada", m.get("data_registro", ""))[:10] <= df_str]
+    elif tipo_rel == "Validacoes":
+        dados_rel = [v for v in carregar_validacoes() if di_str <= v.get("data", "")[:10] <= df_str]
+    elif tipo_rel == "Funcionarios":
+        dados_rel = carregar_funcionarios()
+    elif tipo_rel == "Absenteismo":
+        dados_rel = [a for a in carregar_absenteismo() if di_str <= a.get("data", "") <= df_str]
+    elif tipo_rel == "Desempenho":
+        dados_rel = [d for d in carregar_desempenho() if di_str <= d.get("data_avaliacao", d.get("registrado_em", ""))[:10] <= df_str]
+    elif tipo_rel == "Forecast":
+        dados_rel = [f for f in carregar_forecast() if di_str <= f.get("data", "") <= df_str]
+    if dados_rel:
+        df_rel = pd.DataFrame(dados_rel)
+        st.dataframe(df_rel, use_container_width=True, hide_index=True)
+        st.markdown("Total: **" + str(len(dados_rel)) + "** registros")
+        re1, re2 = st.columns(2)
+        with re1:
+            buf = io.BytesIO()
+            df_rel.to_excel(buf, index=False, engine="openpyxl")
+            st.download_button("Baixar Excel", data=buf.getvalue(), file_name="relatorio_" + tipo_rel.lower() + "_" + datetime.now(FUSO_BR).strftime("%Y%m%d") + ".xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
+        with re2:
+            csv_rel = df_rel.to_csv(index=False)
+            st.download_button("Baixar CSV", data=csv_rel, file_name="relatorio_" + tipo_rel.lower() + "_" + datetime.now(FUSO_BR).strftime("%Y%m%d") + ".csv", mime="text/csv", use_container_width=True)
+    else:
+        st.info("Nenhum registro encontrado no periodo.")
 
 
 elif menu == "Configuracoes":
@@ -1038,84 +1059,118 @@ elif menu == "Configuracoes":
     tab1, tab2, tab3 = st.tabs(["Site", "Sistema", "Ajuda"])
     with tab1:
         st.markdown("#### Informacoes do Site")
-        st.markdown("- **Site:** EUA8")
+        st.markdown("- **Site:** " + SITE)
         st.markdown("- **Operacao:** First Mile / Cross Dock")
         st.markdown("- **Turno:** Tarde (14h-20h)")
-        st.markdown("- **Regiao:** Sao Paulo")
+        st.markdown("- **Fuso:** America/Sao_Paulo (Brasilia)")
     with tab2:
-        st.markdown("#### Sobre o Sistema")
-        st.markdown("- **App:** EUA8 Manager")
-        st.markdown("- **Versao:** 7.0")
-        st.markdown("- **Desenvolvido por:** Fernando Junior")
-        st.markdown("- **Stack:** Python + Streamlit")
+        st.markdown("#### Informacoes do Sistema")
+        st.markdown("- **Versao:** 6.0")
+        st.markdown("- **Python:** Streamlit")
+        st.markdown("- **IA:** YOLO v8 (ultralytics)")
+        st.markdown("- **Status YOLO:** " + ("Instalado" if yolo_ok else "Nao instalado"))
     with tab3:
         st.markdown("#### Ajuda")
-        st.markdown("Duvidas? Fale com o administrador.")
-        st.markdown("**Funcionalidades:**")
-        st.markdown("- Dashboard com metricas e graficos")
-        st.markdown("- Cadastro e gestao de funcionarios")
-        st.markdown("- Gerador de escala automatico")
-        st.markdown("- Registro de motoristas com foto")
-        st.markdown("- Forecast / Volume previsto")
-        st.markdown("- Validacao por foto com IA (YOLO)")
-        st.markdown("- Scanner QR Code / Codigo de barras")
-        st.markdown("- Envio por WhatsApp")
-        st.markdown("- Controle de absenteismo")
-        st.markdown("- Desempenho por funcao")
-        st.markdown("- Relatorios e exportacao")
-        st.markdown("- Gerenciamento de usuarios")
+        st.markdown("**Como usar o app:**")
+        st.markdown("1. Cadastre os funcionarios")
+        st.markdown("2. Registre o forecast do dia")
+        st.markdown("3. Gere a escala")
+        st.markdown("4. Registre motoristas conforme chegam")
+        st.markdown("5. Faca validacoes por foto")
+        st.markdown("6. Use o scanner para leituras")
+        st.markdown("7. Envie a escala por WhatsApp")
+        st.markdown("8. Consulte relatorios")
 
 
 elif menu == "Gerenciar Usuarios":
     st.markdown("### Gerenciar Usuarios")
     usuarios = carregar_usuarios()
-    tab1, tab2, tab3 = st.tabs(["Novo Usuario", "Lista", "Remover"])
+    tab1, tab2, tab3 = st.tabs(["Novo Usuario", "Lista / Editar", "Remover"])
     with tab1:
-        with st.form("form_new_user"):
+        with st.form("form_novo_user"):
             nu1, nu2 = st.columns(2)
             with nu1:
-                new_user = st.text_input("Usuario (login)")
-                new_nome = st.text_input("Nome Completo")
+                novo_user = st.text_input("Login (usuario)")
+                novo_nome = st.text_input("Nome Completo")
             with nu2:
-                new_senha = st.text_input("Senha", type="password")
-                new_perfil = st.selectbox("Perfil", ["Admin", "Supervisor", "Operador", "Visualizador"])
+                novo_perfil = st.selectbox("Perfil", ["Admin", "Supervisor", "Operador", "Visualizador"])
+                nova_senha = st.text_input("Senha", type="password")
             btn_nu = st.form_submit_button("Criar Usuario", use_container_width=True)
             if btn_nu:
-                if new_user and new_nome and new_senha:
-                    ja_tem = any(u["usuario"] == new_user.lower().strip() for u in usuarios)
-                    if ja_tem:
-                        st.warning("Usuario ja existe!")
+                if novo_user and novo_nome and nova_senha:
+                    existe = False
+                    for u in usuarios:
+                        if u["usuario"] == novo_user.lower().strip():
+                            existe = True
+                            break
+                    if existe:
+                        st.error("Usuario ja existe!")
                     else:
-                        nvu = {"usuario": new_user.lower().strip(), "senha": hash_senha(new_senha), "nome": new_nome, "perfil": new_perfil, "status": "Ativo", "criado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d")}
-                        usuarios.append(nvu)
+                        nu = {"usuario": novo_user.lower().strip(), "senha": cifrar_senha(nova_senha), "nome": novo_nome, "perfil": novo_perfil, "status": "Ativo", "criado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d")}
+                        usuarios.append(nu)
                         salvar_usuarios(usuarios)
-                        st.success("Usuario " + new_user + " criado!")
+                        st.success("Usuario " + novo_user + " criado!")
                         st.rerun()
                 else:
                     st.error("Preencha todos os campos!")
     with tab2:
         if usuarios:
-            lu = [{"Usuario": u["usuario"], "Nome": u["nome"], "Perfil": u["perfil"], "Status": u.get("status", "Ativo")} for u in usuarios]
-            st.dataframe(pd.DataFrame(lu), use_container_width=True, hide_index=True)
+            df_u = pd.DataFrame(usuarios)
+            cols_u = ["usuario", "nome", "perfil", "status", "criado_em"]
+            cols_ok = [c for c in cols_u if c in df_u.columns]
+            st.dataframe(df_u[cols_ok], use_container_width=True, hide_index=True)
+            st.markdown("---")
+            st.markdown("#### Editar Usuario")
+            nomes_u = [u["usuario"] + " (" + u["nome"] + ")" for u in usuarios]
+            sel_u = st.selectbox("Selecione", nomes_u, key="sel_u_edit")
+            idx_u = nomes_u.index(sel_u)
+            ue = usuarios[idx_u]
+            perfis_list = ["Admin", "Supervisor", "Operador", "Visualizador"]
+            status_u_list = ["Ativo", "Inativo"]
+            pi = perfis_list.index(ue.get("perfil", "Operador")) if ue.get("perfil", "Operador") in perfis_list else 2
+            sui = status_u_list.index(ue.get("status", "Ativo")) if ue.get("status", "Ativo") in status_u_list else 0
+            with st.form("form_edit_user"):
+                eu1, eu2 = st.columns(2)
+                with eu1:
+                    eun = st.text_input("Nome", value=ue.get("nome", ""))
+                    eup = st.selectbox("Perfil", perfis_list, index=pi)
+                with eu2:
+                    eus = st.selectbox("Status", status_u_list, index=sui)
+                    nova_s = st.text_input("Nova Senha (deixe vazio para manter)", type="password")
+                bsu = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                if bsu:
+                    usuarios[idx_u]["nome"] = eun
+                    usuarios[idx_u]["perfil"] = eup
+                    usuarios[idx_u]["status"] = eus
+                    if nova_s:
+                        usuarios[idx_u]["senha"] = cifrar_senha(nova_s)
+                    salvar_usuarios(usuarios)
+                    st.success("Usuario atualizado!")
+                    st.rerun()
         else:
             st.info("Nenhum usuario.")
     with tab3:
         if len(usuarios) > 1:
-            outros = [u["usuario"] + " - " + u["nome"] + " (" + u["perfil"] + ")" for u in usuarios if u["usuario"] != st.session_state.get("usuario_logado", "")]
+            usr_logado = st.session_state.get("usuario_logado", "")
+            outros = [u["usuario"] + " (" + u["nome"] + ")" for u in usuarios if u["usuario"] != usr_logado]
             if outros:
-                sel_rem = st.selectbox("Selecione usuario para remover", outros, key="sel_rem_u")
+                sel_rem = st.selectbox("Selecione para remover", outros, key="sel_rem_u")
                 if st.button("Remover Usuario", type="secondary"):
-                    user_rem = sel_rem.split(" - ")
-                    usuarios = [u for u in usuarios if u["usuario"] != user_rem]
+                    user_rem = sel_rem.split(" (")
+                    user_rem_login = primeiro(user_rem)
+                    usuarios = [u for u in usuarios if u["usuario"] != user_rem_login]
                     salvar_usuarios(usuarios)
-                    st.success("Removido!")
+                    st.success("Usuario removido!")
                     st.rerun()
             else:
-                st.info("Nenhum usuario para remover.")
+                st.info("Nao ha usuarios para remover.")
         else:
-            st.warning("Voce e o unico admin.")
+            st.warning("Voce e o unico admin. Nao pode se remover!")
 
 
+rodape = "<div style='text-align: center; color: #666; padding: 20px;'>" + SITE + " Manager v6.0 | First Mile Operations | Amazon Logistics</div>"
 st.markdown("---")
-st.markdown("<div style='text-align:center;color:#666;font-size:0.8rem;'>EUA8 Manager v7.0 | First Mile Operations | Amazon Logistics | " + datetime.now(FUSO_BR).strftime("%Y") + "</div>", unsafe_allow_html=True)
+st.markdown(rodape, unsafe_allow_html=True)
+
+            st.info("Nenhum motorista registrado.")
 
