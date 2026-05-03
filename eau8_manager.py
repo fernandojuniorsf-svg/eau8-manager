@@ -1797,9 +1797,8 @@ def carregar_desempenho():
 def salvar_desempenho(dados):
     with open(ARQ_DESEMPENHO, "w", encoding="utf-8") as f:
         json.dump(dados, f, ensure_ascii=False, indent=2)
-
-                st.success("Forecasts limpos!")
-                st.rerun()
+st.success("Forecasts limpos!")
+st.rerun()
     with tab3:
         st.markdown("#### Como usar o EUA8 Manager")
         st.markdown("1. **Cadastre seus funcionarios** - Nome, telefone, habilidades e turno")
