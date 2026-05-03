@@ -991,8 +991,7 @@ elif menu == "Validacao por Foto (IA)":
                     with st.spinner("Analisando imagem com IA..."):
                         temp_path = os.path.join(PASTA_FOTOS, "temp_analise.jpg")
                         image.save(temp_path)
-                        modelo = YOLO("yolov8x.pt")
-                        modelo = carregar_modelo()
+                        modelo = YOLO("yolov8m.pt")
                         resultados = modelo(temp_path, conf=0.3)
                         for r in resultados:
                             for box in r.boxes:
