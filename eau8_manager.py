@@ -1162,6 +1162,12 @@ elif menu == "Validacao por Foto (IA)":
                 registro["foto"] = nome_foto
                 registro["total_objetos"] = len(deteccoes)
                 registro["deteccoes"] = deteccoes[:20]
+                registro["total_objetos_ia"] = total_ia
+                registro["total_objetos_manual"] = total_manual
+                registro["contagem_ia"] = contagem_ia_mapeada
+                registro["contagem_manual"] = contagem_manual
+                registro["divergencia"] = total_ia - total_manual
+
                 registro["validado_por"] = "Fernando"
                 validacoes = carregar_validacoes()
                 validacoes.append(registro)
