@@ -1651,9 +1651,7 @@ elif menu == "Gerenciar Usuarios":
                     st.info("Nao ha usuarios para remover.")
             else:
                 st.warning("Voce e o unico admin. Nao pode se remover!")
-
-
-
+                
 elif menu == "Configuracoes":
     st.markdown("### Configuracoes")
     tab1, tab2, tab3 = st.tabs(["Site", "Sistema", "Ajuda"])
