@@ -1799,7 +1799,7 @@ def salvar_desempenho(dados):
         json.dump(dados, f, ensure_ascii=False, indent=2)
 st.success("Forecasts limpos!")
 st.rerun()
-with tab3:
+    with tab3:
         st.markdown("#### Como usar o EUA8 Manager")
         st.markdown("1. **Cadastre seus funcionarios** - Nome, telefone, habilidades e turno")
         st.markdown("2. **Cadastre o forecast** - Volume previsto manual ou por upload")
