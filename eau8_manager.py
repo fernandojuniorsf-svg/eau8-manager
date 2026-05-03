@@ -316,23 +316,6 @@ def carregar_forecast():
 def salvar_forecast(fc):
     salvar_dados(ARQ_FORECAST, fc)
 
-
-menu = st.sidebar.radio(
-    "Menu Principal",
-    [
-        "Dashboard",
-        "Cadastro de Funcionarios",
-        "Gerador de Escala",
-        "Registro de Motorista",
-        "Forecast / Volume",
-        "Validacao por Foto (IA)",
-        "Scanner QR/Barcode",
-        "Enviar por WhatsApp",
-        "Relatorios",
-        "Configuracoes"
-    ]
-)
-
 st.sidebar.markdown("---")
 agora = datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")
 info_sb = "<div style='color:#AAAAAA;font-size:0.8rem;'>"
