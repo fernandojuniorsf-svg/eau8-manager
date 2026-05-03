@@ -1,4 +1,6 @@
 import streamlit as st
+st.write("APP INICIOU")
+import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta, date
