@@ -486,20 +486,21 @@ elif menu == "Gerador de Escala":
             usados = []
             for pos in POSICOES:
                 cands = [f for f in disponiveis if f["nome"] not in usados]
-                if usar_desemp:
+                if usar_desemp and desempenho:
                     cn = []
                     for c in cands:
                         nota_recente = 0
-                        data_recente = "2000-01-01"
-                        for d in desempenho:
-                            if d.get("funcionario") == c["nome"] and d.get("posicao") == pos:
-                                da = d.get("data_avaliacao", d.get("registrado_em", "2000-01-01"))[:10]
-                                if da >= data_recente:
-                                    data_recente = da
-                                    nota_recente = d.get("nota", 0)
-                        cn.append({"cand": c, "nota": nota_recente, "dt": data_recente})
-                    cn.sort(key=lambda x: (x["nota"], x["dt"]), reverse=True)
+                        notas_pos = [d for d in desempenho if d.get("funcionario") == c["nome"] and d.get("posicao") == pos]
+                        if notas_pos:
+                            notas_pos.sort(key=lambda x: x.get("data_avaliacao", "2000-01-01")[:10], reverse=True)
+                            nota_recente = notas_pos.get("nota", 0)
+                        cn.append({"cand": c, "nota": nota_recente})
+                    cn.sort(key=lambda x: x["nota"], reverse=True)
                     cands = [item["cand"] for item in cn]
+                    escolhido = cands
+                else:
+                    random.shuffle(cands)
+                    escolhido = cands
                 else:
                     random.shuffle(cands)
                 if cands:
