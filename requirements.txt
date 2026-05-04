@@ -1,7 +1,8 @@
 streamlit
 pandas
-numpy
+numpy==1.26.4
 Pillow
 openpyxl
 ultralytics==8.0.196
 opencv-python-headless==4.8.1.78
+A diferença é o numpy==1.26.4
