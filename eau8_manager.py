@@ -865,35 +865,31 @@ elif menu == "Validacao por Foto (IA)":
             st.image(image, caption="Foto capturada", use_container_width=True)
             contagem_ia = {}
             total_ia = 0
-            img_resultado = None
-            if yolo_ok:
-                import tempfile
-                temp_path = os.path.join(tempfile.gettempdir(), "foto_val.jpg")
-                image.save(temp_path)
-                modelo = YOLO("yolov8n.pt")
-                resultados = modelo(temp_path, conf=0.15)
-                st.write("DEBUG - Qtd resultados: " + str(len(resultados)))
-                if len(resultados) > 0:
-                    r = resultados
-                    st.write("DEBUG - Qtd boxes: " + str(len(r.boxes)))
-                    for box in r.boxes:
-                        cls_id = int(box.cls)
-                        nome_obj = modelo.names.get(cls_id, "desconhecido")
-                        st.write("DEBUG - Objeto: " + nome_obj)
+            import requests
+            import base64
+            import io
+            try:
+                buf = io.BytesIO()
+                image.save(buf, format="JPEG")
+                img_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+                api_url = "https://detect.roboflow.com/coco/5"
+                params = {"api_key": "rf_y60A1G2JcxVYuq3yj5vu39kgAP13", "confidence": "15", "overlap": "30"}
+                resp = requests.post(api_url, params=params, data=img_b64, headers={"Content-Type": "application/x-www-form-urlencoded"})
+                if resp.status_code == 200:
+                    dados = resp.json()
+                    preds = dados.get("predictions", [])
+                    for p in preds:
+                        nome_obj = p.get("class", "desconhecido")
                         contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
                     total_ia = sum(contagem_ia.values())
-                    try:
-                        img_resultado = r.plot()
-                        st.image(img_resultado, caption="Deteccao IA - " + str(total_ia) + " objetos", use_container_width=True)
-                    except Exception:
-                        st.info("Nao foi possivel exibir imagem com deteccoes.")
-                st.success("IA detectou: " + str(total_ia) + " objetos")
-                if contagem_ia:
-                    df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
-                    st.dataframe(df_ia, use_container_width=True, hide_index=True)
-            else:
-                st.warning("YOLO nao instalado. Modo demonstracao ativo.")
-                st.info("Para IA real, rode: pip install ultralytics")
+                    st.success("IA detectou: " + str(total_ia) + " objetos")
+                    if contagem_ia:
+                        df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
+                        st.dataframe(df_ia, use_container_width=True, hide_index=True)
+                if resp.status_code != 200:
+                    st.error("Erro na API: " + str(resp.status_code))
+            except Exception as e:
+                st.error("Erro ao conectar com IA: " + str(e))
             st.markdown("---")
             st.markdown("#### Contagem Manual da Equipe")
             st.markdown("Informe a contagem feita manualmente pela equipe:")
