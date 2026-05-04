@@ -866,7 +866,7 @@ elif menu == "Validacao por Foto (IA)":
             contagem_ia = {}
             total_ia = 0
             img_resultado = None
-                        if yolo_ok:
+            if yolo_ok:
                 import tempfile
                 temp_path = os.path.join(tempfile.gettempdir(), "foto_val.jpg")
                 image.save(temp_path)
