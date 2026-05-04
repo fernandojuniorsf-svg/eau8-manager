@@ -494,7 +494,7 @@ elif menu == "Gerador de Escala":
                     for c in cands:
                         notas_p = [d for d in desempenho if d.get("funcionario") == c["nome"] and d.get("posicao") == pos]
                         notas_p.sort(key=lambda x: x.get("data_avaliacao", "2000-01-01")[:10], reverse=True)
-                        nota_map[c["nome"]] = notas_p.get("nota", 0) if notas_p else 0
+                        nota_map[c["nome"]] = notas_p[0].get("nota", 0) if notas_p else 0
                     cands.sort(key=lambda x: nota_map.get(x["nome"], 0), reverse=True)
                 if not usar_desemp or not desempenho:
                     random.shuffle(cands)
