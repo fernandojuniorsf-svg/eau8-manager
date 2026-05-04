@@ -542,7 +542,7 @@ elif menu == "Registro de Motorista":
             btn_mot = st.form_submit_button("Registrar", use_container_width=True)
             if btn_mot:
                 if nome_mot and placa_mot:
-                    nm = {"nome": nome_mot, "placa": placa_mot.upper(), "tipo_veiculo": tipo_veic, "horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
+                        nm = {"nome": nome_mot, "placa": placa_mot.upper(), "telefone": tel_mot, "tipo_veiculo": tipo_veic,"horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
                     if foto_mot:
                         nf = "mot_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
                         cf = os.path.join(PASTA_MOTORISTAS, nf)
