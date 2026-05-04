@@ -28,8 +28,6 @@ try:
     yolo_ok = True
 except Exception as erro_yolo:
     yolo_ok = False
-    import streamlit as _st_erro
-    _st_erro.sidebar.error("Erro YOLO: " + str(erro_yolo))
 
 ARQ_FUNCIONARIOS = os.path.join(PASTA_DADOS, "funcionarios.json")
 ARQ_ESCALAS = os.path.join(PASTA_DADOS, "escalas.json")
