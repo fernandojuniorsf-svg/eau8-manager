@@ -131,41 +131,52 @@ PERFIS_ACESSO = {
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
 css_texto = "<style>"
-css_texto += ".stApp {background-color: #f0f0f0;}"
-css_texto += '@media (prefers-color-scheme: dark) {.stApp {background-color: #1a1a1a;}}'
+css_texto += ".stApp {background-color: #1a1a1a !important;}"
 css_texto += 'section[data-testid="stSidebar"] {background-color: #2d2d2d !important;}'
 css_texto += 'section[data-testid="stSidebar"] * {color: #e0e0e0 !important;}'
 css_texto += 'section[data-testid="stSidebar"] h2 {color: #FF9900 !important;}'
 css_texto += 'section[data-testid="stSidebar"] .stRadio label span {color: #e0e0e0 !important;}'
 css_texto += 'section[data-testid="stSidebar"] .stRadio label:hover span {color: #FF9900 !important;}'
-css_texto += 'section[data-testid="stSidebar"] button {border: 2px solid #FF9900 !important; color: #FF9900 !important; background: transparent !important; border-radius: 8px !important;}'
+css_texto += 'section[data-testid="stSidebar"] button {border: 2px solid #FF9900 !important; color: #FF9900 !important; background: transparent !important; border-radius: 10px !important; padding: 12px 32px !important;}'
 css_texto += 'section[data-testid="stSidebar"] button:hover {background-color: #FF9900 !important; color: #000 !important;}'
 css_texto += "h1 {color: #FF9900 !important;}"
+css_texto += "h2 {color: #FF9900 !important;}"
 css_texto += "h3 {color: #FF9900 !important;}"
+css_texto += "h4 {color: #FF9900 !important;}"
+css_texto += "h5 {color: #cccccc !important;}"
+css_texto += ".stMarkdown p {color: #e0e0e0 !important;}"
+css_texto += ".stMarkdown li {color: #e0e0e0 !important;}"
+css_texto += ".stMarkdown strong {color: #ffffff !important;}"
+css_texto += ".stMarkdown em {color: #cccccc !important;}"
+css_texto += ".stMarkdown code {color: #FF9900 !important; background-color: #333 !important;}"
 css_texto += ".stMetricValue {color: #FF9900 !important; font-weight: 700 !important;}"
 css_texto += 'div[data-testid="stMetricDelta"] {color: #00C853 !important;}'
-css_texto += 'div[data-testid="stMetric"] {background-color: #2d2d2d; border-left: 4px solid #FF9900; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);}'
-css_texto += 'div[data-testid="stMetric"] * {color: #e0e0e0 !important;}'
-css_texto += 'div[data-testid="stMetric"] [data-testid="stMetricValue"] {color: #FF9900 !important;}'
-css_texto += '.stTabs [data-baseweb="tab"] {color: #e0e0e0 !important; background: #2d2d2d; border-radius: 8px 8px 0 0; font-weight: 500;}'
-css_texto += '.stTabs [aria-selected="true"] {background-color: #FF9900 !important; color: #000 !important; border-radius: 8px 8px 0 0;}'
-css_texto += '.stButton>button[kind="primary"] {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 8px !important; padding: 8px 24px !important; box-shadow: 0 2px 6px rgba(255,153,0,0.4) !important;}'
-css_texto += '.stButton>button[kind="primary"]:hover {background-color: #e68a00 !important; box-shadow: 0 4px 12px rgba(255,153,0,0.5) !important;}'
-css_texto += '.stButton>button[kind="secondary"] {border: 2px solid #FF9900 !important; color: #FF9900 !important; border-radius: 8px !important; background: transparent !important;}'
+css_texto += 'div[data-testid="stMetricLabel"] p {color: #cccccc !important;}'
+css_texto += 'div[data-testid="stMetric"] {background-color: #2d2d2d !important; border-left: 4px solid #FF9900; border-radius: 10px; padding: 16px; box-shadow: 0 3px 8px rgba(0,0,0,0.3);}'
+css_texto += '.stTabs [data-baseweb="tab-list"] {background-color: #2d2d2d; border-radius: 10px 10px 0 0;}'
+css_texto += '.stTabs [data-baseweb="tab"] {color: #cccccc !important; font-weight: 500; padding: 12px 24px !important;}'
+css_texto += '.stTabs [aria-selected="true"] {background-color: #FF9900 !important; color: #000 !important; border-radius: 10px 10px 0 0; font-weight: 700;}'
+css_texto += '.stButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 10px !important; padding: 16px 48px !important; font-weight: 600 !important; font-size: 16px !important; box-shadow: 0 3px 8px rgba(255,153,0,0.4) !important; letter-spacing: 0.5px !important; margin-top: 8px !important; margin-bottom: 8px !important;}'
+css_texto += '.stButton>button:hover {background-color: #e68a00 !important; box-shadow: 0 6px 16px rgba(255,153,0,0.5) !important; transform: translateY(-2px);}'
+css_texto += '.stButton>button[kind="secondary"] {border: 2px solid #FF9900 !important; color: #FF9900 !important; background: transparent !important; padding: 16px 48px !important;}'
 css_texto += '.stButton>button[kind="secondary"]:hover {background-color: #FF9900 !important; color: #000 !important;}'
-css_texto += '.stButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(255,153,0,0.3) !important;}'
-css_texto += '.stButton>button:hover {background-color: #e68a00 !important; box-shadow: 0 4px 10px rgba(255,153,0,0.4) !important;}'
-css_texto += 'div[data-testid="stForm"] {background-color: #2d2d2d; border: 1px solid #444; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);}'
+css_texto += 'div[data-testid="stForm"] {background-color: #2d2d2d !important; border: 1px solid #444; border-radius: 12px; padding: 24px; box-shadow: 0 3px 10px rgba(0,0,0,0.25);}'
 css_texto += 'div[data-testid="stForm"] * {color: #e0e0e0;}'
+css_texto += ".stSelectbox label, .stTextInput label, .stNumberInput label, .stDateInput label, .stMultiSelect label, .stSlider label, .stTextArea label, .stFileUploader label, .stCameraInput label {color: #cccccc !important; font-weight: 500 !important;}"
+css_texto += 'input {background-color: #3a3a3a !important; color: #e0e0e0 !important; border: 1px solid #555 !important; border-radius: 8px !important;}'
+css_texto += 'textarea {background-color: #3a3a3a !important; color: #e0e0e0 !important; border: 1px solid #555 !important; border-radius: 8px !important;}'
+css_texto += '[data-baseweb="select"] {background-color: #3a3a3a !important;}'
+css_texto += '[data-baseweb="select"] * {color: #e0e0e0 !important;}'
 css_texto += ".stDataFrame {border-radius: 8px;}"
 css_texto += "hr {border-color: #FF9900 !important; opacity: 0.4;}"
-css_texto += ".stMarkdown p, .stMarkdown li {color: #e0e0e0;}"
-css_texto += ".stMarkdown h4 {color: #FF9900 !important;}"
-css_texto += '[data-testid="stHeader"] {background-color: #1a1a1a;}'
-css_texto += ".stSelectbox label, .stTextInput label, .stNumberInput label, .stDateInput label, .stMultiSelect label, .stSlider label, .stTextArea label, .stFileUploader label {color: #e0e0e0 !important;}"
-css_texto += 'input, textarea, [data-baseweb="select"] {background-color: #3a3a3a !important; color: #e0e0e0 !important; border-color: #555 !important; border-radius: 6px !important;}'
+css_texto += '[data-testid="stHeader"] {background-color: #1a1a1a !important;}'
+css_texto += ".stAlert {border-radius: 8px !important;}"
+css_texto += '[data-testid="stNotification"] {border-radius: 8px !important;}'
+css_texto += ".stDownloadButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 10px !important; padding: 14px 40px !important; font-weight: 600 !important; box-shadow: 0 3px 8px rgba(255,153,0,0.4) !important;}"
+css_texto += ".stDownloadButton>button:hover {background-color: #e68a00 !important; box-shadow: 0 6px 14px rgba(255,153,0,0.5) !important;}"
 css_texto += "</style>"
 st.markdown(css_texto, unsafe_allow_html=True)
+
 
 
 
