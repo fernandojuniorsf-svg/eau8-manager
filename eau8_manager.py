@@ -469,13 +469,13 @@ elif menu == "Gerador de Escala":
         if faltas_dia:
             st.warning("Com falta registrada: **" + ", ".join(faltas_dia) + "**")
         st.markdown("Disponiveis: **" + str(len(disponiveis)) + "** de " + str(len(ativos)))
-            if volume_prev > 0:
+        if volume_prev > 0:
             minutos_turno = 330
             min_por_pacote = 5.5
             capacidade_pessoa = int(minutos_turno / min_por_pacote)
             pessoas_necessarias = -(-volume_prev // capacidade_pessoa)
             st.info("Calculo HC: " + str(volume_prev) + " pacotes / " + str(capacidade_pessoa) + " por pessoa = " + str(pessoas_necessarias) + " pessoas necessarias (5min30s/pacote)")
-            if len(disponiveis) < pessoas_necessarias:
+        if len(disponiveis) < pessoas_necessarias:
                 st.warning("ALERTA: Disponiveis: " + str(len(disponiveis)) + " | Necessarios: " + str(pessoas_necessarias) + " - Faltam " + str(pessoas_necessarias - len(disponiveis)) + "!")
             else:
                 st.success("HC suficiente! Disponiveis: " + str(len(disponiveis)) + " | Necessarios: " + str(pessoas_necessarias))
