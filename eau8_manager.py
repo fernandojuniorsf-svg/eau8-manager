@@ -865,6 +865,31 @@ elif menu == "Validacao por Foto (IA)":
             st.image(image, caption="Foto capturada", use_container_width=True)
             contagem_ia = {}
             total_ia = 0
+                        import requests
+            import base64
+            import io
+            try:
+                buf = io.BytesIO()
+                image.save(buf, format="JPEG")
+                img_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+                api_url = "https://detect.roboflow.com/coco-dataset-vdnr1/2"
+                params = {"api_key": "rf_y60A1G2JcxVYuq3yj5vu39kgAP13", "confidence": "15", "overlap": "30"}
+                resp = requests.post(api_url, params=params, data=img_b64, headers={"Content-Type": "application/x-www-form-urlencoded"})
+                if resp.status_code == 200:
+                    dados = resp.json()
+                    preds = dados.get("predictions", [])
+                    for p in preds:
+                        nome_obj = p.get("class", "desconhecido")
+                        contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
+                    total_ia = sum(contagem_ia.values())
+                    st.success("IA detectou: " + str(total_ia) + " objetos")
+                    if contagem_ia:
+                        df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
+                        st.dataframe(df_ia, use_container_width=True, hide_index=True)
+                if resp.status_code != 200:
+                    st.error("Erro na API: " + str(resp.status_code))
+            except Exception as e:
+                st.error("Erro ao conectar com IA: " + str(e))
             import requests
             import base64
             import io
