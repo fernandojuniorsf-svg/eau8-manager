@@ -29,6 +29,17 @@ try:
 except Exception as erro_yolo:
     yolo_ok = False
 
+try:
+    from ultralytics import YOLO
+    yolo_ok = True
+except Exception as erro_yolo:
+    yolo_ok = False
+import streamlit as _dbg
+_dbg.sidebar.write("YOLO STATUS: " + str(yolo_ok))
+if not yolo_ok:
+    _dbg.sidebar.error("ERRO: " + str(erro_yolo))
+
+
 ARQ_FUNCIONARIOS = os.path.join(PASTA_DADOS, "funcionarios.json")
 ARQ_ESCALAS = os.path.join(PASTA_DADOS, "escalas.json")
 ARQ_MOTORISTAS = os.path.join(PASTA_DADOS, "motoristas.json")
