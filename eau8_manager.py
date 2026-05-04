@@ -872,7 +872,7 @@ elif menu == "Validacao por Foto (IA)":
                 image.save(temp_path)
                 modelo = YOLO("yolov8n.pt")
                 resultados = modelo(temp_path, conf=0.15)
-                primeiro_res = primeiro(resultados)
+                primeiro_res = resultados if resultados else None
                 if primeiro_res is not None:
                     for box in primeiro_res.boxes:
                         cls_id = int(box.cls)
