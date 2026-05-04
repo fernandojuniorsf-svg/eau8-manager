@@ -469,7 +469,7 @@ elif menu == "Gerador de Escala":
         if faltas_dia:
             st.warning("Com falta registrada: **" + ", ".join(faltas_dia) + "**")
         st.markdown("Disponiveis: **" + str(len(disponiveis)) + "** de " + str(len(ativos)))
-                if volume_prev > 0:
+        if volume_prev > 0:
             tph = 70
             horas_turno = 5.75
             capacidade = tph * horas_turno
