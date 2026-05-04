@@ -486,29 +486,26 @@ elif menu == "Gerador de Escala":
             usados = []
             for pos in POSICOES:
                 cands = [f for f in disponiveis if f["nome"] not in usados]
+                if not cands:
+                    continue
                 if usar_desemp and desempenho:
-                    cn = []
                     for c in cands:
-                        nota_recente = 0
-                        notas_pos = [d for d in desempenho if d.get("funcionario") == c["nome"] and d.get("posicao") == pos]
-                        if notas_pos:
-                            notas_pos.sort(key=lambda x: x.get("data_avaliacao", "2000-01-01")[:10], reverse=True)
-                            nota_recente = notas_pos.get("nota", 0)
-                        cn.append({"cand": c, "nota": nota_recente})
-                    cn.sort(key=lambda x: x["nota"], reverse=True)
-                    cands = [item["cand"] for item in cn]
+                        notas_p = [d for d in desempenho if d.get("funcionario") == c["nome"] and d.get("posicao") == pos]
+                        if notas_p:
+                            notas_p.sort(key=lambda x: x.get("data_avaliacao", "2000-01-01")[:10], reverse=True)
+                            c["_nota"] = notas_p.get("nota", 0)
+                        else:
+                            c["_nota"] = 0
+                    cands.sort(key=lambda x: x.get("_nota", 0), reverse=True)
                     escolhido = cands
                 else:
                     random.shuffle(cands)
                     escolhido = cands
-                else:
-                    random.shuffle(cands)
-                if cands:
-                    escolhido = primeiro(cands)
-                    ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", "")}
-                    escala.append(ei)
-                    usados.append(escolhido["nome"])
+                ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", ""), "nota": escolhido.get("_nota", 0)}
+                escala.append(ei)
+                usados.append(escolhido["nome"])
             st.session_state["escala_temp"] = escala
+
         if "escala_temp" in st.session_state and st.session_state["escala_temp"]:
             esc = st.session_state["escala_temp"]
             st.markdown("---")
