@@ -469,12 +469,12 @@ elif menu == "Gerador de Escala":
         if faltas_dia:
             st.warning("Com falta registrada: **" + ", ".join(faltas_dia) + "**")
         st.markdown("Disponiveis: **" + str(len(disponiveis)) + "** de " + str(len(ativos)))
-        if volume_prev > 0:
-            meta_pessoa = 70
-            pessoas_necessarias = -(-volume_prev // meta_pessoa)
-            produtividade_hora = round(meta_pessoa / 5.75, 1)
-            st.info("Meta: " + str(meta_pessoa) + " pacotes/pessoa (turno 5h30) | " + str(produtividade_hora) + " pacotes/hora/pessoa")
-            st.info("Pessoas necessarias: **" + str(volume_prev) + " / " + str(meta_pessoa) + " = " + str(pessoas_necessarias) + " pessoas**")
+                if volume_prev > 0:
+            tph = 70
+            horas_turno = 5.75
+            capacidade = tph * horas_turno
+            pessoas_necessarias = -(-volume_prev // int(capacidade))
+            st.info("TPH: " + str(tph) + " | Turno: " + str(horas_turno) + "h | " + str(volume_prev) + " / (" + str(tph) + " x " + str(horas_turno) + ") = **" + str(pessoas_necessarias) + " pessoas**")
             if len(disponiveis) < pessoas_necessarias:
                 st.warning("ALERTA: Disponiveis: " + str(len(disponiveis)) + " | Necessarios: " + str(pessoas_necessarias) + " - Faltam " + str(pessoas_necessarias - len(disponiveis)) + "!")
             if len(disponiveis) >= pessoas_necessarias:
