@@ -532,6 +532,7 @@ elif menu == "Registro de Motorista":
             with rm1:
                 nome_mot = st.text_input("Nome do Motorista")
                 placa_mot = st.text_input("Placa do Veiculo", placeholder="ABC1D23")
+                tel_mot = st.text_input("Telefone do Motorista", placeholder="11999999999")
                 tipo_veic = st.selectbox("Tipo de Veiculo", TIPOS_VEICULO)
             with rm2:
                 h_chegada = st.text_input("Horario Chegada (HH:MM)", placeholder="14:30")
