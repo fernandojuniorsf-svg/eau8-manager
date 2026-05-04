@@ -872,49 +872,32 @@ elif menu == "Validacao por Foto (IA)":
                 buf = io.BytesIO()
                 image.save(buf, format="JPEG")
                 img_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-                api_url = "https://detect.roboflow.com/coco-dataset-vdnr1/2"
-                params = {"api_key": "rf_y60A1G2JcxVYuq3yj5vu39kgAP13", "confidence": "15", "overlap": "30"}
-                resp = requests.post(api_url, params=params, data=img_b64, headers={"Content-Type": "application/x-www-form-urlencoded"})
+                api_url = "https://serverless.roboflow.com/infer/workflows/fernando-juniorsf-gmail-com/general-segmentation-api"
+                headers_rf = {"Content-Type": "application/json"}
+                body_rf = {"api_key": "3bQisbodRqjpv1vhbgte", "inputs": {"image": {"type": "base64", "value": img_b64}}, "parameters": {"classes": "box, pallet, package, person, truck, bag, suitcase, backpack, handbag, cell phone, bottle, cup"}}
+                resp = requests.post(api_url, json=body_rf, headers=headers_rf)
                 if resp.status_code == 200:
                     dados = resp.json()
-                    preds = dados.get("predictions", [])
-                    for p in preds:
-                        nome_obj = p.get("class", "desconhecido")
-                        contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
+                    resultados = dados if isinstance(dados, list) else dados.get("outputs", dados.get("results", [dados]))
+                    for r in resultados:
+                        preds = r.get("predictions", r.get("output", {}).get("predictions", []))
+                        if isinstance(preds, dict):
+                            preds = preds.get("predictions", [])
+                        for p in preds:
+                            nome_obj = p.get("class", "desconhecido")
+                            contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
                     total_ia = sum(contagem_ia.values())
                     st.success("IA detectou: " + str(total_ia) + " objetos")
                     if contagem_ia:
                         df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
                         st.dataframe(df_ia, use_container_width=True, hide_index=True)
+                    if total_ia == 0:
+                        st.info("DEBUG resposta: " + str(dados)[:500])
                 if resp.status_code != 200:
-                    st.error("Erro na API: " + str(resp.status_code))
+                    st.error("Erro API: " + str(resp.status_code) + " - " + resp.text[:300])
             except Exception as e:
                 st.error("Erro ao conectar com IA: " + str(e))
-            import requests
-            import base64
-            import io
-            try:
-                buf = io.BytesIO()
-                image.save(buf, format="JPEG")
-                img_b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-                api_url = "https://detect.roboflow.com/coco/5"
-                params = {"api_key": "rf_y60A1G2JcxVYuq3yj5vu39kgAP13", "confidence": "15", "overlap": "30"}
-                resp = requests.post(api_url, params=params, data=img_b64, headers={"Content-Type": "application/x-www-form-urlencoded"})
-                if resp.status_code == 200:
-                    dados = resp.json()
-                    preds = dados.get("predictions", [])
-                    for p in preds:
-                        nome_obj = p.get("class", "desconhecido")
-                        contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
-                    total_ia = sum(contagem_ia.values())
-                    st.success("IA detectou: " + str(total_ia) + " objetos")
-                    if contagem_ia:
-                        df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
-                        st.dataframe(df_ia, use_container_width=True, hide_index=True)
-                if resp.status_code != 200:
-                    st.error("Erro na API: " + str(resp.status_code))
-            except Exception as e:
-                st.error("Erro ao conectar com IA: " + str(e))
+
             st.markdown("---")
             st.markdown("#### Contagem Manual da Equipe")
             st.markdown("Informe a contagem feita manualmente pela equipe:")
