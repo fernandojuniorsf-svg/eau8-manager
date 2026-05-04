@@ -488,23 +488,21 @@ elif menu == "Gerador de Escala":
                 cands = [f for f in disponiveis if f["nome"] not in usados]
                 if not cands:
                     continue
+                nota_map = {}
                 if usar_desemp and desempenho:
                     for c in cands:
                         notas_p = [d for d in desempenho if d.get("funcionario") == c["nome"] and d.get("posicao") == pos]
-                        if notas_p:
-                            notas_p.sort(key=lambda x: x.get("data_avaliacao", "2000-01-01")[:10], reverse=True)
-                            c["_nota"] = notas_p.get("nota", 0)
-                        else:
-                            c["_nota"] = 0
-                    cands.sort(key=lambda x: x.get("_nota", 0), reverse=True)
-                    escolhido = cands
-                else:
+                        notas_p.sort(key=lambda x: x.get("data_avaliacao", "2000-01-01")[:10], reverse=True)
+                        nota_map[c["nome"]] = notas_p.get("nota", 0) if notas_p else 0
+                    cands.sort(key=lambda x: nota_map.get(x["nome"], 0), reverse=True)
+                if not usar_desemp or not desempenho:
                     random.shuffle(cands)
-                    escolhido = cands
-                ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", ""), "nota": escolhido.get("_nota", 0)}
+                escolhido = cands
+                ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", ""), "nota": nota_map.get(escolhido["nome"], 0)}
                 escala.append(ei)
                 usados.append(escolhido["nome"])
             st.session_state["escala_temp"] = escala
+
 
         if "escala_temp" in st.session_state and st.session_state["escala_temp"]:
             esc = st.session_state["escala_temp"]
