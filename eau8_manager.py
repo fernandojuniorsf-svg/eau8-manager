@@ -865,32 +865,27 @@ elif menu == "Validacao por Foto (IA)":
             st.image(image, caption="Foto capturada", use_container_width=True)
             contagem_ia = {}
             total_ia = 0
-            import requests
-            import io
+            import tempfile
             try:
-                buf = io.BytesIO()
-                image.save(buf, format="JPEG")
-                img_bytes = buf.getvalue()
-                api_url = "https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50"
-                resp = requests.post(api_url, data=img_bytes)
-                if resp.status_code == 200:
-                    preds = resp.json()
-                    for p in preds:
-                        score = p.get("score", 0)
-                        if score > 0.5:
-                            nome_obj = p.get("label", "desconhecido")
-                            contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
-                    total_ia = sum(contagem_ia.values())
-                    st.success("IA detectou: " + str(total_ia) + " objetos")
-                    if contagem_ia:
-                        df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
-                        st.dataframe(df_ia, use_container_width=True, hide_index=True)
-                    if total_ia == 0:
-                        st.warning("IA nao encontrou objetos. Tente outra foto com mais luz.")
-                if resp.status_code != 200:
-                    st.error("Erro: " + str(resp.status_code) + " " + resp.text[:200])
+                temp_path = os.path.join(tempfile.gettempdir(), "foto_val.jpg")
+                image.save(temp_path)
+                from ultralytics import YOLO
+                modelo = YOLO("yolov8n.pt")
+                resultados = modelo(temp_path, conf=0.15)
+                for r in resultados:
+                    for box in r.boxes:
+                        cls_id = int(box.cls.item())
+                        nome_obj = modelo.names.get(cls_id, "desconhecido")
+                        contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
+                total_ia = sum(contagem_ia.values())
+                st.success("IA detectou: " + str(total_ia) + " objetos")
+                if contagem_ia:
+                    df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
+                    st.dataframe(df_ia, use_container_width=True, hide_index=True)
+                if total_ia == 0:
+                    st.warning("Nenhum objeto detectado. Tente com mais luz.")
             except Exception as e:
-                st.error("Erro: " + str(e))
+                st.error("Erro IA: " + str(e))
 
             st.markdown("---")
             st.markdown("#### Contagem Manual da Equipe")
