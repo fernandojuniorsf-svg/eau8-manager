@@ -475,9 +475,9 @@ elif menu == "Gerador de Escala":
             capacidade_pessoa = int(minutos_turno / min_por_pacote)
             pessoas_necessarias = -(-volume_prev // capacidade_pessoa)
             st.info("Calculo HC: " + str(volume_prev) + " pacotes / " + str(capacidade_pessoa) + " por pessoa = " + str(pessoas_necessarias) + " pessoas necessarias (5min30s/pacote)")
-        if len(disponiveis) < pessoas_necessarias:
+            if len(disponiveis) < pessoas_necessarias:
                 st.warning("ALERTA: Disponiveis: " + str(len(disponiveis)) + " | Necessarios: " + str(pessoas_necessarias) + " - Faltam " + str(pessoas_necessarias - len(disponiveis)) + "!")
-            else:
+            if len(disponiveis) >= pessoas_necessarias:
                 st.success("HC suficiente! Disponiveis: " + str(len(disponiveis)) + " | Necessarios: " + str(pessoas_necessarias))
 
         usar_desemp = st.checkbox("Priorizar por nota de desempenho (mais recente)", value=False)
