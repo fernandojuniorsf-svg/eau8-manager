@@ -498,7 +498,7 @@ elif menu == "Gerador de Escala":
                     cands.sort(key=lambda x: nota_map.get(x["nome"], 0), reverse=True)
                 if not usar_desemp or not desempenho:
                     random.shuffle(cands)
-                escolhido = cands
+                escolhido = cands[0]
                 ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", ""), "nota": nota_map.get(escolhido["nome"], 0)}
                 escala.append(ei)
                 usados.append(escolhido["nome"])
