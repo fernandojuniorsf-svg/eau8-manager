@@ -131,28 +131,42 @@ PERFIS_ACESSO = {
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
 css_texto = "<style>"
-css_texto += ":root {--cor-principal: #FF9900; --cor-fundo: #f5f5f5; --cor-card: #ffffff; --cor-texto: #333333; --cor-borda: #e0e0e0;}"
-css_texto += ".stApp {background-color: var(--cor-fundo);}"
-css_texto += 'section[data-testid="stSidebar"] {background-color: #232f3e;}'
-css_texto += 'section[data-testid="stSidebar"] .stMarkdown {color: #ffffff;}'
-css_texto += 'section[data-testid="stSidebar"] .stMarkdown h2 {color: #FF9900;}'
-css_texto += "h1, h3 {color: #232f3e !important;}"
-css_texto += ".stMetricValue {color: #FF9900 !important; font-weight: 700;}"
+css_texto += ".stApp {background-color: #f0f0f0;}"
+css_texto += '@media (prefers-color-scheme: dark) {.stApp {background-color: #1a1a1a;}}'
+css_texto += 'section[data-testid="stSidebar"] {background-color: #2d2d2d !important;}'
+css_texto += 'section[data-testid="stSidebar"] * {color: #e0e0e0 !important;}'
+css_texto += 'section[data-testid="stSidebar"] h2 {color: #FF9900 !important;}'
+css_texto += 'section[data-testid="stSidebar"] .stRadio label span {color: #e0e0e0 !important;}'
+css_texto += 'section[data-testid="stSidebar"] .stRadio label:hover span {color: #FF9900 !important;}'
+css_texto += 'section[data-testid="stSidebar"] button {border: 2px solid #FF9900 !important; color: #FF9900 !important; background: transparent !important; border-radius: 8px !important;}'
+css_texto += 'section[data-testid="stSidebar"] button:hover {background-color: #FF9900 !important; color: #000 !important;}'
+css_texto += "h1 {color: #FF9900 !important;}"
+css_texto += "h3 {color: #FF9900 !important;}"
+css_texto += ".stMetricValue {color: #FF9900 !important; font-weight: 700 !important;}"
 css_texto += 'div[data-testid="stMetricDelta"] {color: #00C853 !important;}'
-css_texto += '.stTabs [data-baseweb="tab"] {color: #232f3e; font-weight: 500;}'
-css_texto += '.stTabs [aria-selected="true"] {background-color: #FF9900 !important; color: #fff !important; border-radius: 8px 8px 0 0;}'
-css_texto += '.stButton>button[kind="primary"] {background-color: #FF9900; color: #fff; border: none; border-radius: 8px; padding: 8px 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.3s;}'
-css_texto += '.stButton>button[kind="primary"]:hover {background-color: #e68a00; box-shadow: 0 4px 8px rgba(0,0,0,0.3); transform: translateY(-1px);}'
-css_texto += '.stButton>button[kind="secondary"] {border: 2px solid #FF9900; color: #FF9900; border-radius: 8px; background: transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.1);}'
-css_texto += '.stButton>button[kind="secondary"]:hover {background-color: #FF9900; color: #fff;}'
-css_texto += 'div[data-testid="stForm"] {background-color: var(--cor-card); border: 1px solid var(--cor-borda); border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);}'
-css_texto += 'div[data-testid="stMetric"] {background-color: var(--cor-card); border-left: 4px solid #FF9900; border-radius: 8px; padding: 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.08);}'
-css_texto += ".stDataFrame {border: 1px solid var(--cor-borda); border-radius: 8px;}"
-css_texto += "hr {border-color: #FF9900 !important; opacity: 0.3;}"
-css_texto += ".stMarkdown {color: var(--cor-texto);}"
-css_texto += 'div[data-testid="stSidebarNav"] a {color: #ffffff;}'
+css_texto += 'div[data-testid="stMetric"] {background-color: #2d2d2d; border-left: 4px solid #FF9900; border-radius: 8px; padding: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);}'
+css_texto += 'div[data-testid="stMetric"] * {color: #e0e0e0 !important;}'
+css_texto += 'div[data-testid="stMetric"] [data-testid="stMetricValue"] {color: #FF9900 !important;}'
+css_texto += '.stTabs [data-baseweb="tab"] {color: #e0e0e0 !important; background: #2d2d2d; border-radius: 8px 8px 0 0; font-weight: 500;}'
+css_texto += '.stTabs [aria-selected="true"] {background-color: #FF9900 !important; color: #000 !important; border-radius: 8px 8px 0 0;}'
+css_texto += '.stButton>button[kind="primary"] {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 8px !important; padding: 8px 24px !important; box-shadow: 0 2px 6px rgba(255,153,0,0.4) !important;}'
+css_texto += '.stButton>button[kind="primary"]:hover {background-color: #e68a00 !important; box-shadow: 0 4px 12px rgba(255,153,0,0.5) !important;}'
+css_texto += '.stButton>button[kind="secondary"] {border: 2px solid #FF9900 !important; color: #FF9900 !important; border-radius: 8px !important; background: transparent !important;}'
+css_texto += '.stButton>button[kind="secondary"]:hover {background-color: #FF9900 !important; color: #000 !important;}'
+css_texto += '.stButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 8px !important; box-shadow: 0 2px 6px rgba(255,153,0,0.3) !important;}'
+css_texto += '.stButton>button:hover {background-color: #e68a00 !important; box-shadow: 0 4px 10px rgba(255,153,0,0.4) !important;}'
+css_texto += 'div[data-testid="stForm"] {background-color: #2d2d2d; border: 1px solid #444; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.15);}'
+css_texto += 'div[data-testid="stForm"] * {color: #e0e0e0;}'
+css_texto += ".stDataFrame {border-radius: 8px;}"
+css_texto += "hr {border-color: #FF9900 !important; opacity: 0.4;}"
+css_texto += ".stMarkdown p, .stMarkdown li {color: #e0e0e0;}"
+css_texto += ".stMarkdown h4 {color: #FF9900 !important;}"
+css_texto += '[data-testid="stHeader"] {background-color: #1a1a1a;}'
+css_texto += ".stSelectbox label, .stTextInput label, .stNumberInput label, .stDateInput label, .stMultiSelect label, .stSlider label, .stTextArea label, .stFileUploader label {color: #e0e0e0 !important;}"
+css_texto += 'input, textarea, [data-baseweb="select"] {background-color: #3a3a3a !important; color: #e0e0e0 !important; border-color: #555 !important; border-radius: 6px !important;}'
 css_texto += "</style>"
 st.markdown(css_texto, unsafe_allow_html=True)
+
 
 
 if "logado" not in st.session_state:
