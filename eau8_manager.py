@@ -865,7 +865,7 @@ elif menu == "Validacao por Foto (IA)":
             st.image(image, caption="Foto capturada", use_container_width=True)
             contagem_ia = {}
             total_ia = 0
-                        import requests
+            import requests
             import base64
             import io
             try:
