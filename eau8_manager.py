@@ -871,23 +871,26 @@ elif menu == "Validacao por Foto (IA)":
                 buf = io.BytesIO()
                 image.save(buf, format="JPEG")
                 img_bytes = buf.getvalue()
-                api_url = "https://api-inference.huggingface.co/models/facebook/detr-resnet-50"
+                api_url = "https://router.huggingface.co/hf-inference/models/facebook/detr-resnet-50"
                 resp = requests.post(api_url, data=img_bytes)
                 if resp.status_code == 200:
                     preds = resp.json()
                     for p in preds:
-                        nome_obj = p.get("label", "desconhecido")
-                        contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
+                        score = p.get("score", 0)
+                        if score > 0.5:
+                            nome_obj = p.get("label", "desconhecido")
+                            contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
                     total_ia = sum(contagem_ia.values())
                     st.success("IA detectou: " + str(total_ia) + " objetos")
                     if contagem_ia:
                         df_ia = pd.DataFrame(list(contagem_ia.items()), columns=["Objeto", "Quantidade"])
                         st.dataframe(df_ia, use_container_width=True, hide_index=True)
+                    if total_ia == 0:
+                        st.warning("IA nao encontrou objetos. Tente outra foto com mais luz.")
                 if resp.status_code != 200:
-                    st.error("Erro: " + str(resp.status_code))
+                    st.error("Erro: " + str(resp.status_code) + " " + resp.text[:200])
             except Exception as e:
                 st.error("Erro: " + str(e))
-
 
             st.markdown("---")
             st.markdown("#### Contagem Manual da Equipe")
