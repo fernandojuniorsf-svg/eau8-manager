@@ -3,5 +3,7 @@ pandas
 numpy
 Pillow
 openpyxl
-ultralytics==8.1.0
+ultralytics==8.0.232
 opencv-python-headless
+torch
+torchvision
