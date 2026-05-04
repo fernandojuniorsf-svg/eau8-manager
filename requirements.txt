@@ -4,3 +4,4 @@ numpy
 Pillow
 openpyxl
 ultralytics
+opencv-python-headless
