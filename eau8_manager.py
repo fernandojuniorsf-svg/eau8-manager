@@ -469,7 +469,7 @@ elif menu == "Gerador de Escala":
         if faltas_dia:
             st.warning("Com falta registrada: **" + ", ".join(faltas_dia) + "**")
         st.markdown("Disponiveis: **" + str(len(disponiveis)) + "** de " + str(len(ativos)))
-            if volume_prev > 0:
+        if volume_prev > 0:
             meta_pessoa = 70
             pessoas_necessarias = -(-volume_prev // meta_pessoa)
             produtividade_hora = round(meta_pessoa / 5.75, 1)
