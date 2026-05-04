@@ -866,21 +866,24 @@ elif menu == "Validacao por Foto (IA)":
             contagem_ia = {}
             total_ia = 0
             img_resultado = None
-            if yolo_ok:
+                        if yolo_ok:
                 import tempfile
                 temp_path = os.path.join(tempfile.gettempdir(), "foto_val.jpg")
                 image.save(temp_path)
                 modelo = YOLO("yolov8n.pt")
                 resultados = modelo(temp_path, conf=0.15)
-                primeiro_res = resultados[0] if resultados else None
-                if primeiro_res is not None:
-                    for box in primeiro_res.boxes:
+                st.write("DEBUG - Qtd resultados: " + str(len(resultados)))
+                if len(resultados) > 0:
+                    r = resultados
+                    st.write("DEBUG - Qtd boxes: " + str(len(r.boxes)))
+                    for box in r.boxes:
                         cls_id = int(box.cls)
                         nome_obj = modelo.names.get(cls_id, "desconhecido")
+                        st.write("DEBUG - Objeto: " + nome_obj)
                         contagem_ia[nome_obj] = contagem_ia.get(nome_obj, 0) + 1
                     total_ia = sum(contagem_ia.values())
                     try:
-                        img_resultado = primeiro_res.plot()
+                        img_resultado = r.plot()
                         st.image(img_resultado, caption="Deteccao IA - " + str(total_ia) + " objetos", use_container_width=True)
                     except Exception:
                         st.info("Nao foi possivel exibir imagem com deteccoes.")
