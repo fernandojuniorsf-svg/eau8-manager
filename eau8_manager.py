@@ -550,8 +550,8 @@ elif menu == "Registro de Motorista":
                     st.markdown('<div class="success-box">Excluido!</div>', unsafe_allow_html=True)
                     st.rerun()
         else:
-            st.info("Nenhum motorista registrado.")
-        with tab3:
+            st.info("Nenhum motorista registrado.")         
+    with tab3:
         st.markdown("#### Importar Motoristas em Massa")
         st.markdown("Envie um Excel ou CSV com os motoristas frequentes.")
         st.markdown("**Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
