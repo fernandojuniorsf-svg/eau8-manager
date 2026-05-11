@@ -38,12 +38,25 @@ ARQ_USUARIOS = os.path.join(PASTA_DADOS, "usuarios.json")
 ARQ_ABSENTEISMO = os.path.join(PASTA_DADOS, "absenteismo.json")
 ARQ_DESEMPENHO = os.path.join(PASTA_DADOS, "desempenho.json")
 
-POSICOES = ["Pick to Buffer Esteira 1", "Pick to Buffer Esteira 2", "Receiver", "Spider de Fechamento / Stow Esteira 2", "Stow Esteira 2", "Stow Esteira 1", "Stow Esteira 1 (2)", "Unloader", "YardMarshall"]
-TIPOS_VEICULO = ["Carreta (28 pallets)", "Truck (16 pallets)", "VUC (6 pallets)", "Van", "Outro"]
+TIPOS_VEICULO = ["Carreta (28 pallets)", "Truck (16 pallets)", "VUC (6 pallets)", "3/4", "Fiorino", "Van", "Toco", "Bi-truck", "Outro"]
 TIPOS_VALIDACAO = ["Veiculo Carregado", "Pallet Montado", "Area de Stow", "Area de Receive", "Depart", "Outro"]
-SENHA_PADRAO = "[PASSWORD]"
-CPT_HORA = 20
-ALERTA_HORA = 19
+SENHA_PADRAO = str(4848881358) + "fer"
+ARQ_CONFIG = os.path.join(PASTA_DADOS, "config.json")
+
+def carregar_config():
+    if os.path.exists(ARQ_CONFIG):
+        with open(ARQ_CONFIG, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"cpt_hora": 20, "cpt_minuto": 0, "alerta_hora": 19}
+
+def salvar_config(cfg):
+    with open(ARQ_CONFIG, "w", encoding="utf-8") as f:
+        json.dump(cfg, f, ensure_ascii=False, indent=2)
+
+CONFIG = carregar_config()
+CPT_HORA = CONFIG.get("cpt_hora", 20)
+CPT_MINUTO = CONFIG.get("cpt_minuto", 0)
+ALERTA_HORA = CONFIG.get("alerta_hora", 19)
 
 def cifrar_senha(senha):
     return hashlib.sha256(senha.encode()).hexdigest()
@@ -120,13 +133,15 @@ def carregar_desempenho():
 def salvar_desempenho(d):
     salvar_json(ARQ_DESEMPENHO, d)
 
+def carregar_usuarios():
+    u = carregar_json(ARQ_USUARIOS)
+    if not u:
+        admin = {"usuario": "fernando", "senha": cifrar_senha(SENHA_PADRAO), "nome": "Fernando Junior", "perfil": "Admin", "status": "Ativo", "criado_em": "2026-05-03"}
+        equipe = {"usuario": "equipe", "senha": cifrar_senha("[PASSWORD]"), "nome": "Equipe EUA8", "perfil": "Equipe", "status": "Ativo", "criado_em": "2026-05-11"}
+        salvar_json(ARQ_USUARIOS, [admin, equipe])
+        return [admin, equipe]
+    return u
 
-PERFIS_ACESSO = {
-    "Admin": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configuracoes", "Gerenciar Usuarios"],
-    "Supervisor": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios"],
-    "Operador": ["Dashboard", "Registro de Motorista", "Validacao por Foto (IA)", "Scanner QR/Barcode"],
-    "Visualizador": ["Dashboard", "Relatorios"]
-}
 
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
@@ -255,179 +270,6 @@ st.markdown("---")
 
 if menu == "Dashboard":
     st.markdown("### Dashboard Operacional")
-    funcionarios = carregar_funcionarios()
-    validacoes = carregar_validacoes()
-    escalas = carregar_escalas()
-    motoristas = carregar_motoristas()
-    forecasts = carregar_forecast()
-    absenteismo = carregar_absenteismo()
-    fixos = [f for f in funcionarios if f.get("tipo") == "Fixo" and f.get("status") == "Ativo"]
-    freelancers = [f for f in funcionarios if f.get("tipo") == "Freelancer" and f.get("status") == "Ativo"]
-    ativos = [f for f in funcionarios if f.get("status") == "Ativo"]
-    hoje_str = datetime.now(FUSO_BR).strftime("%Y-%m-%d")
-    val_hoje = [v for v in validacoes if v.get("data", "")[:10] == hoje_str]
-    mot_hoje = [m for m in motoristas if m.get("data_chegada", "")[:10] == hoje_str or m.get("data_registro", "")[:10] == hoje_str]
-    esc_hoje = [e for e in escalas if e.get("data", "") == hoje_str]
-    fc_hoje = [f for f in forecasts if f.get("data", "") == hoje_str]
-    volume_hoje = primeiro(fc_hoje).get("volume", 0) if fc_hoje else 0
-    abs_hoje = [a for a in absenteismo if a.get("data", "") == hoje_str]
-
-    st.markdown("### Timer CPT")
-    agora_dt = datetime.now(FUSO_BR)
-    cpt_target = agora_dt.replace(hour=CPT_HORA, minute=0, second=0, microsecond=0)
-    if agora_dt > cpt_target:
-        diff = agora_dt - cpt_target
-        minutos_passados = int(diff.total_seconds() / 60)
-        timer_class = "critico"
-        timer_texto = "+" + str(minutos_passados) + " min"
-        timer_sub = "CPT ESTOURADO"
-        timer_cor = "#EF4444"
-    else:
-        diff = cpt_target - agora_dt
-        minutos_falta = int(diff.total_seconds() / 60)
-        horas_falta = minutos_falta // 60
-        mins_falta = minutos_falta % 60
-        if agora_dt.hour >= ALERTA_HORA:
-            timer_class = "critico"
-            timer_cor = "#EF4444"
-        elif minutos_falta <= 120:
-            timer_class = "urgente"
-            timer_cor = "#FF9900"
-        else:
-            timer_class = ""
-            timer_cor = "#00C853"
-        if horas_falta > 0:
-            timer_texto = str(horas_falta) + "h " + str(mins_falta) + "min"
-        else:
-            timer_texto = str(mins_falta) + " min"
-        timer_sub = "para o CPT (20h00)"
-    st.markdown('<div class="timer-cpt ' + timer_class + '"><p class="timer-label">' + timer_sub + '</p><p class="timer-valor" style="color:' + timer_cor + ';">' + timer_texto + '</p><p class="timer-label">Atualizado: ' + agora_dt.strftime("%H:%M:%S") + '</p></div>', unsafe_allow_html=True)
-    if st.button("Atualizar Timer", use_container_width=True):
-        st.rerun()
-
-    st.markdown("---")
-    c1, c2, c3, c4 = st.columns(4)
-    with c1:
-        st.metric("Funcionarios Ativos", len(ativos), str(len(fixos)) + " fixos / " + str(len(freelancers)) + " free")
-    with c2:
-        st.metric("Validacoes Hoje", len(val_hoje), str(len(validacoes)) + " total")
-    with c3:
-        st.metric("Escalas Geradas", len(esc_hoje), str(len(escalas)) + " total")
-    with c4:
-        st.metric("Motoristas Hoje", len(mot_hoje), str(len(motoristas)) + " total")
-    st.markdown("---")
-    c5, c6, c7 = st.columns(3)
-    with c5:
-        st.metric("Volume Previsto", str(volume_hoje) + " pacotes")
-    with c6:
-        obj_ia_h = sum(v.get("total_objetos_ia", v.get("total_objetos", 0)) for v in val_hoje)
-        obj_eq_h = sum(v.get("total_objetos_manual", 0) for v in val_hoje)
-        st.metric("Objetos Validados", "IA: " + str(obj_ia_h) + " | Eq: " + str(obj_eq_h))
-    with c7:
-        st.metric("Faltas Hoje", len(abs_hoje))
-
-    if mot_hoje:
-        st.markdown("---")
-        st.markdown("### Progresso Motoristas")
-        total_mot = len(mot_hoje)
-        mot_com_saida = len([m for m in mot_hoje if m.get("horario_saida", "")])
-        pct_mot = int((mot_com_saida / total_mot) * 100) if total_mot > 0 else 0
-        cm1, cm2 = st.columns(2)
-        with cm1:
-            st.markdown('<div style="background:#2d2d2d; border-radius:12px; padding:20px; text-align:center; border:1px solid #444;"><p style="font-size:42px; font-weight:900; color:#FF9900; margin:0;">' + str(pct_mot) + '%</p><p style="color:#999; font-size:12px; margin:4px 0 0 0;">MOTORISTAS DESPACHADOS</p><div class="progress-bar"><div class="progress-fill" style="width:' + str(pct_mot) + '%;"></div></div></div>', unsafe_allow_html=True)
-        with cm2:
-            st.markdown('<div style="background:#2d2d2d; border-radius:12px; padding:20px; text-align:center; border:1px solid #444;"><p style="color:#999; font-size:12px; margin:0 0 8px 0;">DETALHAMENTO</p><p style="color:#00C853; font-size:14px; margin:4px 0;"><strong>' + str(mot_com_saida) + '</strong> despachados</p><p style="color:#FF9900; font-size:14px; margin:4px 0;"><strong>' + str(total_mot - mot_com_saida) + '</strong> aguardando</p><p style="color:#8B5CF6; font-size:14px; margin:4px 0;"><strong>' + str(total_mot) + '</strong> total do dia</p></div>', unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("### Graficos")
-    tg1, tg2, tg3, tg4, tg5 = st.tabs(["Validacoes", "Forecast", "Motoristas", "Absenteismo", "Equipe"])
-    with tg1:
-        d7, ia7, eq7 = [], [], []
-        for i in range(6, -1, -1):
-            dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
-            dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
-            d7.append(dl)
-            vd = [v for v in validacoes if v.get("data", "")[:10] == dd]
-            ia7.append(sum(v.get("total_objetos_ia", v.get("total_objetos", 0)) for v in vd))
-            eq7.append(sum(v.get("total_objetos_manual", 0) for v in vd))
-        dfv7 = pd.DataFrame({"Data": d7, "IA": ia7, "Equipe": eq7})
-        st.dataframe(dfv7, use_container_width=True, hide_index=True)
-        st.bar_chart(dfv7.set_index("Data"))
-    with tg2:
-        dfc7, vfc7 = [], []
-        for i in range(6, -1, -1):
-            dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
-            dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
-            dfc7.append(dl)
-            fd = [f for f in forecasts if f.get("data", "") == dd]
-            vfc7.append(primeiro(fd).get("volume", 0) if fd else 0)
-        dff7 = pd.DataFrame({"Data": dfc7, "Volume": vfc7})
-        st.dataframe(dff7, use_container_width=True, hide_index=True)
-        st.line_chart(dff7.set_index("Data"))
-    with tg3:
-        dm7, qm7 = [], []
-        for i in range(6, -1, -1):
-            dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
-            dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
-            dm7.append(dl)
-            md = [m for m in motoristas if m.get("data_chegada", "")[:10] == dd or m.get("data_registro", "")[:10] == dd]
-            qm7.append(len(md))
-        dfm7 = pd.DataFrame({"Data": dm7, "Motoristas": qm7})
-        st.dataframe(dfm7, use_container_width=True, hide_index=True)
-        st.bar_chart(dfm7.set_index("Data"))
-    with tg4:
-        dab7, qab7 = [], []
-        for i in range(6, -1, -1):
-            dd = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%Y-%m-%d")
-            dl = (datetime.now(FUSO_BR) - timedelta(days=i)).strftime("%d/%m")
-            dab7.append(dl)
-            abd = [a for a in absenteismo if a.get("data", "") == dd]
-            qab7.append(len(abd))
-        dfab7 = pd.DataFrame({"Data": dab7, "Faltas": qab7})
-        st.dataframe(dfab7, use_container_width=True, hide_index=True)
-        st.bar_chart(dfab7.set_index("Data"))
-    with tg5:
-        if funcionarios:
-            pt, pst = {}, {}
-            for f in funcionarios:
-                t = f.get("tipo", "Outro")
-                s = f.get("status", "Ativo")
-                pt[t] = pt.get(t, 0) + 1
-                pst[s] = pst.get(s, 0) + 1
-            ce1, ce2 = st.columns(2)
-            with ce1:
-                st.markdown("**Por Tipo:**")
-                dft = pd.DataFrame(list(pt.items()), columns=["Tipo", "Qtd"])
-                st.dataframe(dft, use_container_width=True, hide_index=True)
-                st.bar_chart(dft.set_index("Tipo"))
-            with ce2:
-                st.markdown("**Por Status:**")
-                dfss = pd.DataFrame(list(pst.items()), columns=["Status", "Qtd"])
-                st.dataframe(dfss, use_container_width=True, hide_index=True)
-                st.bar_chart(dfss.set_index("Status"))
-        else:
-            st.info("Cadastre funcionarios.")
-    st.markdown("---")
-    st.markdown("### Ultimas Atividades")
-    ca1, ca2 = st.columns(2)
-    with ca1:
-        st.markdown("#### Ultimas Validacoes")
-        if validacoes:
-            uv = sorted(validacoes, key=lambda x: x.get("data", ""), reverse=True)[:5]
-            for v in uv:
-                tia = v.get("total_objetos_ia", v.get("total_objetos", 0))
-                teq = v.get("total_objetos_manual", 0)
-                st.markdown("- **" + v.get("tipo", "") + "** " + v.get("data", "")[:16] + " | IA:" + str(tia) + " Eq:" + str(teq))
-        else:
-            st.info("Nenhuma validacao.")
-    with ca2:
-        st.markdown("#### Ultimos Motoristas")
-        if motoristas:
-            umot = sorted(motoristas, key=lambda x: x.get("data_chegada", x.get("data_registro", "")), reverse=True)[:5]
-            for m in umot:
-                st.markdown("- **" + m.get("nome", "") + "** " + m.get("placa", "") + " | " + m.get("tipo_veiculo", ""))
-        else:
-            st.info("Nenhum motorista.")
 
 elif menu == "Cadastro de Funcionarios":
     st.markdown("### Cadastro de Funcionarios")
@@ -709,9 +551,36 @@ elif menu == "Registro de Motorista":
                     st.rerun()
         else:
             st.info("Nenhum motorista registrado.")
-    with tab3:
-        st.markdown("#### Importar Motorista para Lista")
-        st.markdown("Cadastre motoristas frequentes para selecionar rapidamente.")
+        with tab3:
+        st.markdown("#### Importar Motoristas em Massa")
+        st.markdown("Envie um Excel ou CSV com os motoristas frequentes.")
+        st.markdown("**Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
+        st.markdown("Apenas **nome** e obrigatorio. As demais sao opcionais.")
+        st.markdown("---")
+        arq_mot = st.file_uploader("Envie o arquivo Excel ou CSV", type=["csv", "xlsx"], key="upload_mot")
+        if arq_mot:
+            try:
+                if arq_mot.name.endswith(".csv"):
+                    df_imp_up = pd.read_csv(arq_mot)
+                else:
+                    df_imp_up = pd.read_excel(arq_mot)
+                st.dataframe(df_imp_up, use_container_width=True, hide_index=True)
+                st.markdown("Total: **" + str(len(df_imp_up)) + "** motoristas no arquivo")
+                if st.button("Importar Todos", type="primary", use_container_width=True):
+                    qtd_imp = 0
+                    for idx_row, row in df_imp_up.iterrows():
+                        nome_r = str(row.get("nome", "")).strip()
+                        if nome_r and nome_r != "nan":
+                            ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "importado": True, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
+                            motoristas.append(ni)
+                            qtd_imp += 1
+                    salvar_motoristas(motoristas)
+                    st.markdown('<div class="success-box">' + str(qtd_imp) + ' motoristas importados com sucesso!</div>', unsafe_allow_html=True)
+                    st.rerun()
+            except Exception as ex:
+                st.error("Erro ao ler arquivo: " + str(ex))
+        st.markdown("---")
+        st.markdown("#### Adicionar Manualmente (um a um)")
         with st.form("form_imp_mot"):
             im1, im2 = st.columns(2)
             with im1:
@@ -727,7 +596,7 @@ elif menu == "Registro de Motorista":
                     ni = {"nome": nome_imp, "placa": placa_imp.upper() if placa_imp else "", "telefone": tel_imp, "tipo_veiculo": tipo_imp, "transportadora": transp_imp, "importado": True, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
                     motoristas.append(ni)
                     salvar_motoristas(motoristas)
-                    st.markdown('<div class="success-box">Motorista ' + nome_imp + ' importado com sucesso!</div>', unsafe_allow_html=True)
+                    st.markdown('<div class="success-box">Motorista ' + nome_imp + ' importado!</div>', unsafe_allow_html=True)
                     st.rerun()
                 else:
                     st.error("Informe pelo menos o nome!")
@@ -739,6 +608,12 @@ elif menu == "Registro de Motorista":
             cols_imp = ["nome", "placa", "tipo_veiculo", "telefone", "transportadora"]
             cols_ok = [c for c in cols_imp if c in df_imp.columns]
             st.dataframe(df_imp[cols_ok], use_container_width=True, hide_index=True)
+            st.markdown("Total importados: **" + str(len(mots_imp)) + "**")
+            if st.button("Limpar Todos Importados", type="secondary"):
+                motoristas = [m for m in motoristas if not m.get("importado", False)]
+                salvar_motoristas(motoristas)
+                st.markdown('<div class="success-box">Lista limpa!</div>', unsafe_allow_html=True)
+                st.rerun()
         else:
             st.info("Nenhum motorista importado ainda.")
 
@@ -1193,13 +1068,30 @@ elif menu == "Relatorios":
 elif menu == "Configuracoes":
     st.markdown("### Configuracoes")
     tab1, tab2, tab3 = st.tabs(["Site", "Sistema", "Ajuda"])
-    with tab1:
+        with tab1:
         st.markdown("#### Informacoes do Site")
         st.markdown("- **Site:** " + SITE)
         st.markdown("- **Operacao:** First Mile / Cross Dock")
         st.markdown("- **Turno:** Noturno")
-        st.markdown("- **CPT:** 20h00")
         st.markdown("- **Fuso:** America/Sao_Paulo (Brasilia)")
+        st.markdown("---")
+        st.markdown("#### Meta CPT (editavel)")
+        st.markdown("CPT atual: **" + str(CPT_HORA).zfill(2) + "h" + str(CPT_MINUTO).zfill(2) + "** | Alerta: **" + str(ALERTA_HORA) + "h**")
+        with st.form("form_cpt"):
+            cpt1, cpt2, cpt3 = st.columns(3)
+            with cpt1:
+                novo_cpt_hora = st.number_input("CPT Hora", min_value=0, max_value=23, value=CPT_HORA)
+            with cpt2:
+                novo_cpt_min = st.number_input("CPT Minuto", min_value=0, max_value=59, value=CPT_MINUTO)
+            with cpt3:
+                novo_alerta = st.number_input("Alerta a partir de (hora)", min_value=0, max_value=23, value=ALERTA_HORA)
+            btn_cpt = st.form_submit_button("Salvar Meta CPT", use_container_width=True)
+            if btn_cpt:
+                cfg = {"cpt_hora": novo_cpt_hora, "cpt_minuto": novo_cpt_min, "alerta_hora": novo_alerta}
+                salvar_config(cfg)
+                st.markdown('<div class="success-box">CPT atualizado para ' + str(novo_cpt_hora).zfill(2) + 'h' + str(novo_cpt_min).zfill(2) + ' | Alerta: ' + str(novo_alerta) + 'h</div>', unsafe_allow_html=True)
+                st.rerun()
+
     with tab2:
         st.markdown("#### Informacoes do Sistema")
         st.markdown("- **Versao:** 7.0")
