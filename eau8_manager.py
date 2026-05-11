@@ -1068,7 +1068,7 @@ elif menu == "Relatorios":
 elif menu == "Configuracoes":
     st.markdown("### Configuracoes")
     tab1, tab2, tab3 = st.tabs(["Site", "Sistema", "Ajuda"])
-        with tab1:
+    with tab1:
         st.markdown("#### Informacoes do Site")
         st.markdown("- **Site:** " + SITE)
         st.markdown("- **Operacao:** First Mile / Cross Dock")
