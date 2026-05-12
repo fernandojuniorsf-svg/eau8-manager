@@ -909,7 +909,14 @@ elif menu == "Registro de Motorista":
             df_imp = pd.DataFrame(mots_imp)
             cols_imp = ["nome", "placa", "tipo_veiculo", "telefone", "transportadora"]
             cols_ok = [c for c in cols_imp if c in df_imp.columns]
-            st.
+              st.dataframe(df_imp[cols_ok], use_container_width=True, hide_index=True)
+            st.markdown("Total: **" + str(len(mots_imp)) + "** importados")
+            if st.button("Limpar Todos Importados", type="secondary"):
+                limpar_motoristas_importados()
+                st.markdown('<div class="success-box">Lista limpa!</div>', unsafe_allow_html=True)
+                st.rerun()
+        else:
+            st.info("Nenhum motorista importado.")
 
 elif menu == "Absenteismo":
     st.markdown("### Registro de Absenteismo")
