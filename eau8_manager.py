@@ -861,16 +861,31 @@ elif menu == "Registro de Motorista":
         st.markdown("Envie um Excel ou CSV. **Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
         st.markdown("Apenas **nome** e obrigatorio.")
         st.markdown("---")
-        arq_mot = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="upload_mot")
+                arq_mot = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="upload_mot")
         if arq_mot:
             try:
                 if arq_mot.name.endswith(".csv"):
                     df_imp_up = pd.read_csv(arq_mot)
                 else:
                     df_imp_up = pd.read_excel(arq_mot)
-                st.dataframe(df_imp_up, use_container_width=True, hide_index=True)
-                st.markdown("Total: **" + str(len(df_imp_up)) + "** motoristas")
-                if st.button("Importar Todos", type="primary", use_container_width=True):
+                st.session_state["df_mot_upload"] = df_imp_up
+            except Exception as ex:
+                st.error("Erro ao ler arquivo: " + str(ex))
+          if "df_mot_upload" in st.session_state and st.session_state["df_mot_upload"] is not None:
+            df_imp_up = st.session_state["df_mot_upload"]
+            st.dataframe(df_imp_up, use_container_width=True, hide_index=True)
+            st.markdown("Total: **" + str(len(df_imp_up)) + "** motoristas")
+            if st.button("Importar Todos", type="primary", use_container_width=True):
+                qtd_imp = 0
+                for idx_row, row in df_imp_up.iterrows():
+                    nome_r = str(row.get("nome", "")).strip()
+                    if nome_r and nome_r != "nan":
+                        ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""}
+                        salvar_motorista(ni)
+                        qtd_imp += 1
+                st.session_state["df_mot_upload"] = None
+                st.markdown('<div class="success-box">' + str(qtd_imp) + ' motoristas importados!</div>', unsafe_allow_html=True)
+                st.rerun()
                     qtd_imp = 0
                     for idx_row, row in df_imp_up.iterrows():
                         nome_r = str(row.get("nome", "")).strip()
