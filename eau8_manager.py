@@ -886,17 +886,6 @@ elif menu == "Registro de Motorista":
                 st.session_state["df_mot_upload"] = None
                 st.markdown('<div class="success-box">' + str(qtd_imp) + ' motoristas importados!</div>', unsafe_allow_html=True)
                 st.rerun()
-                    qtd_imp = 0
-                    for idx_row, row in df_imp_up.iterrows():
-                        nome_r = str(row.get("nome", "")).strip()
-                        if nome_r and nome_r != "nan":
-                            ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""}
-                            salvar_motorista(ni)
-                            qtd_imp += 1
-                    st.markdown('<div class="success-box">' + str(qtd_imp) + ' motoristas importados!</div>', unsafe_allow_html=True)
-                    st.rerun()
-            except Exception as ex:
-                st.error("Erro: " + str(ex))
         st.markdown("---")
         st.markdown("#### Adicionar Manualmente")
         with st.form("form_imp_mot"):
