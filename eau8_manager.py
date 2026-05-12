@@ -556,6 +556,8 @@ if menu == "Dashboard":
     with bt3:
         if st.button("Atualizar", use_container_width=True):
             st.rerun()
+    st.markdown("---")
+    c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("Funcionarios Ativos", len(ativos), str(len(fixos)) + " fixos / " + str(len(freelancers)) + " free")
     with c2:
