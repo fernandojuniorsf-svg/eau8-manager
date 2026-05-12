@@ -351,7 +351,7 @@ CONFIG = carregar_config()
 CPT_HORA = CONFIG.get("cpt_hora", 20)
 CPT_MINUTO = CONFIG.get("cpt_minuto", 0)
 ALERTA_HORA = CONFIG.get("alerta_hora", 19)
-
+PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configuracoes", "Gerenciar Usuarios"], "Supervisor": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios"], "Operador": ["Dashboard", "Registro de Motorista", "Validacao por Foto (IA)", "Scanner QR/Barcode"], "Equipe": ["Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
 css_texto = "<style>"
