@@ -8,6 +8,7 @@ import hashlib
 import random
 import urllib.parse
 import tempfile
+import psycopg2
 from datetime import datetime, timedelta, date
 from zoneinfo import ZoneInfo
 from PIL import Image
@@ -16,11 +17,10 @@ FUSO_BR = ZoneInfo("America/Sao_Paulo")
 NL = chr(10)
 SITE = "EUA8"
 
-for p in ["dados", "fotos_validacao", "fotos_motoristas"]:
+for p in ["fotos_validacao", "fotos_motoristas"]:
     if not os.path.exists(p):
         os.makedirs(p)
 
-PASTA_DADOS = "dados"
 PASTA_FOTOS = "fotos_validacao"
 PASTA_MOTORISTAS = "fotos_motoristas"
 
@@ -30,37 +30,143 @@ try:
 except Exception:
     yolo_ok = False
 
-ARQ_FUNCIONARIOS = os.path.join(PASTA_DADOS, "funcionarios.json")
-ARQ_ESCALAS = os.path.join(PASTA_DADOS, "escalas.json")
-ARQ_MOTORISTAS = os.path.join(PASTA_DADOS, "motoristas.json")
-ARQ_FORECAST = os.path.join(PASTA_DADOS, "forecast.json")
-ARQ_VALIDACOES = os.path.join(PASTA_DADOS, "validacoes.json")
-ARQ_USUARIOS = os.path.join(PASTA_DADOS, "usuarios.json")
-ARQ_ABSENTEISMO = os.path.join(PASTA_DADOS, "absenteismo.json")
-ARQ_DESEMPENHO = os.path.join(PASTA_DADOS, "desempenho.json")
-ARQ_CONFIG = os.path.join(PASTA_DADOS, "config.json")
-
 POSICOES = ["Pick to Buffer Esteira 1", "Pick to Buffer Esteira 2", "Receiver", "Spider de Fechamento / Stow Esteira 2", "Stow Esteira 2", "Stow Esteira 1", "Stow Esteira 1 (2)", "Unloader", "YardMarshall"]
 TIPOS_VEICULO = ["Carreta (28 pallets)", "Truck (16 pallets)", "VUC (6 pallets)", "3/4", "Fiorino", "Van", "Toco", "Bi-truck", "Outro"]
 TIPOS_VALIDACAO = ["Veiculo Carregado", "Pallet Montado", "Area de Stow", "Area de Receive", "Depart", "Outro"]
 
 
-def carregar_config():
-    if os.path.exists(ARQ_CONFIG):
-        with open(ARQ_CONFIG, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {"cpt_hora": 20, "cpt_minuto": 0, "alerta_hora": 19}
+def get_conn():
+    return psycopg2.connect(
+        host=st.secrets["DB_HOST"],
+        port=st.secrets["DB_PORT"],
+        dbname=st.secrets["DB_NAME"],
+        user=st.secrets["DB_USER"],
+        password=st.secrets["DB_PASS"]
+    )
 
 
-def salvar_config(cfg):
-    with open(ARQ_CONFIG, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, ensure_ascii=False, indent=2)
+def query(sql, params=None):
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(sql, params or ())
+    if cur.description:
+        cols = [desc[0] for desc in cur.description]
+        rows = cur.fetchall()
+        conn.commit()
+        cur.close()
+        conn.close()
+        return [dict(zip(cols, row)) for row in rows]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return []
 
 
-CONFIG = carregar_config()
-CPT_HORA = CONFIG.get("cpt_hora", 20)
-CPT_MINUTO = CONFIG.get("cpt_minuto", 0)
-ALERTA_HORA = CONFIG.get("alerta_hora", 19)
+def execute(sql, params=None):
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(sql, params or ())
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def init_db():
+    sql = """
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id SERIAL PRIMARY KEY,
+        usuario TEXT UNIQUE NOT NULL,
+        senha TEXT NOT NULL,
+        nome TEXT NOT NULL,
+        perfil TEXT DEFAULT 'Operador',
+        status TEXT DEFAULT 'Ativo',
+        criado_em TEXT
+    );
+    CREATE TABLE IF NOT EXISTS funcionarios (
+        id SERIAL PRIMARY KEY,
+        nome TEXT NOT NULL,
+        tipo TEXT DEFAULT 'Fixo',
+        telefone TEXT,
+        qualidades TEXT,
+        status TEXT DEFAULT 'Ativo',
+        observacoes TEXT,
+        cadastrado_em TEXT
+    );
+    CREATE TABLE IF NOT EXISTS escalas (
+        id SERIAL PRIMARY KEY,
+        data TEXT,
+        turno TEXT,
+        volume INTEGER DEFAULT 0,
+        escala TEXT,
+        gerada_em TEXT,
+        gerada_por TEXT
+    );
+    CREATE TABLE IF NOT EXISTS motoristas (
+        id SERIAL PRIMARY KEY,
+        nome TEXT NOT NULL,
+        placa TEXT,
+        telefone TEXT,
+        tipo_veiculo TEXT,
+        horario_chegada TEXT,
+        horario_saida TEXT,
+        observacoes TEXT,
+        destino TEXT,
+        transportadora TEXT,
+        data_chegada TEXT,
+        data_registro TEXT,
+        importado BOOLEAN DEFAULT FALSE,
+        foto TEXT
+    );
+    CREATE TABLE IF NOT EXISTS absenteismo (
+        id SERIAL PRIMARY KEY,
+        funcionario TEXT,
+        data TEXT,
+        motivo TEXT,
+        observacoes TEXT,
+        registrado_em TEXT
+    );
+    CREATE TABLE IF NOT EXISTS desempenho (
+        id SERIAL PRIMARY KEY,
+        funcionario TEXT,
+        posicao TEXT,
+        nota INTEGER,
+        data_avaliacao TEXT,
+        observacoes TEXT,
+        registrado_em TEXT
+    );
+    CREATE TABLE IF NOT EXISTS forecast (
+        id SERIAL PRIMARY KEY,
+        data TEXT,
+        volume INTEGER DEFAULT 0,
+        observacoes TEXT,
+        registrado_em TEXT
+    );
+    CREATE TABLE IF NOT EXISTS validacoes (
+        id SERIAL PRIMARY KEY,
+        tipo TEXT,
+        data TEXT,
+        total_objetos_ia INTEGER DEFAULT 0,
+        contagem_ia TEXT,
+        total_objetos_manual INTEGER DEFAULT 0,
+        contagem_manual TEXT,
+        foto TEXT
+    );
+    CREATE TABLE IF NOT EXISTS config (
+        id SERIAL PRIMARY KEY,
+        cpt_hora INTEGER DEFAULT 20,
+        cpt_minuto INTEGER DEFAULT 0,
+        alerta_hora INTEGER DEFAULT 19
+    );
+    CREATE TABLE IF NOT EXISTS timer_historico (
+        id SERIAL PRIMARY KEY,
+        data TEXT,
+        hora_inicio TEXT,
+        hora_conclusao TEXT,
+        registrado_em TEXT,
+        registrado_por TEXT
+    );
+    """
+    execute(sql)
 
 
 def cifrar_senha(senha):
@@ -77,89 +183,174 @@ def primeiro(lista):
     return None
 
 
-def carregar_json(arq):
-    if os.path.exists(arq):
-        with open(arq, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+def carregar_config():
+    rows = query("SELECT cpt_hora, cpt_minuto, alerta_hora FROM config LIMIT 1")
+    if rows:
+        return rows[0]
+    execute("INSERT INTO config (cpt_hora, cpt_minuto, alerta_hora) VALUES (20, 0, 19)")
+    return {"cpt_hora": 20, "cpt_minuto": 0, "alerta_hora": 19}
 
 
-def salvar_json(arq, dados):
-    with open(arq, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=2)
+def salvar_config(cfg):
+    rows = query("SELECT id FROM config LIMIT 1")
+    if rows:
+        execute("UPDATE config SET cpt_hora=%s, cpt_minuto=%s, alerta_hora=%s WHERE id=%s", (cfg["cpt_hora"], cfg["cpt_minuto"], cfg["alerta_hora"], rows[0]["id"]))
+    else:
+        execute("INSERT INTO config (cpt_hora, cpt_minuto, alerta_hora) VALUES (%s,%s,%s)", (cfg["cpt_hora"], cfg["cpt_minuto"], cfg["alerta_hora"]))
 
 
 def carregar_usuarios():
-    u = carregar_json(ARQ_USUARIOS)
-    if not u:
-        admin = {"usuario": "fernando", "senha": SENHA_ADMIN, "nome": "Fernando Junior", "perfil": "Admin", "status": "Ativo", "criado_em": "2026-05-03"}
-        equipe = {"usuario": "equipe", "senha": SENHA_EQUIPE, "nome": "Equipe EUA8", "perfil": "Equipe", "status": "Ativo", "criado_em": "2026-05-11"}
-        salvar_json(ARQ_USUARIOS, [admin, equipe])
-        return [admin, equipe]
-    return u
+    rows = query("SELECT * FROM usuarios ORDER BY id")
+    if not rows:
+        execute("INSERT INTO usuarios (usuario, senha, nome, perfil, status, criado_em) VALUES (%s,%s,%s,%s,%s,%s)", ("fernando", SENHA_ADMIN, "Fernando Junior", "Admin", "Ativo", "2026-05-03"))
+        execute("INSERT INTO usuarios (usuario, senha, nome, perfil, status, criado_em) VALUES (%s,%s,%s,%s,%s,%s)", ("equipe", SENHA_EQUIPE, "Equipe EUA8", "Equipe", "Ativo", "2026-05-11"))
+        return query("SELECT * FROM usuarios ORDER BY id")
+    return rows
 
 
-def salvar_usuarios(u):
-    salvar_json(ARQ_USUARIOS, u)
+def salvar_usuario(u):
+    execute("INSERT INTO usuarios (usuario, senha, nome, perfil, status, criado_em) VALUES (%s,%s,%s,%s,%s,%s)", (u["usuario"], u["senha"], u["nome"], u["perfil"], u["status"], u["criado_em"]))
+
+
+def atualizar_usuario(uid, dados):
+    if dados.get("senha"):
+        execute("UPDATE usuarios SET nome=%s, perfil=%s, status=%s, senha=%s WHERE id=%s", (dados["nome"], dados["perfil"], dados["status"], dados["senha"], uid))
+    else:
+        execute("UPDATE usuarios SET nome=%s, perfil=%s, status=%s WHERE id=%s", (dados["nome"], dados["perfil"], dados["status"], uid))
 
 
 def carregar_funcionarios():
-    return carregar_json(ARQ_FUNCIONARIOS)
+    rows = query("SELECT * FROM funcionarios ORDER BY id")
+    for r in rows:
+        if r.get("qualidades"):
+            try:
+                r["qualidades"] = json.loads(r["qualidades"])
+            except Exception:
+                r["qualidades"] = []
+        else:
+            r["qualidades"] = []
+    return rows
 
 
-def salvar_funcionarios(d):
-    salvar_json(ARQ_FUNCIONARIOS, d)
+def salvar_funcionario(f):
+    execute("INSERT INTO funcionarios (nome, tipo, telefone, qualidades, status, observacoes, cadastrado_em) VALUES (%s,%s,%s,%s,%s,%s,%s)", (f["nome"], f["tipo"], f["telefone"], json.dumps(f.get("qualidades", []), ensure_ascii=False), f["status"], f.get("observacoes", ""), f["cadastrado_em"]))
+
+
+def atualizar_funcionario(fid, f):
+    execute("UPDATE funcionarios SET nome=%s, tipo=%s, telefone=%s, qualidades=%s, status=%s, observacoes=%s WHERE id=%s", (f["nome"], f["tipo"], f["telefone"], json.dumps(f.get("qualidades", []), ensure_ascii=False), f["status"], f.get("observacoes", ""), fid))
+
+
+def excluir_funcionario(fid):
+    execute("DELETE FROM funcionarios WHERE id=%s", (fid,))
 
 
 def carregar_escalas():
-    return carregar_json(ARQ_ESCALAS)
+    rows = query("SELECT * FROM escalas ORDER BY data DESC")
+    for r in rows:
+        if r.get("escala"):
+            try:
+                r["escala"] = json.loads(r["escala"])
+            except Exception:
+                r["escala"] = []
+        else:
+            r["escala"] = []
+    return rows
 
 
-def salvar_escalas(d):
-    salvar_json(ARQ_ESCALAS, d)
+def salvar_escala(e):
+    execute("INSERT INTO escalas (data, turno, volume, escala, gerada_em, gerada_por) VALUES (%s,%s,%s,%s,%s,%s)", (e["data"], e["turno"], e["volume"], json.dumps(e.get("escala", []), ensure_ascii=False), e["gerada_em"], e["gerada_por"]))
+
+
+def excluir_escala(eid):
+    execute("DELETE FROM escalas WHERE id=%s", (eid,))
 
 
 def carregar_motoristas():
-    return carregar_json(ARQ_MOTORISTAS)
+    return query("SELECT * FROM motoristas ORDER BY id DESC")
 
 
-def salvar_motoristas(d):
-    salvar_json(ARQ_MOTORISTAS, d)
+def salvar_motorista(m):
+    execute("INSERT INTO motoristas (nome, placa, telefone, tipo_veiculo, horario_chegada, horario_saida, observacoes, destino, transportadora, data_chegada, data_registro, importado, foto) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (m.get("nome",""), m.get("placa",""), m.get("telefone",""), m.get("tipo_veiculo",""), m.get("horario_chegada",""), m.get("horario_saida",""), m.get("observacoes",""), m.get("destino",""), m.get("transportadora",""), m.get("data_chegada",""), m.get("data_registro",""), m.get("importado", False), m.get("foto","")))
 
 
-def carregar_forecast():
-    return carregar_json(ARQ_FORECAST)
+def atualizar_motorista(mid, m):
+    execute("UPDATE motoristas SET nome=%s, placa=%s, tipo_veiculo=%s, horario_chegada=%s, horario_saida=%s, observacoes=%s WHERE id=%s", (m["nome"], m["placa"], m["tipo_veiculo"], m["horario_chegada"], m["horario_saida"], m.get("observacoes",""), mid))
 
 
-def salvar_forecast(d):
-    salvar_json(ARQ_FORECAST, d)
+def excluir_motorista(mid):
+    execute("DELETE FROM motoristas WHERE id=%s", (mid,))
 
 
-def carregar_validacoes():
-    return carregar_json(ARQ_VALIDACOES)
-
-
-def salvar_validacoes(d):
-    salvar_json(ARQ_VALIDACOES, d)
+def limpar_motoristas_importados():
+    execute("DELETE FROM motoristas WHERE importado=TRUE")
 
 
 def carregar_absenteismo():
-    return carregar_json(ARQ_ABSENTEISMO)
+    return query("SELECT * FROM absenteismo ORDER BY data DESC")
 
 
-def salvar_absenteismo(d):
-    salvar_json(ARQ_ABSENTEISMO, d)
+def salvar_absenteismo_reg(a):
+    execute("INSERT INTO absenteismo (funcionario, data, motivo, observacoes, registrado_em) VALUES (%s,%s,%s,%s,%s)", (a["funcionario"], a["data"], a["motivo"], a.get("observacoes",""), a["registrado_em"]))
 
 
 def carregar_desempenho():
-    return carregar_json(ARQ_DESEMPENHO)
+    return query("SELECT * FROM desempenho ORDER BY data_avaliacao DESC")
 
 
-def salvar_desempenho(d):
-    salvar_json(ARQ_DESEMPENHO, d)
+def salvar_desempenho_reg(d):
+    execute("INSERT INTO desempenho (funcionario, posicao, nota, data_avaliacao, observacoes, registrado_em) VALUES (%s,%s,%s,%s,%s,%s)", (d["funcionario"], d["posicao"], d["nota"], d["data_avaliacao"], d.get("observacoes",""), d["registrado_em"]))
 
 
-PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configuracoes", "Gerenciar Usuarios"], "Supervisor": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios"], "Operador": ["Dashboard", "Registro de Motorista", "Validacao por Foto (IA)", "Scanner QR/Barcode"], "Equipe": ["Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
+def carregar_forecast():
+    return query("SELECT * FROM forecast ORDER BY data DESC")
+
+
+def salvar_forecast_reg(f):
+    execute("INSERT INTO forecast (data, volume, observacoes, registrado_em) VALUES (%s,%s,%s,%s)", (f["data"], f["volume"], f.get("observacoes",""), f["registrado_em"]))
+
+
+def carregar_validacoes():
+    rows = query("SELECT * FROM validacoes ORDER BY data DESC")
+    for r in rows:
+        if r.get("contagem_ia"):
+            try:
+                r["contagem_ia"] = json.loads(r["contagem_ia"])
+            except Exception:
+                r["contagem_ia"] = {}
+        else:
+            r["contagem_ia"] = {}
+        if r.get("contagem_manual"):
+            try:
+                r["contagem_manual"] = json.loads(r["contagem_manual"])
+            except Exception:
+                r["contagem_manual"] = {}
+        else:
+            r["contagem_manual"] = {}
+    return rows
+
+
+def salvar_validacao(v):
+    execute("INSERT INTO validacoes (tipo, data, total_objetos_ia, contagem_ia, total_objetos_manual, contagem_manual, foto) VALUES (%s,%s,%s,%s,%s,%s,%s)", (v["tipo"], v["data"], v["total_objetos_ia"], json.dumps(v.get("contagem_ia", {}), ensure_ascii=False), v["total_objetos_manual"], json.dumps(v.get("contagem_manual", {}), ensure_ascii=False), v.get("foto", "")))
+
+
+def carregar_timer_historico():
+    return query("SELECT * FROM timer_historico ORDER BY data DESC")
+
+
+def salvar_timer_historico(t):
+    execute("INSERT INTO timer_historico (data, hora_inicio, hora_conclusao, registrado_em, registrado_por) VALUES (%s,%s,%s,%s,%s)", (t["data"], t["hora_inicio"], t["hora_conclusao"], t["registrado_em"], t["registrado_por"]))
+
+
+try:
+    init_db()
+except Exception as e:
+    st.error("Erro ao conectar no banco: " + str(e))
+    st.stop()
+
+CONFIG = carregar_config()
+CPT_HORA = CONFIG.get("cpt_hora", 20)
+CPT_MINUTO = CONFIG.get("cpt_minuto", 0)
+ALERTA_HORA = CONFIG.get("alerta_hora", 19)
 
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
@@ -168,14 +359,7 @@ css_texto += ".stApp {background-color: #1a1a1a !important;}"
 css_texto += 'section[data-testid="stSidebar"] {background-color: #2d2d2d !important;}'
 css_texto += 'section[data-testid="stSidebar"] * {color: #e0e0e0 !important;}'
 css_texto += 'section[data-testid="stSidebar"] h2 {color: #FF9900 !important;}'
-css_texto += 'section[data-testid="stSidebar"] .stRadio label span {color: #e0e0e0 !important;}'
-css_texto += 'section[data-testid="stSidebar"] .stRadio label:hover span {color: #FF9900 !important;}'
-css_texto += 'section[data-testid="stSidebar"] button {border: 2px solid #FF9900 !important; color: #FF9900 !important; background: transparent !important; border-radius: 10px !important; padding: 12px 32px !important;}'
-css_texto += 'section[data-testid="stSidebar"] button:hover {background-color: #FF9900 !important; color: #000 !important;}'
-css_texto += "h1 {color: #FF9900 !important;}"
-css_texto += "h2 {color: #FF9900 !important;}"
-css_texto += "h3 {color: #FF9900 !important;}"
-css_texto += "h4 {color: #FF9900 !important;}"
+css_texto += "h1,h2,h3,h4 {color: #FF9900 !important;}"
 css_texto += ".stMarkdown p {color: #e0e0e0 !important;}"
 css_texto += ".stMarkdown li {color: #e0e0e0 !important;}"
 css_texto += ".stMarkdown strong {color: #ffffff !important;}"
@@ -184,31 +368,23 @@ css_texto += 'div[data-testid="stMetricDelta"] {color: #00C853 !important;}'
 css_texto += 'div[data-testid="stMetricLabel"] p {color: #cccccc !important;}'
 css_texto += 'div[data-testid="stMetric"] {background-color: #2d2d2d !important; border-left: 4px solid #FF9900; border-radius: 10px; padding: 16px; box-shadow: 0 3px 8px rgba(0,0,0,0.3);}'
 css_texto += '.stTabs [data-baseweb="tab-list"] {background-color: #2d2d2d; border-radius: 10px 10px 0 0;}'
-css_texto += '.stTabs [data-baseweb="tab"] {color: #cccccc !important; font-weight: 500; padding: 12px 24px !important;}'
+css_texto += '.stTabs [data-baseweb="tab"] {color: #cccccc !important; font-weight: 500;}'
 css_texto += '.stTabs [aria-selected="true"] {background-color: #FF9900 !important; color: #000 !important; border-radius: 10px 10px 0 0; font-weight: 700;}'
-css_texto += '.stButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 10px !important; padding: 16px 48px !important; font-weight: 600 !important; box-shadow: 0 3px 8px rgba(255,153,0,0.4) !important; margin-top: 8px !important; margin-bottom: 8px !important;}'
-css_texto += '.stButton>button:hover {background-color: #e68a00 !important; box-shadow: 0 6px 16px rgba(255,153,0,0.5) !important;}'
-css_texto += '.stButton>button[kind="secondary"] {border: 2px solid #FF9900 !important; color: #FF9900 !important; background: transparent !important; padding: 16px 48px !important;}'
-css_texto += '.stButton>button[kind="secondary"]:hover {background-color: #FF9900 !important; color: #000 !important;}'
-css_texto += 'div[data-testid="stForm"] {background-color: #2d2d2d !important; border: 1px solid #444; border-radius: 12px; padding: 24px; box-shadow: 0 3px 10px rgba(0,0,0,0.25);}'
-css_texto += 'div[data-testid="stForm"] * {color: #e0e0e0;}'
-css_texto += ".stSelectbox label, .stTextInput label, .stNumberInput label, .stDateInput label, .stMultiSelect label, .stSlider label, .stTextArea label, .stFileUploader label, .stCameraInput label {color: #cccccc !important; font-weight: 500 !important;}"
+css_texto += '.stButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 10px !important; padding: 16px 48px !important; font-weight: 600 !important; box-shadow: 0 3px 8px rgba(255,153,0,0.4) !important;}'
+css_texto += '.stButton>button:hover {background-color: #e68a00 !important;}'
+css_texto += 'div[data-testid="stForm"] {background-color: #2d2d2d !important; border: 1px solid #444; border-radius: 12px; padding: 24px;}'
 css_texto += 'input {background-color: #3a3a3a !important; color: #e0e0e0 !important; border: 1px solid #555 !important; border-radius: 8px !important;}'
 css_texto += 'textarea {background-color: #3a3a3a !important; color: #e0e0e0 !important; border: 1px solid #555 !important; border-radius: 8px !important;}'
 css_texto += '[data-baseweb="select"] {background-color: #3a3a3a !important;}'
 css_texto += '[data-baseweb="select"] * {color: #e0e0e0 !important;}'
 css_texto += "hr {border-color: #FF9900 !important; opacity: 0.4;}"
 css_texto += '[data-testid="stHeader"] {background-color: #1a1a1a !important;}'
-css_texto += ".stDownloadButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 10px !important; padding: 14px 40px !important; font-weight: 600 !important; box-shadow: 0 3px 8px rgba(255,153,0,0.4) !important;}"
-css_texto += ".stDownloadButton>button:hover {background-color: #e68a00 !important;}"
-css_texto += ".timer-cpt {display:flex; justify-content:center; margin:20px 0;}"
+css_texto += ".stDownloadButton>button {background-color: #FF9900 !important; color: #000 !important; border: none !important; border-radius: 10px !important;}"
 css_texto += ".success-box {background: rgba(0,200,83,0.1); border: 1px solid rgba(0,200,83,0.3); border-radius: 10px; padding: 12px 16px; color: #00C853; font-size: 14px; font-weight: 500; margin: 10px 0;}"
 css_texto += ".progress-bar {background: #3a3a3a; border-radius: 8px; height: 14px; overflow: hidden; margin-top: 8px;}"
 css_texto += ".progress-fill {background: linear-gradient(90deg, #FF9900, #FFB84D); height: 100%; border-radius: 8px;}"
-css_texto += "@keyframes pulse {0%,100%{opacity:1;}50%{opacity:0.6;}}"
 css_texto += "</style>"
 st.markdown(css_texto, unsafe_allow_html=True)
-
 
 if "logado" not in st.session_state:
     st.session_state["logado"] = False
@@ -277,7 +453,6 @@ st.markdown("*First Mile Operations | Amazon Logistics*")
 st.markdown("---")
 
 if menu == "Dashboard":
-    st.markdown('<meta http-equiv="refresh" content="60">', unsafe_allow_html=True)
     st.markdown("### Dashboard Operacional")
     funcionarios = carregar_funcionarios()
     validacoes = carregar_validacoes()
@@ -296,38 +471,47 @@ if menu == "Dashboard":
     volume_hoje = primeiro(fc_hoje).get("volume", 0) if fc_hoje else 0
     abs_hoje = [a for a in absenteismo if a.get("data", "") == hoje_str]
     agora_dt = datetime.now(FUSO_BR)
+    timer_ativo = st.session_state.get("timer_ativo", False)
+    st.markdown("### Timer CPT")
     cpt_target = agora_dt.replace(hour=CPT_HORA, minute=CPT_MINUTO, second=0, microsecond=0)
-    if agora_dt > cpt_target:
-        diff = agora_dt - cpt_target
-        minutos_passados = int(diff.total_seconds() / 60)
-        timer_texto = "+" + str(minutos_passados) + "min"
-        timer_sub = "CPT ESTOURADO"
-        timer_cor = "#EF4444"
-        timer_sombra = "0 0 60px rgba(239,68,68,0.6)"
-        pct_circulo = 100
+    if not timer_ativo:
+        timer_texto = "Aguardando"
+        timer_cor = "#666666"
+        timer_sombra = "0 0 20px rgba(100,100,100,0.3)"
+        timer_sub = "Clique em Iniciar Turno"
+        pct_circulo = 0
     else:
-        diff = cpt_target - agora_dt
-        seg_total = int(diff.total_seconds())
-        minutos_falta = seg_total // 60
-        horas_falta = minutos_falta // 60
-        mins_falta = minutos_falta % 60
-        if horas_falta > 0:
-            timer_texto = str(horas_falta) + "h" + str(mins_falta).zfill(2)
-        else:
-            timer_texto = str(mins_falta) + "min"
-        timer_sub = "para o CPT (" + str(CPT_HORA).zfill(2) + "h" + str(CPT_MINUTO).zfill(2) + ")"
-        seg_total_turno = 6 * 3600
-        seg_passados = seg_total_turno - seg_total
-        pct_circulo = min(int((seg_passados / seg_total_turno) * 100), 100) if seg_total_turno > 0 else 0
-        if minutos_falta <= 10:
+        if agora_dt > cpt_target:
+            diff = agora_dt - cpt_target
+            minutos_passados = int(diff.total_seconds() / 60)
+            timer_texto = "+" + str(minutos_passados) + "min"
+            timer_sub = "CPT ESTOURADO"
             timer_cor = "#EF4444"
             timer_sombra = "0 0 60px rgba(239,68,68,0.6)"
-        elif minutos_falta <= 60:
-            timer_cor = "#FF9900"
-            timer_sombra = "0 0 40px rgba(255,153,0,0.4)"
+            pct_circulo = 100
         else:
-            timer_cor = "#00C853"
-            timer_sombra = "0 0 30px rgba(0,200,83,0.3)"
+            diff = cpt_target - agora_dt
+            seg_total = int(diff.total_seconds())
+            minutos_falta = seg_total // 60
+            horas_falta = minutos_falta // 60
+            mins_falta = minutos_falta % 60
+            if horas_falta > 0:
+                timer_texto = str(horas_falta) + "h" + str(mins_falta).zfill(2)
+            else:
+                timer_texto = str(mins_falta) + "min"
+            timer_sub = "para o CPT (" + str(CPT_HORA).zfill(2) + ":" + str(CPT_MINUTO).zfill(2) + ")"
+            seg_total_turno = 6 * 3600
+            seg_passados = seg_total_turno - seg_total
+            pct_circulo = min(int((seg_passados / seg_total_turno) * 100), 100) if seg_total_turno > 0 else 0
+            if minutos_falta <= 10:
+                timer_cor = "#EF4444"
+                timer_sombra = "0 0 60px rgba(239,68,68,0.6)"
+            elif minutos_falta <= 60:
+                timer_cor = "#FF9900"
+                timer_sombra = "0 0 40px rgba(255,153,0,0.4)"
+            else:
+                timer_cor = "#00C853"
+                timer_sombra = "0 0 30px rgba(0,200,83,0.3)"
     grau = int(pct_circulo * 3.6)
     if grau <= 180:
         grad_circulo = "linear-gradient(90deg, #3a3a3a 50%, transparent 50%), linear-gradient(" + str(90 + grau) + "deg, " + timer_cor + " 50%, #3a3a3a 50%)"
@@ -341,8 +525,36 @@ if menu == "Dashboard":
     timer_html += '<p style="font-size:11px; color:#666; margin:4px 0 0 0;">' + agora_dt.strftime("%H:%M:%S") + '</p>'
     timer_html += '</div></div></div>'
     st.markdown(timer_html, unsafe_allow_html=True)
-    if st.button("Atualizar Timer", use_container_width=True):
-        st.rerun()
+    bt1, bt2, bt3 = st.columns(3)
+    with bt1:
+        if not timer_ativo:
+            if st.button("Iniciar Turno", type="primary", use_container_width=True):
+                st.session_state["timer_ativo"] = True
+                st.session_state["timer_inicio"] = agora_dt.strftime("%H:%M")
+                st.rerun()
+        else:
+            st.markdown('<div class="success-box">Turno iniciado as ' + st.session_state.get("timer_inicio", "") + '</div>', unsafe_allow_html=True)
+    with bt2:
+        if timer_ativo:
+            if st.button("Concluir Turno", use_container_width=True):
+                st.session_state["mostrar_conclusao"] = True
+    with bt3:
+        if st.button("Atualizar", use_container_width=True):
+            st.rerun()
+    if st.session_state.get("mostrar_conclusao", False):
+        st.markdown("---")
+        st.markdown("#### Registrar Conclusao")
+        with st.form("form_conclusao"):
+            hora_conclusao = st.text_input("Horario de conclusao (HH:MM)", value=agora_dt.strftime("%H:%M"))
+            btn_conc = st.form_submit_button("Confirmar Conclusao", use_container_width=True)
+            if btn_conc:
+                t = {"data": hoje_str, "hora_inicio": st.session_state.get("timer_inicio", ""), "hora_conclusao": hora_conclusao, "registrado_em": agora_dt.strftime("%d/%m/%Y %H:%M"), "registrado_por": nome_logado}
+                salvar_timer_historico(t)
+                st.session_state["timer_ativo"] = False
+                st.session_state["timer_inicio"] = ""
+                st.session_state["mostrar_conclusao"] = False
+                st.markdown('<div class="success-box">Turno concluido as ' + hora_conclusao + ' e registrado no historico!</div>', unsafe_allow_html=True)
+                st.rerun()
     st.markdown("---")
     c1, c2, c3, c4 = st.columns(4)
     with c1:
@@ -358,7 +570,7 @@ if menu == "Dashboard":
     with c5:
         st.metric("Volume Previsto", str(volume_hoje) + " pacotes")
     with c6:
-        obj_ia_h = sum(v.get("total_objetos_ia", v.get("total_objetos", 0)) for v in val_hoje)
+        obj_ia_h = sum(v.get("total_objetos_ia", 0) for v in val_hoje)
         obj_eq_h = sum(v.get("total_objetos_manual", 0) for v in val_hoje)
         st.metric("Objetos Validados", "IA: " + str(obj_ia_h) + " | Eq: " + str(obj_eq_h))
     with c7:
@@ -374,14 +586,23 @@ if menu == "Dashboard":
     with cm2:
         st.markdown('<div style="background:#2d2d2d; border-radius:12px; padding:20px; text-align:center; border:1px solid #444;"><p style="color:#999; font-size:12px; margin:0 0 8px 0;">DETALHAMENTO</p><p style="color:#00C853; font-size:14px; margin:4px 0;"><strong>' + str(mot_com_saida) + '</strong> despachados</p><p style="color:#FF9900; font-size:14px; margin:4px 0;"><strong>' + str(total_mot - mot_com_saida) + '</strong> aguardando</p><p style="color:#8B5CF6; font-size:14px; margin:4px 0;"><strong>' + str(total_mot) + '</strong> total do dia</p></div>', unsafe_allow_html=True)
     st.markdown("---")
+    st.markdown("### Historico Timer CPT")
+    hist_timer = carregar_timer_historico()
+    if hist_timer:
+        df_ht = pd.DataFrame(hist_timer)
+        cols_ht = ["data", "hora_inicio", "hora_conclusao", "registrado_por"]
+        cols_ok = [c for c in cols_ht if c in df_ht.columns]
+        st.dataframe(df_ht[cols_ok].head(10), use_container_width=True, hide_index=True)
+    else:
+        st.info("Nenhum registro de timer.")
+    st.markdown("---")
     st.markdown("### Ultimas Atividades")
     ca1, ca2 = st.columns(2)
     with ca1:
         st.markdown("#### Ultimas Validacoes")
         if validacoes:
-            uv = sorted(validacoes, key=lambda x: x.get("data", ""), reverse=True)[:5]
-            for v in uv:
-                tia = v.get("total_objetos_ia", v.get("total_objetos", 0))
+            for v in validacoes[:5]:
+                tia = v.get("total_objetos_ia", 0)
                 teq = v.get("total_objetos_manual", 0)
                 st.markdown("- **" + v.get("tipo", "") + "** " + v.get("data", "")[:16] + " | IA:" + str(tia) + " Eq:" + str(teq))
         else:
@@ -389,8 +610,7 @@ if menu == "Dashboard":
     with ca2:
         st.markdown("#### Ultimos Motoristas")
         if motoristas:
-            umot = sorted(motoristas, key=lambda x: x.get("data_chegada", x.get("data_registro", "")), reverse=True)[:5]
-            for m in umot:
+            for m in motoristas[:5]:
                 st.markdown("- **" + m.get("nome", "") + "** " + m.get("placa", "") + " | " + m.get("tipo_veiculo", ""))
         else:
             st.info("Nenhum motorista.")
@@ -413,9 +633,8 @@ elif menu == "Cadastro de Funcionarios":
             btn_func = st.form_submit_button("Cadastrar", use_container_width=True)
             if btn_func:
                 if nome:
-                    nv = {"nome": nome, "tipo": tipo, "telefone": telefone, "qualidades": qualidades, "status": status_func, "observacoes": obs_func, "cadastrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                    funcionarios.append(nv)
-                    salvar_funcionarios(funcionarios)
+                    nv = {"nome": nome, "tipo": tipo, "telefone": telefone, "qualidades": qualidades, "status": status_func, "observacoes": obs_func, "cadastrado_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")}
+                    salvar_funcionario(nv)
                     st.markdown('<div class="success-box">' + nome + ' cadastrado com sucesso!</div>', unsafe_allow_html=True)
                     st.rerun()
                 else:
@@ -450,19 +669,13 @@ elif menu == "Cadastro de Funcionarios":
                 with cef:
                     bef = st.form_submit_button("Excluir Funcionario", use_container_width=True)
                 if bsf:
-                    funcionarios[idx_f]["nome"] = en
-                    funcionarios[idx_f]["tipo"] = et
-                    funcionarios[idx_f]["telefone"] = etel
-                    funcionarios[idx_f]["qualidades"] = eq
-                    funcionarios[idx_f]["status"] = es
-                    funcionarios[idx_f]["observacoes"] = eo
-                    salvar_funcionarios(funcionarios)
-                    st.markdown('<div class="success-box">Atualizado com sucesso!</div>', unsafe_allow_html=True)
+                    dados_f = {"nome": en, "tipo": et, "telefone": etel, "qualidades": eq, "status": es, "observacoes": eo}
+                    atualizar_funcionario(fe["id"], dados_f)
+                    st.markdown('<div class="success-box">Atualizado!</div>', unsafe_allow_html=True)
                     st.rerun()
                 if bef:
-                    funcionarios.pop(idx_f)
-                    salvar_funcionarios(funcionarios)
-                    st.markdown('<div class="success-box">Excluido com sucesso!</div>', unsafe_allow_html=True)
+                    excluir_funcionario(fe["id"])
+                    st.markdown('<div class="success-box">Excluido!</div>', unsafe_allow_html=True)
                     st.rerun()
         else:
             st.info("Nenhum funcionario cadastrado.")
@@ -472,7 +685,6 @@ elif menu == "Gerador de Escala":
     st.markdown("### Gerador de Escala")
     funcionarios = carregar_funcionarios()
     absenteismo = carregar_absenteismo()
-    desempenho = carregar_desempenho()
     ativos = [f for f in funcionarios if f.get("status") == "Ativo"]
     tab1, tab2 = st.tabs(["Gerar Escala", "Anteriores / Editar"])
     with tab1:
@@ -507,7 +719,7 @@ elif menu == "Gerador de Escala":
                 if not cands:
                     continue
                 random.shuffle(cands)
-                escolhido = cands
+                escolhido = cands[0]
                 ei = {"posicao": pos, "funcionario": escolhido["nome"], "telefone": escolhido.get("telefone", ""), "tipo": escolhido.get("tipo", "")}
                 escala.append(ei)
                 usados.append(escolhido["nome"])
@@ -522,18 +734,16 @@ elif menu == "Gerador de Escala":
             cs1, cs2 = st.columns(2)
             with cs1:
                 if st.button("Salvar Escala", type="primary", use_container_width=True):
-                    ne = {"data": data_esc_str, "turno": turno_escala, "volume": volume_prev, "escala": df_ed.to_dict("records"), "gerada_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "gerada_por": st.session_state.get("nome_logado", "Admin")}
-                    escalas = carregar_escalas()
-                    escalas.append(ne)
-                    salvar_escalas(escalas)
-                    tw = "*ESCALA " + SITE + " - " + data_esc_str + "*" + NL
+                    ne = {"data": data_esc_str, "turno": turno_escala, "volume": volume_prev, "escala": df_ed.to_dict("records"), "gerada_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "gerada_por": st.session_state.get("nome_logado", "Admin")}
+                    salvar_escala(ne)
+                    tw = "*ESCALA " + SITE + " - " + data_escala.strftime("%d/%m/%Y") + "*" + NL
                     tw += "Turno: " + turno_escala + NL + NL
                     for it in df_ed.to_dict("records"):
                         tw += it.get("posicao", "") + ": " + it.get("funcionario", "") + NL
                     tw += NL + "Bora, time!"
                     st.session_state["ultima_escala_wpp"] = tw
                     st.session_state["escala_temp"] = None
-                    st.markdown('<div class="success-box">Escala salva com sucesso!</div>', unsafe_allow_html=True)
+                    st.markdown('<div class="success-box">Escala salva!</div>', unsafe_allow_html=True)
                     st.rerun()
             with cs2:
                 if st.button("Sortear Novamente", use_container_width=True):
@@ -542,19 +752,16 @@ elif menu == "Gerador de Escala":
     with tab2:
         escalas = carregar_escalas()
         if escalas:
-            es_s = sorted(escalas, key=lambda x: x.get("data", ""), reverse=True)
-            ops = [e["data"] + " - " + e["turno"] + " - Vol:" + str(e.get("volume", "")) for e in es_s]
+            ops = [e.get("data","") + " - " + e.get("turno","") + " - Vol:" + str(e.get("volume", "")) for e in escalas]
             sel_e = st.selectbox("Selecione", ops, key="sel_esc_h")
             idx_e = ops.index(sel_e)
-            esel = es_s[idx_e]
-            st.markdown("**Data:** " + esel["data"] + " | **Turno:** " + esel["turno"] + " | **Volume:** " + str(esel.get("volume", "")))
+            esel = escalas[idx_e]
+            st.markdown("**Data:** " + esel.get("data","") + " | **Turno:** " + esel.get("turno","") + " | **Volume:** " + str(esel.get("volume", "")))
             df_e_h = pd.DataFrame(esel.get("escala", []))
             st.dataframe(df_e_h, use_container_width=True, hide_index=True)
-            if st.button("Excluir Escala Selecionada", type="secondary"):
-                todas = carregar_escalas()
-                todas = [x for x in todas if not (x.get("data") == esel.get("data") and x.get("gerada_em") == esel.get("gerada_em"))]
-                salvar_escalas(todas)
-                st.markdown('<div class="success-box">Escala excluida!</div>', unsafe_allow_html=True)
+            if st.button("Excluir Escala", type="secondary"):
+                excluir_escala(esel["id"])
+                st.markdown('<div class="success-box">Excluida!</div>', unsafe_allow_html=True)
                 st.rerun()
         else:
             st.info("Nenhuma escala gerada.")
@@ -584,7 +791,7 @@ elif menu == "Registro de Motorista":
                     tipo_veic = mi.get("tipo_veiculo", "Carreta (28 pallets)")
                     st.markdown('<div class="success-box">Motorista selecionado: <strong>' + nome_mot + '</strong></div>', unsafe_allow_html=True)
             else:
-                st.info("Nenhum motorista importado. Use a aba Importar Motoristas ou digite manualmente.")
+                st.info("Nenhum motorista importado. Use a aba Importar ou digite manualmente.")
         with st.form("form_mot"):
             rm1, rm2 = st.columns(2)
             with rm1:
@@ -600,27 +807,26 @@ elif menu == "Registro de Motorista":
             foto_mot = st.camera_input("Foto do Veiculo (opcional)")
             btn_mot = st.form_submit_button("Registrar", use_container_width=True)
             if btn_mot:
-                nm = {"nome": nome_mot_input or "N/I", "placa": placa_mot_input.upper() if placa_mot_input else "", "telefone": tel_mot_input, "tipo_veiculo": tipo_veic_input, "horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot, "destino": destino_mot, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "importado": False}
+                nm = {"nome": nome_mot_input or "N/I", "placa": placa_mot_input.upper() if placa_mot_input else "", "telefone": tel_mot_input, "tipo_veiculo": tipo_veic_input, "horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot, "destino": destino_mot, "transportadora": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": False, "foto": ""}
                 if foto_mot:
                     nf = "mot_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
                     cf = os.path.join(PASTA_MOTORISTAS, nf)
                     img_m = Image.open(foto_mot)
                     img_m.save(cf)
                     nm["foto"] = nf
-                motoristas.append(nm)
-                salvar_motoristas(motoristas)
+                salvar_motorista(nm)
                 st.markdown('<div class="success-box">' + (nome_mot_input or "Motorista") + ' registrado com sucesso!</div>', unsafe_allow_html=True)
                 st.rerun()
     with tab2:
         mots_registrados = [m for m in motoristas if not m.get("importado", False)]
         if mots_registrados:
             df_mot = pd.DataFrame(mots_registrados)
-            cols_m = ["nome", "placa", "tipo_veiculo", "horario_chegada", "horario_saida", "destino", "data_chegada", "observacoes"]
+            cols_m = ["nome", "placa", "tipo_veiculo", "horario_chegada", "horario_saida", "destino", "data_chegada", "data_registro", "observacoes"]
             cols_ok = [c for c in cols_m if c in df_mot.columns]
             st.dataframe(df_mot[cols_ok], use_container_width=True, hide_index=True)
             st.markdown("---")
             st.markdown("#### Editar Motorista")
-            ops_m = [m.get("nome", "") + " - " + m.get("placa", "") + " - " + m.get("data_chegada", "")[:10] for m in mots_registrados]
+            ops_m = [m.get("nome", "") + " - " + m.get("placa", "") + " - " + str(m.get("data_chegada", ""))[:10] for m in mots_registrados]
             sel_m = st.selectbox("Selecione", ops_m, key="sel_m_edit")
             idx_m = ops_m.index(sel_m)
             me = mots_registrados[idx_m]
@@ -636,35 +842,26 @@ elif menu == "Registro de Motorista":
                     eom = st.text_input("Obs", value=me.get("observacoes", ""))
                 csm, cem = st.columns(2)
                 with csm:
-                    bsm = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
+                    bsm = st.form_submit_button("Salvar", use_container_width=True)
                 with cem:
-                    bem = st.form_submit_button("Excluir Registro", use_container_width=True)
+                    bem = st.form_submit_button("Excluir", use_container_width=True)
                 if bsm:
-                    idx_real = motoristas.index(me)
-                    motoristas[idx_real]["nome"] = enm
-                    motoristas[idx_real]["placa"] = epm.upper()
-                    motoristas[idx_real]["tipo_veiculo"] = etv
-                    motoristas[idx_real]["horario_chegada"] = ehc
-                    motoristas[idx_real]["horario_saida"] = ehs
-                    motoristas[idx_real]["observacoes"] = eom
-                    salvar_motoristas(motoristas)
+                    dados_m = {"nome": enm, "placa": epm.upper(), "tipo_veiculo": etv, "horario_chegada": ehc, "horario_saida": ehs, "observacoes": eom}
+                    atualizar_motorista(me["id"], dados_m)
                     st.markdown('<div class="success-box">Atualizado!</div>', unsafe_allow_html=True)
                     st.rerun()
                 if bem:
-                    idx_real = motoristas.index(me)
-                    motoristas.pop(idx_real)
-                    salvar_motoristas(motoristas)
+                    excluir_motorista(me["id"])
                     st.markdown('<div class="success-box">Excluido!</div>', unsafe_allow_html=True)
                     st.rerun()
         else:
             st.info("Nenhum motorista registrado.")
     with tab3:
         st.markdown("#### Importar Motoristas em Massa")
-        st.markdown("Envie um Excel ou CSV com os motoristas frequentes.")
-        st.markdown("**Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
+        st.markdown("Envie um Excel ou CSV. **Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
         st.markdown("Apenas **nome** e obrigatorio.")
         st.markdown("---")
-        arq_mot = st.file_uploader("Envie o arquivo Excel ou CSV", type=["csv", "xlsx"], key="upload_mot")
+        arq_mot = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="upload_mot")
         if arq_mot:
             try:
                 if arq_mot.name.endswith(".csv"):
@@ -672,20 +869,19 @@ elif menu == "Registro de Motorista":
                 else:
                     df_imp_up = pd.read_excel(arq_mot)
                 st.dataframe(df_imp_up, use_container_width=True, hide_index=True)
-                st.markdown("Total: **" + str(len(df_imp_up)) + "** motoristas no arquivo")
+                st.markdown("Total: **" + str(len(df_imp_up)) + "** motoristas")
                 if st.button("Importar Todos", type="primary", use_container_width=True):
                     qtd_imp = 0
                     for idx_row, row in df_imp_up.iterrows():
                         nome_r = str(row.get("nome", "")).strip()
                         if nome_r and nome_r != "nan":
-                            ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "importado": True, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                            motoristas.append(ni)
+                            ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""}
+                            salvar_motorista(ni)
                             qtd_imp += 1
-                    salvar_motoristas(motoristas)
                     st.markdown('<div class="success-box">' + str(qtd_imp) + ' motoristas importados!</div>', unsafe_allow_html=True)
                     st.rerun()
             except Exception as ex:
-                st.error("Erro ao ler arquivo: " + str(ex))
+                st.error("Erro: " + str(ex))
         st.markdown("---")
         st.markdown("#### Adicionar Manualmente")
         with st.form("form_imp_mot"):
@@ -697,12 +893,11 @@ elif menu == "Registro de Motorista":
                 tel_imp = st.text_input("Telefone (opcional)")
                 tipo_imp = st.selectbox("Tipo Veiculo", TIPOS_VEICULO)
                 transp_imp = st.text_input("Transportadora (opcional)")
-            btn_imp = st.form_submit_button("Importar Motorista", use_container_width=True)
+            btn_imp = st.form_submit_button("Importar", use_container_width=True)
             if btn_imp:
                 if nome_imp:
-                    ni = {"nome": nome_imp, "placa": placa_imp.upper() if placa_imp else "", "telefone": tel_imp, "tipo_veiculo": tipo_imp, "transportadora": transp_imp, "importado": True, "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                    motoristas.append(ni)
-                    salvar_motoristas(motoristas)
+                    ni = {"nome": nome_imp, "placa": placa_imp.upper() if placa_imp else "", "telefone": tel_imp, "tipo_veiculo": tipo_imp, "transportadora": transp_imp, "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""}
+                    salvar_motorista(ni)
                     st.markdown('<div class="success-box">' + nome_imp + ' importado!</div>', unsafe_allow_html=True)
                     st.rerun()
                 else:
@@ -714,15 +909,7 @@ elif menu == "Registro de Motorista":
             df_imp = pd.DataFrame(mots_imp)
             cols_imp = ["nome", "placa", "tipo_veiculo", "telefone", "transportadora"]
             cols_ok = [c for c in cols_imp if c in df_imp.columns]
-            st.dataframe(df_imp[cols_ok], use_container_width=True, hide_index=True)
-            st.markdown("Total: **" + str(len(mots_imp)) + "** importados")
-            if st.button("Limpar Todos Importados", type="secondary"):
-                motoristas = [m for m in motoristas if not m.get("importado", False)]
-                salvar_motoristas(motoristas)
-                st.markdown('<div class="success-box">Lista limpa!</div>', unsafe_allow_html=True)
-                st.rerun()
-        else:
-            st.info("Nenhum motorista importado.")
+            st.
 
 elif menu == "Absenteismo":
     st.markdown("### Registro de Absenteismo")
@@ -743,9 +930,8 @@ elif menu == "Absenteismo":
             btn_abs = st.form_submit_button("Registrar Falta", use_container_width=True)
             if btn_abs:
                 if func_abs and func_abs != "Nenhum":
-                    nabs = {"funcionario": func_abs, "data": data_abs.strftime("%Y-%m-%d"), "motivo": motivo_abs, "observacoes": obs_abs, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                    absenteismo.append(nabs)
-                    salvar_absenteismo(absenteismo)
+                    nabs = {"funcionario": func_abs, "data": data_abs.strftime("%Y-%m-%d"), "motivo": motivo_abs, "observacoes": obs_abs, "registrado_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")}
+                    salvar_absenteismo_reg(nabs)
                     st.markdown('<div class="success-box">Falta registrada!</div>', unsafe_allow_html=True)
                     st.rerun()
                 else:
@@ -778,9 +964,8 @@ elif menu == "Desempenho por Funcao":
             btn_desemp = st.form_submit_button("Registrar Avaliacao", use_container_width=True)
             if btn_desemp:
                 if func_desemp and func_desemp != "Nenhum":
-                    nd = {"funcionario": func_desemp, "posicao": pos_desemp, "nota": nota_desemp, "data_avaliacao": data_desemp.strftime("%Y-%m-%d"), "observacoes": obs_desemp, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                    desempenho.append(nd)
-                    salvar_desempenho(desempenho)
+                    nd = {"funcionario": func_desemp, "posicao": pos_desemp, "nota": nota_desemp, "data_avaliacao": data_desemp.strftime("%Y-%m-%d"), "observacoes": obs_desemp, "registrado_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")}
+                    salvar_desempenho_reg(nd)
                     st.markdown('<div class="success-box">Avaliacao registrada!</div>', unsafe_allow_html=True)
                     st.rerun()
                 else:
@@ -807,14 +992,17 @@ elif menu == "Forecast / Volume":
                 obs_fc = st.text_input("Observacoes")
             btn_fc = st.form_submit_button("Salvar Forecast", use_container_width=True)
             if btn_fc:
-                nfc = {"data": data_fc.strftime("%Y-%m-%d"), "volume": volume_fc, "observacoes": obs_fc, "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                forecasts.append(nfc)
-                salvar_forecast(forecasts)
-                st.markdown('<div class="success-box">Forecast salvo!</div>', unsafe_allow_html=True)
-                st.rerun()
+                if volume_fc > 0:
+                    nfc = {"data": data_fc.strftime("%d/%m/%Y"), "volume": volume_fc, "observacoes": obs_fc, "registrado_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")}
+                    salvar_forecast_reg(nfc)
+                    st.markdown('<div class="success-box">Forecast salvo! Data: ' + data_fc.strftime("%d/%m/%Y") + ' | Volume: ' + str(volume_fc) + '</div>', unsafe_allow_html=True)
+                    st.rerun()
+                else:
+                    st.error("Informe um volume maior que zero!")
         st.markdown("---")
         st.markdown("#### Upload de Forecast (CSV/Excel)")
-        arq_up = st.file_uploader("Colunas: data, volume", type=["csv", "xlsx"])
+        st.markdown("**Colunas obrigatorias:** data (dd/mm/aaaa), volume")
+        arq_up = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="up_fc")
         if arq_up:
             try:
                 if arq_up.name.endswith(".csv"):
@@ -822,19 +1010,30 @@ elif menu == "Forecast / Volume":
                 else:
                     df_up = pd.read_excel(arq_up)
                 st.dataframe(df_up, use_container_width=True, hide_index=True)
-                if st.button("Importar Forecast", type="primary"):
+                st.markdown("Total: **" + str(len(df_up)) + "** registros")
+                if st.button("Importar Forecast", type="primary", use_container_width=True):
+                    qtd_ok = 0
                     for idx_row, row in df_up.iterrows():
-                        nfc = {"data": str(row.get("data", "")), "volume": int(row.get("volume", 0)), "observacoes": "Upload", "registrado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M")}
-                        forecasts.append(nfc)
-                    salvar_forecast(forecasts)
-                    st.markdown('<div class="success-box">' + str(len(df_up)) + ' registros importados!</div>', unsafe_allow_html=True)
+                        data_raw = str(row.get("data", "")).strip()
+                        vol_raw = row.get("volume", 0)
+                        try:
+                            vol_int = int(float(vol_raw))
+                        except Exception:
+                            vol_int = 0
+                        if vol_int > 0 and data_raw and data_raw != "nan":
+                            nfc = {"data": data_raw, "volume": vol_int, "observacoes": "Upload", "registrado_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M")}
+                            salvar_forecast_reg(nfc)
+                            qtd_ok += 1
+                    st.markdown('<div class="success-box">' + str(qtd_ok) + ' registros importados!</div>', unsafe_allow_html=True)
                     st.rerun()
             except Exception as ex:
                 st.error("Erro: " + str(ex))
     with tab2:
         if forecasts:
             df_fc = pd.DataFrame(forecasts)
-            st.dataframe(df_fc, use_container_width=True, hide_index=True)
+            cols_fc = ["data", "volume", "observacoes", "registrado_em"]
+            cols_ok = [c for c in cols_fc if c in df_fc.columns]
+            st.dataframe(df_fc[cols_ok], use_container_width=True, hide_index=True)
         else:
             st.info("Nenhum forecast registrado.")
 
@@ -880,19 +1079,18 @@ elif menu == "Validacao por Foto (IA)":
                     contagem_manual[obj] = qtd
             total_manual = sum(contagem_manual.values())
             if st.button("Salvar Validacao", type="primary", use_container_width=True):
-                nv = {"tipo": tipo_val, "data": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M"), "total_objetos_ia": total_ia, "contagem_ia": contagem_ia, "total_objetos_manual": total_manual, "contagem_manual": contagem_manual}
+                nv = {"tipo": tipo_val, "data": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "total_objetos_ia": total_ia, "contagem_ia": contagem_ia, "total_objetos_manual": total_manual, "contagem_manual": contagem_manual, "foto": ""}
                 nf = "val_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
                 cf = os.path.join(PASTA_FOTOS, nf)
                 image.save(cf)
                 nv["foto"] = nf
-                validacoes.append(nv)
-                salvar_validacoes(validacoes)
+                salvar_validacao(nv)
                 st.markdown('<div class="success-box">Validacao salva!</div>', unsafe_allow_html=True)
                 st.rerun()
     with tab2:
         if validacoes:
-            for v in sorted(validacoes, key=lambda x: x.get("data", ""), reverse=True)[:10]:
-                tia = v.get("total_objetos_ia", v.get("total_objetos", 0))
+            for v in validacoes[:10]:
+                tia = v.get("total_objetos_ia", 0)
                 teq = v.get("total_objetos_manual", 0)
                 st.markdown("- **" + v.get("tipo", "") + "** - " + v.get("data", "")[:16] + " - IA: " + str(tia) + " | Equipe: " + str(teq))
         else:
@@ -909,7 +1107,7 @@ elif menu == "Scanner QR/Barcode":
         destino_input = st.text_input("Destino", placeholder="Digite o destino")
         if st.button("Adicionar a Lista", type="primary", use_container_width=True):
             if codigo_input:
-                item_scan = {"codigo": codigo_input, "destino": destino_input, "horario": datetime.now(FUSO_BR).strftime("%Y-%m-%d %H:%M:%S")}
+                item_scan = {"codigo": codigo_input, "destino": destino_input, "horario": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M:%S")}
                 st.session_state["scanner_lista"].append(item_scan)
                 st.markdown('<div class="success-box">Adicionado: ' + codigo_input + '</div>', unsafe_allow_html=True)
             else:
@@ -978,7 +1176,7 @@ elif menu == "Enviar por WhatsApp":
 
 elif menu == "Relatorios":
     st.markdown("### Relatorios")
-    tipo_rel = st.selectbox("Tipo", ["Escalas", "Motoristas", "Validacoes", "Funcionarios", "Absenteismo", "Desempenho", "Forecast"])
+    tipo_rel = st.selectbox("Tipo", ["Escalas", "Motoristas", "Validacoes", "Funcionarios", "Absenteismo", "Desempenho", "Forecast", "Timer CPT"])
     dr1, dr2 = st.columns(2)
     with dr1:
         data_ini = st.date_input("Inicio", value=date.today() - timedelta(days=7), key="rel_ini")
@@ -1000,7 +1198,9 @@ elif menu == "Relatorios":
     elif tipo_rel == "Desempenho":
         dados_rel = [d for d in carregar_desempenho() if di_str <= d.get("data_avaliacao", "")[:10] <= df_str]
     elif tipo_rel == "Forecast":
-        dados_rel = [f for f in carregar_forecast() if di_str <= f.get("data", "") <= df_str]
+        dados_rel = carregar_forecast()
+    elif tipo_rel == "Timer CPT":
+        dados_rel = [t for t in carregar_timer_historico() if di_str <= t.get("data", "") <= df_str]
     if dados_rel:
         df_rel = pd.DataFrame(dados_rel)
         st.dataframe(df_rel, use_container_width=True, hide_index=True)
@@ -1028,7 +1228,7 @@ elif menu == "Configuracoes":
         st.markdown("- **Fuso:** America/Sao_Paulo")
         st.markdown("---")
         st.markdown("#### Meta CPT (editavel)")
-        st.markdown("CPT atual: **" + str(CPT_HORA).zfill(2) + "h" + str(CPT_MINUTO).zfill(2) + "** | Alerta: **" + str(ALERTA_HORA) + "h**")
+        st.markdown("CPT atual: **" + str(CPT_HORA).zfill(2) + ":" + str(CPT_MINUTO).zfill(2) + "** | Alerta: **" + str(ALERTA_HORA) + "h**")
         with st.form("form_cpt"):
             cpt1, cpt2, cpt3 = st.columns(3)
             with cpt1:
@@ -1041,11 +1241,12 @@ elif menu == "Configuracoes":
             if btn_cpt:
                 cfg = {"cpt_hora": novo_cpt_hora, "cpt_minuto": novo_cpt_min, "alerta_hora": novo_alerta}
                 salvar_config(cfg)
-                st.markdown('<div class="success-box">CPT atualizado para ' + str(novo_cpt_hora).zfill(2) + 'h' + str(novo_cpt_min).zfill(2) + '</div>', unsafe_allow_html=True)
+                st.markdown('<div class="success-box">CPT atualizado para ' + str(novo_cpt_hora).zfill(2) + ':' + str(novo_cpt_min).zfill(2) + '</div>', unsafe_allow_html=True)
                 st.rerun()
     with tab2:
         st.markdown("#### Sistema")
-        st.markdown("- **Versao:** 7.0")
+        st.markdown("- **Versao:** 8.0 (Supabase)")
+        st.markdown("- **Banco:** PostgreSQL (Supabase)")
         st.markdown("- **Framework:** Streamlit")
         st.markdown("- **IA:** YOLO v8 (" + ("Instalado" if yolo_ok else "Nao instalado") + ")")
     with tab3:
@@ -1084,9 +1285,8 @@ elif menu == "Gerenciar Usuarios":
                     if existe:
                         st.error("Usuario ja existe!")
                     else:
-                        nu = {"usuario": novo_user.lower().strip(), "senha": cifrar_senha(nova_senha), "nome": novo_nome, "perfil": novo_perfil, "status": "Ativo", "criado_em": datetime.now(FUSO_BR).strftime("%Y-%m-%d")}
-                        usuarios.append(nu)
-                        salvar_usuarios(usuarios)
+                        nu = {"usuario": novo_user.lower().strip(), "senha": cifrar_senha(nova_senha), "nome": novo_nome, "perfil": novo_perfil, "status": "Ativo", "criado_em": datetime.now(FUSO_BR).strftime("%d/%m/%Y")}
+                        salvar_usuario(nu)
                         st.markdown('<div class="success-box">Usuario ' + novo_user + ' criado!</div>', unsafe_allow_html=True)
                         st.rerun()
                 else:
@@ -1117,18 +1317,20 @@ elif menu == "Gerenciar Usuarios":
                     nova_s = st.text_input("Nova Senha (vazio = manter)", type="password")
                 bsu = st.form_submit_button("Salvar", use_container_width=True)
                 if bsu:
-                    usuarios[idx_u]["nome"] = eun
-                    usuarios[idx_u]["perfil"] = eup
-                    usuarios[idx_u]["status"] = eus
+                    dados_u = {"nome": eun, "perfil": eup, "status": eus}
                     if nova_s:
-                        usuarios[idx_u]["senha"] = cifrar_senha(nova_s)
-                    salvar_usuarios(usuarios)
+                        dados_u["senha"] = cifrar_senha(nova_s)
+                    atualizar_usuario(ue["id"], dados_u)
                     st.markdown('<div class="success-box">Atualizado!</div>', unsafe_allow_html=True)
                     st.rerun()
         else:
             st.info("Nenhum usuario.")
 
 
-rodape = '<div style="text-align: center; color: #666; padding: 20px;">' + SITE + ' Manager v7.0 | First Mile Operations | Amazon Logistics</div>'
+rodape = '<div style="text-align: center; color: #666; padding: 20px;">' + SITE + ' Manager v8.0 | First Mile Operations | Supabase</div>'
 st.markdown("---")
 st.markdown(rodape, unsafe_allow_html=True)
+
+
+
+PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configuracoes", "Gerenciar Usuarios"], "Supervisor": ["Dashboard", "Cadastro de Funcionarios", "Gerador de Escala", "Registro de Motorista", "Absenteismo", "Desempenho por Funcao", "Forecast / Volume", "Validacao por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios"], "Operador": ["Dashboard", "Registro de Motorista", "Validacao por Foto (IA)", "Scanner QR/Barcode"], "Equipe": ["Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
