@@ -861,7 +861,7 @@ elif menu == "Registro de Motorista":
         st.markdown("Envie um Excel ou CSV. **Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
         st.markdown("Apenas **nome** e obrigatorio.")
         st.markdown("---")
-                arq_mot = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="upload_mot")
+        arq_mot = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="upload_mot")
         if arq_mot:
             try:
                 if arq_mot.name.endswith(".csv"):
