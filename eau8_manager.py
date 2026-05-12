@@ -871,7 +871,7 @@ elif menu == "Registro de Motorista":
                 st.session_state["df_mot_upload"] = df_imp_up
             except Exception as ex:
                 st.error("Erro ao ler arquivo: " + str(ex))
-          if "df_mot_upload" in st.session_state and st.session_state["df_mot_upload"] is not None:
+            if "df_mot_upload" in st.session_state and st.session_state["df_mot_upload"] is not None:
             df_imp_up = st.session_state["df_mot_upload"]
             st.dataframe(df_imp_up, use_container_width=True, hide_index=True)
             st.markdown("Total: **" + str(len(df_imp_up)) + "** motoristas")
