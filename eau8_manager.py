@@ -473,12 +473,19 @@ if menu == "Dashboard":
     agora_dt = datetime.now(FUSO_BR)
     timer_ativo = st.session_state.get("timer_ativo", False)
     st.markdown("### Timer CPT")
+    timer_hoje = [t for t in carregar_timer_historico() if t.get("data","") == hoje_str]
+    ultimo_timer = None
+    for tt in timer_hoje:
+        if tt.get("hora_conclusao", "") == "":
+            ultimo_timer = tt
+            break
+    timer_ativo = ultimo_timer is not None
     cpt_target = agora_dt.replace(hour=CPT_HORA, minute=CPT_MINUTO, second=0, microsecond=0)
     if not timer_ativo:
         timer_texto = "Aguardando"
         timer_cor = "#666666"
         timer_sombra = "0 0 20px rgba(100,100,100,0.3)"
-        timer_sub = "Clique em Iniciar Turno"
+        timer_sub = "Inicie o turno abaixo"
         pct_circulo = 0
     else:
         if agora_dt > cpt_target:
@@ -528,35 +535,27 @@ if menu == "Dashboard":
     bt1, bt2, bt3 = st.columns(3)
     with bt1:
         if not timer_ativo:
-            if st.button("Iniciar Turno", type="primary", use_container_width=True):
-                st.session_state["timer_ativo"] = True
-                st.session_state["timer_inicio"] = agora_dt.strftime("%H:%M")
-                st.rerun()
+            with st.form("form_iniciar_turno"):
+                hora_inicio_input = st.text_input("Horario de inicio (HH:MM)", value=agora_dt.strftime("%H:%M"))
+                btn_iniciar = st.form_submit_button("Iniciar Turno", use_container_width=True)
+                if btn_iniciar:
+                    t = {"data": hoje_str, "hora_inicio": hora_inicio_input, "hora_conclusao": "", "registrado_em": agora_dt.strftime("%d/%m/%Y %H:%M"), "registrado_por": nome_logado}
+                    salvar_timer_historico(t)
+                    st.rerun()
         else:
-            st.markdown('<div class="success-box">Turno iniciado as ' + st.session_state.get("timer_inicio", "") + '</div>', unsafe_allow_html=True)
+            st.markdown('<div class="success-box">Turno iniciado as ' + ultimo_timer.get("hora_inicio", "") + '</div>', unsafe_allow_html=True)
     with bt2:
         if timer_ativo:
-            if st.button("Concluir Turno", use_container_width=True):
-                st.session_state["mostrar_conclusao"] = True
+            with st.form("form_concluir_turno"):
+                hora_conclusao_input = st.text_input("Horario de conclusao (HH:MM)", value=agora_dt.strftime("%H:%M"))
+                btn_concluir = st.form_submit_button("Concluir Turno", use_container_width=True)
+                if btn_concluir:
+                    execute("UPDATE timer_historico SET hora_conclusao=%s WHERE id=%s", (hora_conclusao_input, ultimo_timer["id"]))
+                    st.markdown('<div class="success-box">Turno concluido as ' + hora_conclusao_input + '!</div>', unsafe_allow_html=True)
+                    st.rerun()
     with bt3:
         if st.button("Atualizar", use_container_width=True):
             st.rerun()
-    if st.session_state.get("mostrar_conclusao", False):
-        st.markdown("---")
-        st.markdown("#### Registrar Conclusao")
-        with st.form("form_conclusao"):
-            hora_conclusao = st.text_input("Horario de conclusao (HH:MM)", value=agora_dt.strftime("%H:%M"))
-            btn_conc = st.form_submit_button("Confirmar Conclusao", use_container_width=True)
-            if btn_conc:
-                t = {"data": hoje_str, "hora_inicio": st.session_state.get("timer_inicio", ""), "hora_conclusao": hora_conclusao, "registrado_em": agora_dt.strftime("%d/%m/%Y %H:%M"), "registrado_por": nome_logado}
-                salvar_timer_historico(t)
-                st.session_state["timer_ativo"] = False
-                st.session_state["timer_inicio"] = ""
-                st.session_state["mostrar_conclusao"] = False
-                st.markdown('<div class="success-box">Turno concluido as ' + hora_conclusao + ' e registrado no historico!</div>', unsafe_allow_html=True)
-                st.rerun()
-    st.markdown("---")
-    c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.metric("Funcionarios Ativos", len(ativos), str(len(fixos)) + " fixos / " + str(len(freelancers)) + " free")
     with c2:
@@ -778,7 +777,9 @@ elif menu == "Registro de Motorista":
         tel_mot = ""
         tipo_veic = "Carreta (28 pallets)"
         if opcao_mot == "Selecionar da lista importada":
-            mots_importados = [m for m in motoristas if m.get("importado", False)]
+            data_filtro = st.date_input("Data", value=date.today(), key="dt_filtro_mot")
+            data_filtro_str = data_filtro.strftime("%Y-%m-%d")
+            mots_importados = [m for m in motoristas if m.get("importado", False) and m.get("data_chegada", "")[:10] == data_filtro_str]
             if mots_importados:
                 nomes_imp = ["Selecione..."] + [m["nome"] + " | " + str(m.get("placa", "")) for m in mots_importados]
                 sel_imp = st.selectbox("Motorista importado:", nomes_imp, key="sel_mot_imp")
@@ -807,16 +808,15 @@ elif menu == "Registro de Motorista":
             foto_mot = st.camera_input("Foto do Veiculo (opcional)")
             btn_mot = st.form_submit_button("Registrar", use_container_width=True)
             if btn_mot:
-                nm = {"nome": nome_mot_input or "N/I", "placa": placa_mot_input.upper() if placa_mot_input else "", "telefone": tel_mot_input, "tipo_veiculo": tipo_veic_input, "horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot, "destino": destino_mot, "transportadora": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": False, "foto": ""}
-                if foto_mot:
-                    nf = "mot_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
-                    cf = os.path.join(PASTA_MOTORISTAS, nf)
-                    img_m = Image.open(foto_mot)
-                    img_m.save(cf)
-                    nm["foto"] = nf
-                salvar_motorista(nm)
-                st.markdown('<div class="success-box">' + (nome_mot_input or "Motorista") + ' registrado com sucesso!</div>', unsafe_allow_html=True)
-                st.rerun()
+                if opcao_mot == "Selecionar da lista importada" and sel_imp != "Selecione...":
+                    dados_att = {"nome": nome_mot_input or mi["nome"], "placa": placa_mot_input.upper() if placa_mot_input else mi.get("placa",""), "tipo_veiculo": tipo_veic_input, "horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot}
+                    atualizar_motorista(mi["id"], dados_att)
+                    st.markdown('<div class="success-box">' + (nome_mot_input or mi["nome"]) + ' atualizado com sucesso!</div>', unsafe_allow_html=True)
+                    st.rerun()
+                else:
+                    nm = {"nome": nome_mot_input or "N/I", "placa": placa_mot_input.upper() if placa_mot_input else "", "telefone": tel_mot_input, "tipo_veiculo": tipo_veic_input, "horario_chegada": h_chegada, "horario_saida": h_saida, "observacoes": obs_mot, "destino": destino_mot, "transportadora": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": False, "foto": ""}
+                    if foto_mot:
+                        nf = "mot_" + datetime.now(FUSO_BR).strftime("%Y%m%d_%H%M%S") + ".jpg"
     with tab2:
         mots_registrados = [m for m in motoristas if not m.get("importado", False)]
         if mots_registrados:
@@ -861,6 +861,8 @@ elif menu == "Registro de Motorista":
         st.markdown("Envie um Excel ou CSV. **Colunas:** nome, placa, telefone, tipo_veiculo, transportadora")
         st.markdown("Apenas **nome** e obrigatorio.")
         st.markdown("---")
+        st.markdown("#### Data do Upload")
+        data_upload_mot = st.date_input("Data dos motoristas", value=date.today(), key="dt_upload_mot")
         arq_mot = st.file_uploader("Envie o arquivo", type=["csv", "xlsx"], key="upload_mot")
         if arq_mot:
             try:
@@ -880,7 +882,7 @@ elif menu == "Registro de Motorista":
                 for idx_row, row in df_imp_up.iterrows():
                     nome_r = str(row.get("nome", "")).strip()
                     if nome_r and nome_r != "nan":
-                        ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": "", "data_chegada": datetime.now(FUSO_BR).strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""}
+                        ni = {"nome": nome_r, "placa": str(row.get("placa", "")).strip().upper() if str(row.get("placa", "")) != "nan" else "", "telefone": str(row.get("telefone", "")).strip() if str(row.get("telefone", "")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo", "Carreta (28 pallets)")).strip() if str(row.get("tipo_veiculo", "")) != "nan" else "Carreta (28 pallets)", "transportadora": str(row.get("transportadora", "")).strip() if str(row.get("transportadora", "")) != "nan" else "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": "", "data_chegada": data_upload_mot.strftime("%Y-%m-%d"), "data_registro": datetime.now(FUSO_BR).strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""}
                         salvar_motorista(ni)
                         qtd_imp += 1
                 st.session_state["df_mot_upload"] = None
