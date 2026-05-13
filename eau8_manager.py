@@ -24,11 +24,8 @@ def gerar_hash(senha):
 SENHA_ADMIN = gerar_hash(str(4848) + str(8813) + str(58) + "fer")
 SENHA_EQUIPE = gerar_hash("eua" + str(8))
 
-@st.cache_resource
-def get_pool():
-    from psycopg2 import pool
-    return pool.SimpleConnectionPool(
-        1, 5,
+def get_conn():
+    return psycopg2.connect(
         host=st.secrets["DB_HOST"],
         port=st.secrets["DB_PORT"],
         dbname=st.secrets["DB_NAME"],
@@ -36,11 +33,35 @@ def get_pool():
         password=st.secrets["DB_PASS"]
     )
 
-def get_conn():
-    return get_pool().getconn()
+def query(sql, params=None):
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(sql, params or ())
+    cols = [desc.name for desc in cur.description] if cur.description else []
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+    return [dict(zip(cols, r)) for r in rows]
 
-def devolver_conn(conn):
-    get_pool().putconn(conn)
+def query_one(sql, params=None):
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(sql, params or ())
+    cols = [desc.name for desc in cur.description] if cur.description else []
+    row = cur.fetchone()
+    cur.close()
+    conn.close()
+    if row:
+        return dict(zip(cols, row))
+    return None
+
+def execute(sql, params=None):
+    conn = get_conn()
+    cur = conn.cursor()
+    cur.execute(sql, params or ())
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 def query(sql, params=None):
