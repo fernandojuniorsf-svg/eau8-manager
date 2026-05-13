@@ -65,7 +65,7 @@ def init_db():
     cur.execute("""CREATE TABLE IF NOT EXISTS forecast (id SERIAL PRIMARY KEY, data TEXT, volume INTEGER, observacoes TEXT, registrado_em TEXT)""")
     cur.execute("""CREATE TABLE IF NOT EXISTS validacoes (id SERIAL PRIMARY KEY, tipo TEXT, data TEXT, total_objetos_ia INTEGER, contagem_ia TEXT, total_objetos_manual INTEGER, contagem_manual TEXT, foto TEXT)""")
     cur.execute("""CREATE TABLE IF NOT EXISTS timer_historico (id SERIAL PRIMARY KEY, data TEXT, hora_inicio TEXT, hora_conclusao TEXT, registrado_em TEXT, registrado_por TEXT)""")
-    cur.execute("""CREATE TABLE IF NOT EXISTS config (id SERIAL PRIMARY KEY, chave TEXT UNIQUE, valor TEXT)""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS configuracoes (id SERIAL PRIMARY KEY, chave TEXT UNIQUE, valor TEXT)""")
     cur.execute("SELECT COUNT(*) FROM usuarios")
     if cur.fetchone() == 0:
         cur.execute("INSERT INTO usuarios (usuario, senha, nome, perfil, status, criado_em) VALUES (%s,%s,%s,%s,%s,%s)", ("fernando", SENHA_ADMIN, "Fernando Junior", "Admin", "Ativo", "2026-05-03"))
@@ -1216,7 +1216,7 @@ elif menu == "Gerenciar Usuarios":
             btn_novo_user = st.form_submit_button("Criar Usuario", use_container_width=True)
             if btn_novo_user:
                 if novo_user and nova_senha and novo_nome:
-                    hash_senha = cifrar_senha(nova_senha)
+                    hash_senha = gerar_hash(nova_senha)
                     salvar_usuario({"usuario": novo_user, "senha": hash_senha, "nome": novo_nome, "perfil": novo_perfil, "status": "Ativo"})
                     st.markdown("<div class=\"success-box\">Usuario " + novo_user + " criado!</div>", unsafe_allow_html=True)
                     st.rerun()
@@ -1249,7 +1249,7 @@ elif menu == "Gerenciar Usuarios":
                 if btn_salvar_u:
                     dados_u = {"perfil": edit_perfil_u, "status": edit_status_u}
                     if nova_senha_u:
-                        dados_u["senha"] = cifrar_senha(nova_senha_u)
+                        dados_u["senha"] = gerar_hash(nova_senha_u)
                     atualizar_usuario(user_sel["id"], dados_u)
                     st.markdown("<div class=\"success-box\">Usuario atualizado!</div>", unsafe_allow_html=True)
                     st.rerun()
