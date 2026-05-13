@@ -1205,7 +1205,7 @@ elif menu == "Relatorios":
             else:
                 st.info("Nenhum dado para exportar.")
 
-elif menu == "Configuracoes":
+elif menu == "Configurações":
     st.markdown("### Configuracoes")
     tab1, tab2 = st.tabs(["Geral", "Meta CPT"])
     with tab1:
@@ -1232,7 +1232,7 @@ elif menu == "Configuracoes":
                 st.rerun()
         st.markdown("**Meta atual:** " + str(int(get_config_valor("cpt_hora", str(CPT_HORA)))).zfill(2) + ":" + str(int(get_config_valor("cpt_minuto", str(CPT_MINUTO)))).zfill(2))
 
-elif menu == "Gerenciar Usuarios":
+elif menu == "Gerenciar Usuários":
     st.markdown("### Gerenciar Usuarios")
     usuarios_lista = carregar_usuarios()
     tab1, tab2 = st.tabs(["Criar Usuario", "Lista / Editar"])
