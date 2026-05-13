@@ -201,8 +201,8 @@ if "logado" not in st.session_state:
     st.session_state["logado"] = False
 
 if not st.session_state["logado"]:
-        _, col_login, _ = st.columns([1,2,1])
-        with col_login:
+    _, col_login, _ = st.columns([1,2,1])
+    with col_login:
         st.markdown("# " + SITE + " Manager")
         st.markdown("*First Mile Operations | Amazon Logistics*")
         st.markdown("---")
