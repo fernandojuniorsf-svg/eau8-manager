@@ -497,13 +497,20 @@ elif menu == "Cadastro de Funcionários":
                 with ef2:
                     edit_turno = st.selectbox("Turno", ["Noturno", "Diurno", "Misto"], index=["Noturno", "Diurno", "Misto"].index(func_sel.get("turno","Noturno")) if func_sel.get("turno","Noturno") in ["Noturno", "Diurno", "Misto"] else 0)
                     edit_tel = st.text_input("Telefone", value=func_sel.get("telefone",""))
+                pos_atuais = func_sel.get("posicoes_permitidas", "")
+                lista_pos_atuais = pos_atuais.split(",") if pos_atuais else POSICOES
+                todas_edit = st.checkbox("Todas as posicoes", value=(pos_atuais == "" or len(pos_atuais) < 3), key="chk_todas_edit")
+                if todas_edit:
+                    posicoes_edit = POSICOES
+                else:
+                    posicoes_edit = st.multiselect("Posicoes permitidas", POSICOES, default=[p for p in lista_pos_atuais if p in POSICOES], key="ms_pos_edit")
                 col_btn1, col_btn2 = st.columns(2)
                 with col_btn1:
                     btn_salvar_func = st.form_submit_button("Salvar Alteracoes", use_container_width=True)
                 with col_btn2:
                     btn_excluir_func = st.form_submit_button("Excluir Funcionario", use_container_width=True)
                 if btn_salvar_func:
-                    atualizar_funcionario(func_sel["id"], {"tipo": edit_tipo, "status": edit_status, "turno": edit_turno, "telefone": edit_tel})
+                    atualizar_funcionario(func_sel["id"], {"tipo": edit_tipo, "status": edit_status, "turno": edit_turno, "telefone": edit_tel, "posicoes_permitidas": ",".join(posicoes_edit)})
                     st.markdown("<div class=\"success-box\">Alteracoes salvas!</div>", unsafe_allow_html=True)
                     st.rerun()
                 if btn_excluir_func:
