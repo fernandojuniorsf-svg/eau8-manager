@@ -905,7 +905,7 @@ elif menu == "Absenteismo":
         else:
             st.info("Nenhum registro de absenteismo.")
 
-elif menu == "Desempenho por Funcao":
+elif menu == "Desempenho por Função":
     st.markdown("### Avaliacao de Desempenho por Funcao")
     funcionarios = carregar_funcionarios()
     desempenho_lista = carregar_desempenho()
