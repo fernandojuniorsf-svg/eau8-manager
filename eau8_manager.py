@@ -185,16 +185,28 @@ PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionarios", "Gerador de 
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
 st.markdown("""<style>
-    .stApp {background-color: #0e0e0e; color: #f0f0f0;}
-    .stSidebar {background-color: #1a1a1a !important;}
-    .stMetric {background: #1e1e1e; padding: 16px; border-radius: 10px; border: 1px solid #333;}
-    .success-box {background: #1a3a1a; border: 1px solid #00C853; border-radius: 8px; padding: 12px; color: #00C853; text-align: center; margin: 8px 0;}
-    .warning-box {background: #3a3a1a; border: 1px solid #FF9900; border-radius: 8px; padding: 12px; color: #FF9900; text-align: center; margin: 8px 0;}
-    .error-box {background: #3a1a1a; border: 1px solid #EF4444; border-radius: 8px; padding: 12px; color: #EF4444; text-align: center; margin: 8px 0;}
-    div[data-testid="stForm"] {background: #1e1e1e; padding: 20px; border-radius: 12px; border: 1px solid #333;}
-    .progress-bar {width: 100%; height: 8px; background: #333; border-radius: 4px; margin: 8px 0;}
-    .progress-fill {height: 100%; background: #FF9900; border-radius: 4px; transition: width 0.5s;}
-    div[data-testid="stMetric"] {background: #1e1e1e; padding: 16px; border-radius: 10px; border: 1px solid #333;}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+* {font-family: 'Inter', sans-serif;}
+.stApp {background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%); color: #e0e0e0;}
+[data-testid="stSidebar"] {background: linear-gradient(180deg, #0d0d0d 0%, #1a1a1a 100%) !important; border-right: 1px solid #2a2a2a;}
+[data-testid="stSidebar"] .stMarkdown {color: #ccc;}
+div[data-testid="stMetric"] {background: linear-gradient(135deg, #1e1e2e 0%, #2a2a3a 100%); padding: 20px; border-radius: 14px; border: 1px solid #333; box-shadow: 0 4px 20px rgba(0,0,0,0.3);}
+div[data-testid="stMetric"] label {color: #888 !important; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;}
+div[data-testid="stMetric"] [data-testid="stMetricValue"] {color: #FF9900 !important; font-weight: 700;}
+div[data-testid="stForm"] {background: linear-gradient(135deg, #1a1a2a 0%, #222233 100%); padding: 24px; border-radius: 16px; border: 1px solid #333; box-shadow: 0 8px 32px rgba(0,0,0,0.3);}
+.stButton > button {background: linear-gradient(135deg, #FF9900 0%, #e68a00 100%); color: #000; font-weight: 600; border: none; border-radius: 8px; padding: 8px 24px; transition: all 0.3s;}
+.stButton > button:hover {background: linear-gradient(135deg, #ffad33 0%, #FF9900 100%); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,153,0,0.3);}
+.success-box {background: linear-gradient(135deg, #0a2a0a 0%, #1a3a1a 100%); border: 1px solid #00C853; border-radius: 10px; padding: 14px; color: #a5d6a7; box-shadow: 0 4px 12px rgba(0,200,83,0.1);}
+.warning-box {background: linear-gradient(135deg, #2a2a0a 0%, #3a3a1a 100%); border: 1px solid #FF9900; border-radius: 10px; padding: 14px; color: #ffe082; box-shadow: 0 4px 12px rgba(255,153,0,0.1);}
+.error-box {background: linear-gradient(135deg, #2a0a0a 0%, #3a1a1a 100%); border: 1px solid #EF4444; border-radius: 10px; padding: 14px; color: #ef9a9a; box-shadow: 0 4px 12px rgba(239,68,68,0.1);}
+.progress-bar {width: 100%; height: 10px; background: #222; border-radius: 6px; margin: 10px 0; overflow: hidden;}
+.progress-fill {height: 100%; background: linear-gradient(90deg, #FF9900 0%, #ffcc00 100%); border-radius: 6px; transition: width 0.8s ease;}
+h1, h2, h3 {color: #FF9900 !important; font-weight: 700;}
+.stDataFrame {border-radius: 12px; overflow: hidden;}
+div[data-testid="stDataFrame"] > div {border-radius: 12px;}
+.stSelectbox > div > div {background: #1e1e2e; border: 1px solid #333; border-radius: 8px;}
+.stTextInput > div > div > input {background: #1e1e2e; border: 1px solid #333; border-radius: 8px; color: #e0e0e0;}
+.stNumberInput > div > div > input {background: #1e1e2e; border: 1px solid #333; border-radius: 8px; color: #e0e0e0;}
 </style>""", unsafe_allow_html=True)
 
 if "logado" not in st.session_state:
