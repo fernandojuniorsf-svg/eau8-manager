@@ -1110,21 +1110,18 @@ elif menu == "Scanner QR/Barcode":
             if qtd_s > 0:
                 st.markdown("- " + s + ": " + str(qtd_s) + " codigos")
         st.markdown("---")
-        texto_wpp = "*Lista Scanner - " + hoje_str + "*
-
-"
+        texto_wpp = "*Lista Scanner - " + hoje_str + "*" + chr(10) + chr(10)
         for s in ["EUA8", "ELP8", "ESA8"]:
             itens_s = [x for x in st.session_state["lista_scan"] if x["site"] == s]
             if itens_s:
-                texto_wpp += "*" + s + " (" + str(len(itens_s)) + "):*
-"
+                texto_wpp += "*" + s + " (" + str(len(itens_s)) + "):*" + chr(10)
                 for idx_s, it in enumerate(itens_s):
-                    texto_wpp += str(idx_s+1) + ". " + it["codigo"] + " - " + it["hora"] + "
-"
-                texto_wpp += "
-"
+                    texto_wpp += str(idx_s+1) + ". " + it["codigo"] + " - " + it["hora"] + chr(10)
+                texto_wpp += chr(10)
         import urllib.parse
         link_wpp = "https://wa.me/?text=" + urllib.parse.quote(texto_wpp)
+        st.markdown("[Enviar por WhatsApp](" + link_wpp + ")")
+
         st.markdown("[Enviar por WhatsApp](" + link_wpp + ")")
         c_limpar1, c_limpar2 = st.columns(2)
         with c_limpar1:
