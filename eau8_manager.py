@@ -463,14 +463,20 @@ elif menu == "Cadastro de Funcionários":
                 status_func = st.selectbox("Status", ["Ativo", "Inativo", "Ferias", "Afastado"])
                 tel_func = st.text_input("Telefone (opcional)")
             obs_func = st.text_area("Observacoes", height=80)
+            todas_pos = st.checkbox("Todas as posicoes", value=True, key="chk_todas")
+            if todas_pos:
+                posicoes_func = POSICOES
+            else:
+                posicoes_func = st.multiselect("Posicoes permitidas", POSICOES, key="ms_pos")
             btn_func = st.form_submit_button("Cadastrar", use_container_width=True)
             if btn_func:
                 if nome_func:
-                    salvar_funcionario({"nome": nome_func, "tipo": tipo_func, "funcao": funcao_func, "turno": turno_func, "status": status_func, "data_admissao": hoje_str, "telefone": tel_func, "observacoes": obs_func})
+                    salvar_funcionario({"nome": nome_func, "tipo": tipo_func, "funcao": funcao_func, "turno": turno_func, "status": status_func, "data_admissao": hoje_str, "telefone": tel_func, "observacoes": obs_func, "posicoes_permitidas": ",".join(posicoes_func)})
                     st.markdown("<div class=\"success-box\">" + nome_func + " cadastrado!</div>", unsafe_allow_html=True)
                     st.rerun()
                 else:
                     st.error("Informe o nome.")
+
     with tab2:
         if funcionarios:
             df_func = pd.DataFrame(funcionarios)
