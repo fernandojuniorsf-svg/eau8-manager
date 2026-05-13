@@ -24,14 +24,24 @@ def gerar_hash(senha):
 SENHA_ADMIN = gerar_hash(str(4848) + str(8813) + str(58) + "fer")
 SENHA_EQUIPE = gerar_hash("eua" + str(8))
 
-def get_conn():
-    return psycopg2.connect(
+@st.cache_resource
+def get_pool():
+    from psycopg2 import pool
+    return pool.SimpleConnectionPool(
+        1, 5,
         host=st.secrets["DB_HOST"],
         port=st.secrets["DB_PORT"],
         dbname=st.secrets["DB_NAME"],
         user=st.secrets["DB_USER"],
         password=st.secrets["DB_PASS"]
     )
+
+def get_conn():
+    return get_pool().getconn()
+
+def devolver_conn(conn):
+    get_pool().putconn(conn)
+
 
 def query(sql, params=None):
     conn = get_conn()
