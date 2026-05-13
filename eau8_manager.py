@@ -451,11 +451,13 @@ elif menu == "Cadastro de Funcionários":
                 status_func = st.selectbox("Status", ["Ativo", "Inativo", "Ferias", "Afastado"])
                 tel_func = st.text_input("Telefone (opcional)")
             obs_func = st.text_area("Observacoes", height=80)
-            todas_pos = st.checkbox("Todas as posicoes", value=True, key="chk_todas")
-            if todas_pos:
-                posicoes_func = POSICOES
-            else:
-                posicoes_func = st.multiselect("Posicoes permitidas", POSICOES, key="ms_pos")
+            st.markdown("**Posicoes habilitadas:**")
+            todas_pos = st.checkbox("Selecionar todas", value=True, key="chk_todas")
+            posicoes_func = []
+            for idx_p, pos_nome in enumerate(POSICOES):
+                marcado = st.checkbox(pos_nome, value=todas_pos, key="pos_" + str(idx_p))
+                if marcado:
+                    posicoes_func.append(pos_nome)
             btn_func = st.form_submit_button("Cadastrar", use_container_width=True)
             if btn_func:
                 if nome_func:
