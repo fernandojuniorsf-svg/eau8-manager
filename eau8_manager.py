@@ -103,7 +103,7 @@ def carregar_motoristas():
     return query("SELECT * FROM motoristas ORDER BY id DESC")
 
 def salvar_motorista(m):
-    execute("INSERT INTO motoristas (nome, placa, tipo_veiculo, telefone, observacao, horario_chegada, horario_saida, Observações, destino, data_chegada, data_registro, importado, foto) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (m["nome"], m.get("placa",""), m.get("tipo_veiculo",""), m.get("telefone",""), m.get("observacao",""), m.get("horario_chegada",""), m.get("horario_saida",""), m.get("Observações",""), m.get("destino",""), m.get("data_chegada",""), m.get("data_registro",""), m.get("importado", False), m.get("foto","")))
+    execute("INSERT INTO motoristas (nome, placa, tipo_veiculo, telefone, observacao, horario_chegada, horario_saida, observacoes, destino, data_chegada, data_registro, importado, foto) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (m["nome"], m.get("placa",""), m.get("tipo_veiculo",""), m.get("telefone",""), m.get("observacao",""), m.get("horario_chegada",""), m.get("horario_saida",""), m.get("Observações",""), m.get("destino",""), m.get("data_chegada",""), m.get("data_registro",""), m.get("importado", False), m.get("foto","")))
 
 def atualizar_motorista(mid, dados):
     sets = ", ".join([k + "=%s" for k in dados.keys()])
@@ -748,7 +748,7 @@ elif menu == "Registro de Motorista":
                         tipo_r = str(row.get("tipo_veiculo", "")).strip()
                         tel_r = str(row.get("telefone", "")).strip()
                         dest_r = str(row.get("destino", "")).strip()
-                        salvar_motorista({"nome": nome_r, "placa": placa_r, "tipo_veiculo": tipo_r, "telefone": tel_r, "observacao": "", "horario_chegada": "", "horario_saida": "", "Observações": "", "destino": dest_r, "data_chegada": data_imp_str, "data_registro": agora_dt.strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""})
+                        salvar_motorista({"nome": nome_r, "placa": placa_r, "tipo_veiculo": tipo_r, "telefone": tel_r, "observacao": "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": dest_r, "data_chegada": data_imp_str, "data_registro": agora_dt.strftime("%d/%m/%Y %H:%M"), "importado": True, "foto": ""})
                         qtd_imp += 1
                 st.session_state["df_mot_upload"] = None
                 st.markdown("<div class=\"success-box\">" + str(qtd_imp) + " motoristas importados!</div>", unsafe_allow_html=True)
