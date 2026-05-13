@@ -163,10 +163,10 @@ def carregar_config():
     return {r["chave"]: r["valor"] for r in rows}
 
 def salvar_config(chave, valor):
-    execute("INSERT INTO config (chave, valor) VALUES (%s, %s) ON CONFLICT (chave) DO UPDATE SET valor = EXCLUDED.valor", (chave, valor))
+    execute("INSERT INTO configuracoes (chave, valor) VALUES (%s, %s) ON CONFLICT (chave) DO UPDATE SET valor = EXCLUDED.valor", (chave, valor))
 
 def get_config_valor(chave, default="0"):
-    r = query_one("SELECT valor FROM config WHERE chave=%s", (chave,))
+    r = query_one("SELECT valor FROM configuracoes WHERE chave=%s", (chave,))
     return r["valor"] if r else default
 
 try:
