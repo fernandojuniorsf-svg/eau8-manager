@@ -50,7 +50,7 @@ def query(sql, params=None):
     cols = [desc.name for desc in cur.description] if cur.description else []
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    devolver_conn(conn)
     return [dict(zip(cols, r)) for r in rows]
 
 def query_one(sql, params=None):
@@ -60,7 +60,7 @@ def query_one(sql, params=None):
     cols = [desc.name for desc in cur.description] if cur.description else []
     row = cur.fetchone()
     cur.close()
-    conn.close()
+    devolver_conn(conn)
     if row:
         return dict(zip(cols, row))
     return None
@@ -71,7 +71,7 @@ def execute(sql, params=None):
     cur.execute(sql, params or ())
     conn.commit()
     cur.close()
-    conn.close()
+    devolver_conn(conn)
 
 
 def init_db():
