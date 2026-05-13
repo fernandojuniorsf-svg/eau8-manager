@@ -590,7 +590,7 @@ elif menu == "Gerador de Escala":
                         escolhido = pool_diaristas.pop(0)
                         escala_gerada.append({"funcionario": escolhido, "posicao": posicao})
                         usados.append(escolhido)
-                     elif pool_fixos:
+                    elif pool_fixos:
                         candidatos = [f for f in pool_fixos if any(posicao in fn.get("posicoes_permitidas","") for fn in fixos if fn["nome"] == f)]
                         if not candidatos:
                             candidatos = [f for f in pool_fixos if any(fn.get("posicoes_permitidas","") == "" or "todas" in fn.get("posicoes_permitidas","").lower() for fn in fixos if fn["nome"] == f)]
@@ -610,6 +610,11 @@ elif menu == "Gerador de Escala":
                         escolhido = pool_diaristas.pop(0)
                         escala_gerada.append({"funcionario": escolhido, "posicao": posicao})
                         usados.append(escolhido)
+            if st.button("Limpar Escala do Dia", key="btn_limpar_escala"):
+            limpar_escalas_data(data_escala_str, "operacional")
+            st.success("Escala do dia limpa!")
+            st.rerun()
+            
             if escala_gerada:
                 limpar_escalas_data(data_escala_str, "operacional")
                 for eg in escala_gerada:
