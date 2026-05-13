@@ -611,9 +611,9 @@ elif menu == "Gerador de Escala":
                         escala_gerada.append({"funcionario": escolhido, "posicao": posicao})
                         usados.append(escolhido)
             if st.button("Limpar Escala do Dia", key="btn_limpar_escala"):
-            limpar_escalas_data(data_escala_str, "operacional")
-            st.success("Escala do dia limpa!")
-            st.rerun()
+               limpar_escalas_data(data_escala_str, "operacional")
+               st.success("Escala do dia limpa!")
+               st.rerun()
             
             if escala_gerada:
                 limpar_escalas_data(data_escala_str, "operacional")
