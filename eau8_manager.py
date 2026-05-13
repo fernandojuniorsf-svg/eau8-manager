@@ -1289,7 +1289,7 @@ elif menu == "Gerenciar Usuários":
                 nova_senha = st.text_input("Senha", type="password")
             with nu2:
                 novo_nome = st.text_input("Nome Completo")
-                novo_perfil = st.selectbox("Perfil", ["admin", "operador", "equipe"])
+                novo_perfil = st.selectbox("Perfil", ["Admin", "operador", "equipe"])
             btn_novo_user = st.form_submit_button("Criar Usuario", use_container_width=True)
             if btn_novo_user:
                 if novo_user and nova_senha and novo_nome:
@@ -1314,7 +1314,7 @@ elif menu == "Gerenciar Usuários":
             with st.form("form_edit_user"):
                 eu1, eu2 = st.columns(2)
                 with eu1:
-                    edit_perfil_u = st.selectbox("Perfil", ["admin", "operador", "equipe"], index=["admin", "operador", "equipe"].index(user_sel.get("perfil","operador")) if user_sel.get("perfil","operador") in ["admin", "operador", "equipe"] else 1)
+                    edit_perfil_u = st.selectbox("Perfil", ["Admin", "operador", "equipe"], index=["admin", "operador", "equipe"].index(user_sel.get("perfil","operador")) if user_sel.get("perfil","operador") in ["admin", "operador", "equipe"] else 1)
                 with eu2:
                     edit_status_u = st.selectbox("Status", ["Ativo", "Inativo"], index=["Ativo", "Inativo"].index(user_sel.get("status","Ativo")) if user_sel.get("status","Ativo") in ["Ativo", "Inativo"] else 0)
                 nova_senha_u = st.text_input("Nova Senha (deixe vazio para manter)", type="password", key="nova_senha_edit")
