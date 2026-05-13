@@ -62,39 +62,7 @@ def execute(sql, params=None):
     conn.commit()
     cur.close()
     conn.close()
-
-
-def query(sql, params=None):
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(sql, params or ())
-    cols = [desc.name for desc in cur.description] if cur.description else []
-    rows = cur.fetchall()
-    cur.close()
-    devolver_conn(conn)
-    return [dict(zip(cols, r)) for r in rows]
-
-def query_one(sql, params=None):
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(sql, params or ())
-    cols = [desc.name for desc in cur.description] if cur.description else []
-    row = cur.fetchone()
-    cur.close()
-    devolver_conn(conn)
-    if row:
-        return dict(zip(cols, row))
-    return None
-
-def execute(sql, params=None):
-    conn = get_conn()
-    cur = conn.cursor()
-    cur.execute(sql, params or ())
-    conn.commit()
-    cur.close()
-    devolver_conn(conn)
-
-
+    
 def init_db():
     conn = get_conn()
     cur = conn.cursor()
