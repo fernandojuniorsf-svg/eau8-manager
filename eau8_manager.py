@@ -789,8 +789,33 @@ elif menu == "Registro de Motorista":
             cols_ok = [c for c in cols_hist if c in df_hist.columns]
             st.dataframe(df_hist[cols_ok], use_container_width=True, hide_index=True)
             st.markdown("**Total:** " + str(len(mot_hist)) + " motoristas")
+            st.markdown("---")
+            st.markdown("#### Editar Registro")
+            nomes_mot_hist = [m["nome"] + " | " + m.get("placa","") for m in mot_hist]
+            sel_mot_edit = st.selectbox("Selecione:", nomes_mot_hist, key="sel_mot_edit")
+            idx_mot_sel = nomes_mot_hist.index(sel_mot_edit)
+            mot_sel = mot_hist[idx_mot_sel]
+            with st.form("form_edit_mot"):
+                em1, em2 = st.columns(2)
+                with em1:
+                    edit_hc = st.text_input("Horario Chegada", value=mot_sel.get("horario_chegada",""))
+                with em2:
+                    edit_hs = st.text_input("Horario Saida", value=mot_sel.get("horario_saida",""))
+                edit_obs_mot = st.text_input("Observacao", value=mot_sel.get("observacoes",""))
+                em3, em4 = st.columns(2)
+                with em3:
+                    btn_salvar_mot = st.form_submit_button("Salvar", use_container_width=True)
+                with em4:
+                    btn_excluir_mot = st.form_submit_button("Excluir", use_container_width=True)
+                if btn_salvar_mot:
+                    execute("UPDATE motoristas SET horario_chegada=%s, horario_saida=%s, observacoes=%s WHERE id=%s", (edit_hc, edit_hs, edit_obs_mot, mot_sel["id"]))
+                    st.rerun()
+                if btn_excluir_mot:
+                    execute("DELETE FROM motoristas WHERE id=%s", (mot_sel["id"],))
+                    st.rerun()
         else:
             st.info("Nenhum motorista registrado nesta data.")
+            
 elif menu == "Absenteismo":
     st.markdown("### Registro de Absenteismo")
     funcionarios = carregar_funcionarios()
