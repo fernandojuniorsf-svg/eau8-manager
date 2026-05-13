@@ -27,7 +27,7 @@ def query(sql, params=None):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(sql, params or ())
-    cols = [desc for desc in cur.description] if cur.description else []
+    cols = [desc[0] for desc in cur.description] if cur.description else []
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -37,7 +37,7 @@ def query_one(sql, params=None):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(sql, params or ())
-    cols = [desc for desc in cur.description] if cur.description else []
+    cols = [desc[0] for desc in cur.description] if cur.description else []
     row = cur.fetchone()
     cur.close()
     conn.close()
