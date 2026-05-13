@@ -24,7 +24,6 @@ def gerar_hash(senha):
 SENHA_ADMIN = gerar_hash(str(4848) + str(8813) + str(58) + "fer")
 SENHA_EQUIPE = gerar_hash("eua" + str(8))
 
-@st.cache_resource
 def get_conn():
     return psycopg2.connect(
         host=st.secrets["DB_HOST"],
@@ -33,12 +32,12 @@ def get_conn():
         user=st.secrets["DB_USER"],
         password=st.secrets["DB_PASS"]
     )
-    
+
 def query(sql, params=None):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(sql, params or ())
-    cols = [d.name for d in cur.description] if cur.description else []
+    cols = [desc.name for desc in cur.description] if cur.description else []
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -48,7 +47,7 @@ def query_one(sql, params=None):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(sql, params or ())
-    cols = [d.name for d in cur.description] if cur.description else []
+    cols = [desc.name for desc in cur.description] if cur.description else []
     row = cur.fetchone()
     cur.close()
     conn.close()
@@ -63,6 +62,7 @@ def execute(sql, params=None):
     conn.commit()
     cur.close()
     conn.close()
+
 
 def init_db():
     conn = get_conn()
