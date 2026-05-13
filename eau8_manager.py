@@ -1087,40 +1087,52 @@ elif menu == "Validacao por Foto (IA)":
             st.info("Nenhuma validacao registrada.")
 
 elif menu == "Scanner QR/Barcode":
-    st.markdown("### Scanner de Codigos (Modo Batch)")
-    st.markdown("Bipe varios codigos em sequencia. Todos serao processados de uma vez ao final.")
-    if "codigos_batch" not in st.session_state:
-        st.session_state["codigos_batch"] = []
-    with st.form("form_scanner_batch"):
-        codigo_input = st.text_input("Bipe ou digite o codigo (placa, nome, etc)", key="cod_scan")
+    st.markdown("### Scanner QR / Barcode")
+    site_scanner = st.selectbox("Site destino:", ["EUA8", "ELP8", "ESA8"], key="site_scan")
+    if "lista_scan" not in st.session_state:
+        st.session_state["lista_scan"] = []
+    with st.form("form_scan"):
+        codigo_scan = st.text_input("Digite ou escaneie o codigo")
         btn_add = st.form_submit_button("Adicionar", use_container_width=True)
-        if btn_add and codigo_input:
-            st.session_state["codigos_batch"].append(codigo_input.strip())
+        if btn_add and codigo_scan:
+            st.session_state["lista_scan"].append({"codigo": codigo_scan, "site": site_scanner, "hora": agora_dt.strftime("%H:%M")})
             st.rerun()
-    if st.session_state["codigos_batch"]:
-        st.markdown("**Codigos na fila:** " + str(len(st.session_state["codigos_batch"])))
-        for i, cod in enumerate(st.session_state["codigos_batch"]):
-            st.markdown(str(i + 1) + ". " + cod)
-        sc1, sc2 = st.columns(2)
-        with sc1:
-            if st.button("Buscar Todos no Banco", type="primary", use_container_width=True, key="btn_buscar_batch"):
-                motoristas = carregar_motoristas()
-                resultados = []
-                for cod in st.session_state["codigos_batch"]:
-                    encontrado = [m for m in motoristas if cod.lower() in str(m.get("placa","")).lower() or cod.lower() in str(m.get("nome","")).lower()]
-                    if encontrado:
-                        primeiro = next(iter(encontrado))
-                        resultados.append({"codigo": cod, "nome": primeiro["nome"], "placa": primeiro.get("placa",""), "status": "Encontrado"})
-                    else:
-                        resultados.append({"codigo": cod, "nome": "-", "placa": "-", "status": "Nao encontrado"})
-                df_batch = pd.DataFrame(resultados)
-                st.dataframe(df_batch, use_container_width=True, hide_index=True)
-        with sc2:
-            if st.button("Limpar Fila", use_container_width=True, key="btn_limpar_batch"):
-                st.session_state["codigos_batch"] = []
+    if st.session_state["lista_scan"]:
+        st.markdown("---")
+        lista_site = [x for x in st.session_state["lista_scan"] if x["site"] == site_scanner]
+        st.markdown("**" + site_scanner + " (" + str(len(lista_site)) + " codigos):**")
+        for i, item in enumerate(lista_site):
+            st.markdown(str(i+1) + ". " + item["codigo"] + " - " + item["hora"])
+        st.markdown("---")
+        st.markdown("**Resumo geral:**")
+        for s in ["EUA8", "ELP8", "ESA8"]:
+            qtd_s = len([x for x in st.session_state["lista_scan"] if x["site"] == s])
+            if qtd_s > 0:
+                st.markdown("- " + s + ": " + str(qtd_s) + " codigos")
+        st.markdown("---")
+        texto_wpp = "*Lista Scanner - " + hoje_str + "*
+
+"
+        for s in ["EUA8", "ELP8", "ESA8"]:
+            itens_s = [x for x in st.session_state["lista_scan"] if x["site"] == s]
+            if itens_s:
+                texto_wpp += "*" + s + " (" + str(len(itens_s)) + "):*
+"
+                for idx_s, it in enumerate(itens_s):
+                    texto_wpp += str(idx_s+1) + ". " + it["codigo"] + " - " + it["hora"] + "
+"
+                texto_wpp += "
+"
+        import urllib.parse
+        link_wpp = "https://wa.me/?text=" + urllib.parse.quote(texto_wpp)
+        st.markdown("[Enviar por WhatsApp](" + link_wpp + ")")
+        c_limpar1, c_limpar2 = st.columns(2)
+        with c_limpar1:
+            if st.button("Limpar lista", use_container_width=True):
+                st.session_state["lista_scan"] = []
                 st.rerun()
     else:
-        st.info("Nenhum codigo na fila. Bipe ou digite acima.")
+        st.info("Nenhum codigo escaneado ainda.")
 
 elif menu == "Enviar por WhatsApp":
     st.markdown("### Enviar Informacoes por WhatsApp")
