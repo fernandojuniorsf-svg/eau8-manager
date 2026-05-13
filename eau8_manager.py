@@ -91,7 +91,7 @@ def carregar_funcionarios():
     return query("SELECT * FROM funcionarios ORDER BY nome")
 
 def salvar_funcionario(f):
-    execute("INSERT INTO funcionarios (nome, tipo, funcao, turno, status, data_admissao, telefone, observacoes) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)", (f["nome"], f["tipo"], f["funcao"], f["turno"], f["status"], f.get("data_admissao",""), f.get("telefone",""), f.get("observacoes","")))
+    execute("INSERT INTO funcionarios (nome, tipo, funcao, turno, status, data_admissao, telefone, observacoes, posicoes_permitidas) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)", (f["nome"], f["tipo"], f["funcao"], f["turno"], f["status"], f.get("data_admissao",""), f.get("telefone",""), f.get("observacoes",""), f.get("posicoes_permitidas","")))
 
 def atualizar_funcionario(fid, dados):
     sets = ", ".join([k + "=%s" for k in dados.keys()])
