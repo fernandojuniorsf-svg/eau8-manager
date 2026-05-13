@@ -9,6 +9,10 @@ from datetime import datetime, date, timedelta
 import pytz
 import psycopg2
 
+@st.cache_data(ttl=30)
+def cached_query(sql):
+    return query(sql)
+
 FUSO_BR = pytz.timezone("America/Sao_Paulo")
 SITE = "EUA8"
 POSICOES = ["Pick to Buffer Esteira 1", "Pick to Buffer Esteira 2", "Stow Esteira 1", "Stow Esteira 1 (2)", "Stow Esteira 2", "Spider de Fechamento / Stow Esteira 2", "Receiver", "Unloader", "YardMarshall", "Spider de Inducao - Doca", "Carregamento", "Xerife"]
@@ -20,9 +24,16 @@ def gerar_hash(senha):
 SENHA_ADMIN = gerar_hash(str(4848) + str(8813) + str(58) + "fer")
 SENHA_EQUIPE = gerar_hash("eua" + str(8))
 
+@st.cache_resource
 def get_conn():
-    return psycopg2.connect(host=st.secrets["DB_HOST"], port=st.secrets["DB_PORT"], dbname=st.secrets["DB_NAME"], user=st.secrets["DB_USER"], password=st.secrets["DB_PASS"])
-
+    return psycopg2.connect(
+        host=st.secrets["DB_HOST"],
+        port=st.secrets["DB_PORT"],
+        dbname=st.secrets["DB_NAME"],
+        user=st.secrets["DB_USER"],
+        password=st.secrets["DB_PASS"]
+    )
+    
 def query(sql, params=None):
     conn = get_conn()
     cur = conn.cursor()
