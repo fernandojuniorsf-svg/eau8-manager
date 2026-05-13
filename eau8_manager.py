@@ -1274,7 +1274,7 @@ elif menu == "Gerenciar Usuários":
             if btn_novo_user:
                 if novo_user and nova_senha and novo_nome:
                     hash_senha = gerar_hash(nova_senha)
-                    salvar_usuario({"usuario": novo_user, "senha": hash_senha, "nome": novo_nome, "perfil": novo_perfil, "status": "Ativo"})
+                    execute("INSERT INTO usuarios (usuario, senha, nome, perfil, status) VALUES (%s,%s,%s,%s,%s)", (novo_user, hash_senha, novo_nome, novo_perfil, "Ativo"))
                     st.markdown("<div class=\"success-box\">Usuario " + novo_user + " criado!</div>", unsafe_allow_html=True)
                     st.rerun()
                 else:
