@@ -590,10 +590,12 @@ elif menu == "Gerador de Escala":
                         escolhido = pool_diaristas.pop(0)
                         escala_gerada.append({"funcionario": escolhido, "posicao": posicao})
                         usados.append(escolhido)
-                    elif pool_fixos:
+                     elif pool_fixos:
                         candidatos = [f for f in pool_fixos if any(posicao in fn.get("posicoes_permitidas","") for fn in fixos if fn["nome"] == f)]
                         if not candidatos:
-                            candidatos = pool_fixos
+                            candidatos = [f for f in pool_fixos if any(fn.get("posicoes_permitidas","") == "" or "todas" in fn.get("posicoes_permitidas","").lower() for fn in fixos if fn["nome"] == f)]
+                        if not candidatos:
+                            candidatos = [f for f in pool_fixos if f not in usados]
                         if usar_notas:
                             candidatos.sort(key=lambda x: media_nota(x, posicao), reverse=True)
                         else:
