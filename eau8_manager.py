@@ -159,7 +159,7 @@ def salvar_timer_historico(t):
     execute("INSERT INTO timer_historico (data, hora_inicio, hora_conclusao, registrado_em, registrado_por) VALUES (%s,%s,%s,%s,%s)", (t["data"], t["hora_inicio"], t["hora_conclusao"], t["registrado_em"], t["registrado_por"]))
 
 def carregar_config():
-    rows = query("SELECT * FROM config")
+    rows = query("SELECT * FROM configuracoes")
     return {r["chave"]: r["valor"] for r in rows}
 
 def salvar_config(chave, valor):
