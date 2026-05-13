@@ -189,7 +189,7 @@ CONFIG = carregar_config()
 CPT_HORA = int(CONFIG.get("cpt_hora", "20"))
 CPT_MINUTO = int(CONFIG.get("cpt_minuto", "0"))
 ALERTA_HORA = int(CONFIG.get("alerta_hora", "19"))
-PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configuracões", "Gerenciar Usuários"], "Supervisor": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatórios"], "Operador": ["Dashboard", "Registro de Motorista", "Validação por Foto (IA)", "Scanner QR/Barcode"], "Equipe": ["Dashboard", "Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
+PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configurações", "Gerenciar Usuários"], "Supervisor": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatórios"], "Operador": ["Dashboard", "Registro de Motorista", "Validação por Foto (IA)", "Scanner QR/Barcode"], "Equipe": ["Dashboard", "Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
 st.markdown("""<style>
