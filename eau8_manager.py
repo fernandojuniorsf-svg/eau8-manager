@@ -610,10 +610,6 @@ elif menu == "Gerador de Escala":
                         escolhido = pool_diaristas.pop(0)
                         escala_gerada.append({"funcionario": escolhido, "posicao": posicao})
                         usados.append(escolhido)
-            if st.button("Limpar Escala do Dia", key="btn_limpar_escala"):
-               limpar_escalas_data(data_escala_str, "operacional")
-               st.success("Escala do dia limpa!")
-               st.rerun()
             
             if escala_gerada:
                 limpar_escalas_data(data_escala_str, "operacional")
@@ -623,7 +619,12 @@ elif menu == "Gerador de Escala":
                 st.rerun()
             else:
                 st.error("Nao foi possivel gerar a escala. Verifique os funcionarios disponiveis.")
+        if st.button("Limpar Escala do Dia", key="btn_limpar_escala"):
+            limpar_escalas_data(data_escala_str, "operacional")
+            st.success("Escala do dia limpa!")
+            st.rerun()
         esc_dia_op = [e for e in escalas if e.get("data","") == data_escala_str and e.get("tipo_escala","") == "operacional"]
+
         if esc_dia_op:
             st.markdown("---")
             st.markdown("#### Escala Atual (" + data_escala.strftime("%d/%m/%Y") + ")")
