@@ -97,6 +97,15 @@ def atualizar_funcionario(fid, dados):
     sets = ", ".join([k + "=%s" for k in dados.keys()])
     execute("UPDATE funcionarios SET " + sets + " WHERE id=%s", list(dados.values()) + [fid])
 
+def atualizar_usuario(uid, dados):
+    campos = []
+    valores = []
+    for k, v in dados.items():
+        campos.append(k + " = %s")
+        valores.append(v)
+    valores.append(uid)
+    execute("UPDATE usuarios SET " + ", ".join(campos) + " WHERE id = %s", tuple(valores))
+
 def excluir_funcionario(fid):
     execute("DELETE FROM funcionarios WHERE id=%s", (fid,))
 
