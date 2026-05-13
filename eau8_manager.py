@@ -591,7 +591,7 @@ elif menu == "Gerador de Escala":
                         escala_gerada.append({"funcionario": escolhido, "posicao": posicao})
                         usados.append(escolhido)
                     elif pool_fixos:
-                        candidatos = [f for f in pool_fixos if f not in usados]
+                        candidatos = [f for f in pool if posicao in f.get("posicoes_permitidas", "")]
                         if not candidatos:
                             candidatos = pool_fixos
                         if usar_notas:
