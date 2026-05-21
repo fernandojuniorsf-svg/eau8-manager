@@ -198,7 +198,7 @@ CONFIG = carregar_config()
 CPT_HORA = int(CONFIG.get("cpt_hora", "20"))
 CPT_MINUTO = int(CONFIG.get("cpt_minuto", "0"))
 ALERTA_HORA = int(CONFIG.get("alerta_hora", "19"))
-PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configurações", "Gerenciar Usuários"], "Supervisor": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatórios"], "operador": ["Dashboard", "Registro de Motorista", "Validação por Foto (IA)", "Scanner QR/Barcode"], "equipe": ["Dashboard", "Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
+PERFIS_ACESSO = {"Admin": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume","Enviar por WhatsApp", "Relatorios", "Configurações", "Gerenciar Usuários"], "Supervisor": ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatórios"], "operador": ["Dashboard", "Registro de Motorista", "Validação por Foto (IA)", "Scanner QR/Barcode"], "equipe": ["Dashboard", "Registro de Motorista"], "Visualizador": ["Dashboard", "Relatorios"]}
 st.set_page_config(page_title=SITE + " Manager", page_icon="F", layout="wide")
 
 st.markdown("""<style>
@@ -913,86 +913,95 @@ elif menu == "Absenteismo":
         else:
             st.info("Nenhum registro de absenteismo.")
 
-elif menu == "Desempenho por Função":
-    st.markdown("### Avaliacao de Desempenho por Funcao")
+elif menu == "Desempenho por Funcao":
+    st.markdown("### Avaliacao de Desempenho")
     funcionarios = carregar_funcionarios()
-    desempenho_lista = carregar_desempenho()
-    tab1, tab2, tab3 = st.tabs(["Avaliar", "Importar Excel", "Historico / Editar"])
-    with tab1:
-        with st.form("form_desemp"):
-            nomes_f = [f["nome"] for f in funcionarios if f.get("status") == "Ativo"]
-            func_desemp = st.selectbox("Funcionario", nomes_f, key="sel_desemp")
-            pos_desemp = st.selectbox("Posicao Avaliada", POSICOES, key="pos_desemp")
-            nota_desemp = st.slider("Nota (1 a 5)", min_value=1, max_value=5, value=3, key="nota_desemp")
-            data_desemp = st.date_input("Data da Avaliacao", value=date.today(), key="dt_desemp")
-            obs_desemp = st.text_area("Observacoes", height=80, key="obs_desemp")
-            btn_desemp = st.form_submit_button("Registrar Avaliacao", use_container_width=True)
-            if btn_desemp:
-                salvar_desempenho_reg({"funcionario": func_desemp, "posicao": pos_desemp, "nota": nota_desemp, "data_avaliacao": data_desemp.strftime("%Y-%m-%d"), "observacoes": obs_desemp, "registrado_em": agora_dt.strftime("%d/%m/%Y %H:%M")})
-                st.markdown("<div class=\"success-box\">Avaliacao registrada!</div>", unsafe_allow_html=True)
-                st.rerun()
-    with tab2:
-        st.markdown("#### Importar Avaliacoes por Excel")
-        st.markdown("Colunas: **funcionario, posicao, nota** (1-5), **data** (DD/MM/YYYY), **observacoes**")
-        arq_desemp = st.file_uploader("Envie o arquivo", type=["xlsx", "csv"], key="up_desemp")
-        if arq_desemp:
-            try:
-                if arq_desemp.name.endswith(".csv"):
-                    df_d_imp = pd.read_csv(arq_desemp)
-                else:
-                    df_d_imp = pd.read_excel(arq_desemp)
-                st.dataframe(df_d_imp, use_container_width=True, hide_index=True)
-                if st.button("Importar Todos", type="primary", use_container_width=True, key="btn_imp_desemp"):
-                    qtd = 0
-                    for idx_r, row in df_d_imp.iterrows():
-                        func_r = str(row.get("funcionario", "")).strip()
-                        pos_r = str(row.get("posicao", "")).strip()
-                        nota_r = int(row.get("nota", 3))
-                        data_r = str(row.get("data", "")).strip()
-                        obs_r = str(row.get("observacoes", "")).strip()
-                        if func_r and pos_r:
-                            try:
-                                if "/" in data_r:
-                                    dt_p = datetime.strptime(data_r, "%d/%m/%Y")
-                                else:
-                                    dt_p = datetime.strptime(data_r[:10], "%Y-%m-%d")
-                                data_final = dt_p.strftime("%Y-%m-%d")
-                            except Exception:
-                                data_final = hoje_str
-                            salvar_desempenho_reg({"funcionario": func_r, "posicao": pos_r, "nota": nota_r, "data_avaliacao": data_final, "observacoes": obs_r, "registrado_em": agora_dt.strftime("%d/%m/%Y %H:%M")})
-                            qtd += 1
-                    st.markdown("<div class=\"success-box\">" + str(qtd) + " avaliacoes importadas!</div>", unsafe_allow_html=True)
-                    st.rerun()
-            except Exception as ex:
-                st.error("Erro ao ler arquivo: " + str(ex))
-    with tab3:
-        if desempenho_lista:
-            df_desemp = pd.DataFrame(desempenho_lista)
-            cols_d = ["funcionario", "posicao", "nota", "data_avaliacao", "observacoes"]
-            cols_ok = [c for c in cols_d if c in df_desemp.columns]
-            st.dataframe(df_desemp[cols_ok], use_container_width=True, hide_index=True)
+    nomes_func = [f["nome"] for f in funcionarios if f.get("status","") == "Ativo"]
+    if nomes_func:
+        sel_avaliado = st.selectbox("Selecione o Funcionario", nomes_func, key="sel_aval")
+        st.markdown("---")
+        with st.form("form_desempenho"):
+            st.markdown("**Lideranca** (1 a 5)")
+            lid1, lid2, lid3 = st.columns(3)
+            with lid1:
+                engajamento = st.slider("Engajamento com equipe", 1, 5, 3, key="lid_eng")
+                respeito = st.slider("Respeito da equipe", 1, 5, 3, key="lid_resp")
+            with lid2:
+                confianca = st.slider("Confianca da equipe", 1, 5, 3, key="lid_conf")
+                temperamento = st.slider("Temperamento", 1, 5, 3, key="lid_temp")
+            with lid3:
+                tecnica = st.slider("Lideranca tecnica", 1, 5, 3, key="lid_tec")
             st.markdown("---")
-            st.markdown("#### Editar / Excluir Registro")
-            ids_d = [str(d["id"]) + " - " + d["funcionario"] + " | " + d.get("posicao","") + " (" + str(d.get("nota","")) + ")" for d in desempenho_lista]
-            sel_d_edit = st.selectbox("Selecione:", ids_d, key="sel_d_edit")
-            idx_d_sel = ids_d.index(sel_d_edit)
-            d_sel = desempenho_lista[idx_d_sel]
-            with st.form("form_edit_desemp"):
-                edit_nota = st.number_input("Nota", min_value=1, max_value=5, value=int(d_sel.get("nota", 3)), key="edit_nota_d")
-                edit_obs_d = st.text_input("Observacoes", value=d_sel.get("observacoes",""), key="edit_obs_d")
-                ed1, ed2 = st.columns(2)
-                with ed1:
-                    btn_salvar_d = st.form_submit_button("Salvar", use_container_width=True)
-                with ed2:
-                    btn_excluir_d = st.form_submit_button("Excluir", use_container_width=True)
-                if btn_salvar_d:
-                    execute("UPDATE desempenho SET nota=%s, observacoes=%s WHERE id=%s", (edit_nota, edit_obs_d, d_sel["id"]))
-                    st.rerun()
-                if btn_excluir_d:
-                    execute("DELETE FROM desempenho WHERE id=%s", (d_sel["id"],))
-                    st.rerun()
+            st.markdown("**Comportamental** (1 a 5)")
+            co1, co2, co3 = st.columns(3)
+            with co1:
+                seguranca = st.slider("Nivel de Seguranca", 1, 5, 3, key="n_seg")
+                postura = st.slider("Postura", 1, 5, 3, key="n_post")
+            with co2:
+                urgencia = st.slider("Senso de Urgencia", 1, 5, 3, key="n_urg")
+                comunicacao = st.slider("Comunicacao", 1, 5, 3, key="n_com")
+            with co3:
+                agilidade = st.slider("Agilidade", 1, 5, 3, key="n_agi")
+                resiliencia = st.slider("Resiliencia", 1, 5, 3, key="n_res")
+            st.markdown("---")
+            st.markdown("**Por Posicao** (1 a 5 / 0 = nao avaliado)")
+            po1, po2, po3, po4 = st.columns(4)
+            with po1:
+                n_yard = st.slider("YardMarshall", 0, 5, 0, key="n_yard")
+                n_stow = st.slider("Stow", 0, 5, 0, key="n_stow")
+            with po2:
+                n_pick = st.slider("Pick to Buffer", 0, 5, 0, key="n_pick")
+                n_unl = st.slider("Unloader", 0, 5, 0, key="n_unl")
+            with po3:
+                n_spf = st.slider("Spider Fechamento", 0, 5, 0, key="n_spf")
+                n_spd = st.slider("Spider Doca", 0, 5, 0, key="n_spd")
+            with po4:
+                n_xer = st.slider("Xerife Carregamento", 0, 5, 0, key="n_xer")
+                n_car = st.slider("Carregamento", 0, 5, 0, key="n_car")
+            st.markdown("---")
+            obs_desemp = st.text_area("Observacoes", height=80, key="obs_desemp")
+            btn_salvar_desemp = st.form_submit_button("Salvar Avaliacao Completa", type="primary", use_container_width=True)
+            if btn_salvar_desemp:
+                dados_desemp = {
+                    "funcionario": sel_avaliado,
+                    "data": hoje_str,
+                    "lideranca_engajamento": engajamento,
+                    "lideranca_respeito": respeito,
+                    "lideranca_confianca": confianca,
+                    "lideranca_temperamento": temperamento,
+                    "lideranca_tecnica": tecnica,
+                    "nota_seguranca": seguranca,
+                    "nota_postura": postura,
+                    "nota_urgencia": urgencia,
+                    "nota_comunicacao": comunicacao,
+                    "nota_agilidade": agilidade,
+                    "nota_resiliencia": resiliencia,
+                    "nota_yardmarshall": n_yard,
+                    "nota_stow": n_stow,
+                    "nota_pick_to_buffer": n_pick,
+                    "nota_unloader": n_unl,
+                    "nota_spider_fechamento": n_spf,
+                    "nota_spider_doca": n_spd,
+                    "nota_xerife_carregamento": n_xer,
+                    "nota_carregamento": n_car,
+                    "observacoes": obs_desemp,
+                    "registrado_em": agora
+                }
+                colunas = ", ".join(dados_desemp.keys())
+                placeholders = ", ".join(["%s"] * len(dados_desemp))
+                execute("INSERT INTO desempenho (" + colunas + ") VALUES (" + placeholders + ")", tuple(dados_desemp.values()))
+                st.success("Avaliacao salva com sucesso!")
+                st.rerun()
+        st.markdown("---")
+        st.markdown("#### Historico de Avaliacoes")
+        avaliacoes = query("SELECT * FROM desempenho ORDER BY id DESC LIMIT 50")
+        if avaliacoes:
+            df_aval = pd.DataFrame(avaliacoes)
+            st.dataframe(df_aval, use_container_width=True, hide_index=True)
         else:
             st.info("Nenhuma avaliacao registrada.")
+    else:
+        st.warning("Nenhum funcionario ativo cadastrado.")
 
 elif menu == "Forecast / Volume":
     st.markdown("### Forecast / Volume Previsto")
@@ -1072,7 +1081,7 @@ elif menu == "Forecast / Volume":
         else:
             st.info("Nenhum forecast registrado.")
 
-elif menu == "Validacao por Foto (IA)":
+elif menu == "DESATIVADO_Validacao por Foto (IA)":
     st.markdown("### Validacao por Foto")
     st.markdown("Registre contagens de pacotes/pallets manualmente.")
     validacoes = carregar_validacoes()
@@ -1105,7 +1114,7 @@ elif menu == "Validacao por Foto (IA)":
         else:
             st.info("Nenhuma validacao registrada.")
 
-elif menu == "Scanner QR/Barcode":
+elif menu == "DESATIVADO_Scanner QR/Barcode":
     st.markdown("### Scanner QR / Barcode")
     site_scanner = st.selectbox("Site destino:", ["EUA8", "ELP8", "ESA8"], key="site_scan")
     if "lista_scan" not in st.session_state:
@@ -1348,4 +1357,6 @@ elif menu == "Gerenciar Usuários":
 st.markdown("---")
 rodape = "<div style=\"text-align:center; padding:20px 0;\"><p style=\"color:#666; font-size:11px;\">" + SITE + " Manager | First Mile Operations | Amazon Logistics</p></div>"
 st.markdown(rodape, unsafe_allow_html=True)
+
+
 
