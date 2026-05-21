@@ -246,8 +246,11 @@ if not st.session_state["logado"] and "t" in st.query_params:
         for u in usuarios:
             if u["usuario"] == sessao["usuario"]:
                 st.session_state["logado"] = True
-                st.session_state["usuario"] = u
+                st.session_state["usuario_logado"] = u["usuario"]
+                st.session_state["nome_logado"] = u["nome"]
+                st.session_state["perfil_logado"] = u["perfil"]
                 break
+
 if not st.session_state["logado"]:
     _, col_login, _ = st.columns([1,2,1])
     with col_login:
