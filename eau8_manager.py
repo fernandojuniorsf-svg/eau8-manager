@@ -10,8 +10,10 @@ import pytz
 import psycopg2
 
 def salvar_sessao(usuario):
-    token = hashlib.sha256((usuario + hoje_str + "eua8").encode()).hexdigest()
-    execute("INSERT INTO sessoes (usuario, token, criado_em) VALUES (%s,%s,%s) ON CONFLICT (token) DO NOTHING", (usuario, token, agora))
+    from datetime import datetime
+    hoje = datetime.now().strftime("%Y-%m-%d")
+    token = hashlib.sha256((usuario + hoje + "eua8").encode()).hexdigest()
+    execute("INSERT INTO sessoes (usuario, token, criado_em) VALUES (%s,%s,%s) ON CONFLICT (token) DO NOTHING", (usuario, token, hoje))
     return token
 
 def verificar_sessao(token):
