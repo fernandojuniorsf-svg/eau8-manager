@@ -239,17 +239,6 @@ div[data-testid="stDataFrame"] > div {border-radius: 12px;}
 
 if "logado" not in st.session_state:
     st.session_state["logado"] = False
-if not st.session_state["logado"] and "t" in st.query_params:
-    sessao = verificar_sessao(st.query_params["t"])
-    if sessao:
-        usuarios = carregar_usuarios()
-        for u in usuarios:
-            if u["usuario"] == sessao["usuario"]:
-                st.session_state["logado"] = True
-                st.session_state["usuario_logado"] = u["usuario"]
-                st.session_state["nome_logado"] = u["nome"]
-                st.session_state["perfil_logado"] = u["perfil"]
-                break
 
 if not st.session_state["logado"]:
     _, col_login, _ = st.columns([1,2,1])
@@ -293,7 +282,7 @@ st.sidebar.markdown("## " + SITE + " Manager")
 st.sidebar.markdown("*First Mile Operations*")
 st.sidebar.markdown("Bem-vindo, **" + nome_logado + "** (" + perfil_logado + ")")
 st.sidebar.markdown("---")
-menus_permitidos = PERFIS_ACESSO.get(perfil_logado) or PERFIS_ACESSO.get(perfil_logado.capitalize()) or PERFIS_ACESSO.get(perfil_logado.lower()) or ["Dashboard"]
+menus_permitidos = PERFIS_ACESSO.get(perfil_logado, ["Dashboard"])
 todos_menus = ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configurações", "Gerenciar Usuários"]
 menus_visiveis = [m for m in todos_menus if m in menus_permitidos]
 menu = st.sidebar.radio("Menu Principal", menus_visiveis)
