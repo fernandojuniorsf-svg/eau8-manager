@@ -9,6 +9,15 @@ from datetime import datetime, date, timedelta
 import pytz
 import psycopg2
 
+def salvar_sessao(usuario):
+    token = hashlib.sha256((usuario + hoje_str + "eua8").encode()).hexdigest()
+    execute("INSERT INTO sessoes (usuario, token, criado_em) VALUES (%s,%s,%s) ON CONFLICT (token) DO NOTHING", (usuario, token, agora))
+    return token
+
+def verificar_sessao(token):
+    r = query_one("SELECT * FROM sessoes WHERE token=%s", (token,))
+    return r
+
 @st.cache_data(ttl=30)
 def cached_query(sql):
     return query(sql)
@@ -228,7 +237,15 @@ div[data-testid="stDataFrame"] > div {border-radius: 12px;}
 
 if "logado" not in st.session_state:
     st.session_state["logado"] = False
-
+if not st.session_state["logado"] and "t" in st.query_params:
+    sessao = verificar_sessao(st.query_params["t"])
+    if sessao:
+        usuarios = carregar_usuarios()
+        for u in usuarios:
+            if u["usuario"] == sessao["usuario"]:
+                st.session_state["logado"] = True
+                st.session_state["usuario"] = u
+                break
 if not st.session_state["logado"]:
     _, col_login, _ = st.columns([1,2,1])
     with col_login:
@@ -252,6 +269,8 @@ if not st.session_state["logado"]:
                                 break
                             st.session_state["logado"] = True
                             st.session_state["usuario_logado"] = u["usuario"]
+                            token = salvar_sessao(u["usuario"])
+                            st.query_params["t"] = token
                             st.session_state["nome_logado"] = u["nome"]
                             st.session_state["perfil_logado"] = u["perfil"]
                             encontrou = True
