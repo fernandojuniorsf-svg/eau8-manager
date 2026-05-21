@@ -284,8 +284,8 @@ if not st.session_state["logado"]:
                     st.error("Preencha usuário e senha!")
     st.stop()
 
-nome_logado = st.session_state.get("nome_logado", "Usuário")
-perfil_logado = st.session_state.get("perfil_logado", "Operador")
+nome_logado = st.session_state.get("nome_logado") or "Usuario"
+perfil_logado = st.session_state.get("perfil_logado") or "Operador"
 st.sidebar.markdown("## " + SITE + " Manager")
 st.sidebar.markdown("*First Mile Operations*")
 st.sidebar.markdown("Bem-vindo, **" + nome_logado + "** (" + perfil_logado + ")")
