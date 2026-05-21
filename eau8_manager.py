@@ -293,7 +293,7 @@ st.sidebar.markdown("## " + SITE + " Manager")
 st.sidebar.markdown("*First Mile Operations*")
 st.sidebar.markdown("Bem-vindo, **" + nome_logado + "** (" + perfil_logado + ")")
 st.sidebar.markdown("---")
-menus_permitidos = PERFIS_ACESSO.get(perfil_logado, ["Dashboard"])
+menus_permitidos = PERFIS_ACESSO.get(perfil_logado) or PERFIS_ACESSO.get(perfil_logado.capitalize()) or PERFIS_ACESSO.get(perfil_logado.lower()) or ["Dashboard"]
 todos_menus = ["Dashboard", "Cadastro de Funcionários", "Gerador de Escala", "Registro de Motorista", "Absenteísmo", "Desempenho por Função", "Forecast / Volume", "Validação por Foto (IA)", "Scanner QR/Barcode", "Enviar por WhatsApp", "Relatorios", "Configurações", "Gerenciar Usuários"]
 menus_visiveis = [m for m in todos_menus if m in menus_permitidos]
 menu = st.sidebar.radio("Menu Principal", menus_visiveis)
