@@ -932,7 +932,7 @@ elif menu == "Absenteismo":
         else:
             st.info("Nenhum registro de absenteismo.")
 
-elif menu == "Desempenho por Funcao":
+elif menu == "Desempenho por Função":
     st.markdown("### Avaliacao de Desempenho")
     funcionarios = carregar_funcionarios()
     nomes_func = [f["nome"] for f in funcionarios if f.get("status","") == "Ativo"]
