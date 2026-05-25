@@ -20,7 +20,7 @@ def verificar_sessao(token):
     r = query_one("SELECT * FROM sessoes WHERE token=%s", (token,))
     return r
 
-@st.cache_data(ttl=30)
+@st.cache_data(ttl=3000)
 def cached_query(sql):
     return query(sql)
 
@@ -370,7 +370,7 @@ if menu == "Dashboard":
     timer_html += "<p style=\"font-size:11px; color:#666; margin:4px 0 0 0;\">" + agora_dt.strftime("%H:%M:%S") + "</p>"
     timer_html += "</div></div></div>"
     st.markdown(timer_html, unsafe_allow_html=True)
-    js_rt = "<script>function atRelogio(){var e=document.getElementById('timer-clock');if(e){var d=new Date();e.innerText=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');}}setInterval(atRelogio,1000);setTimeout(function(){window.location.reload();},60000);</script>"
+    js_rt = "<script>function atRelogio(){var e=document.getElementById('timer-clock');if(e){var d=new Date();e.innerText=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');}}setInterval(atRelogio,1000);</script>"
     st.markdown(js_rt, unsafe_allow_html=True)
     bt1, bt2, bt3 = st.columns(3)
     with bt1:
