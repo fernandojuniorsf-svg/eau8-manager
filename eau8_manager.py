@@ -842,11 +842,9 @@ elif perfil == "Yard":
         for msg in mensagens[:5]:
             css_class = "mural-msg-urgente" if msg.get("tipo") == "urgente" else "mural-msg-yard" if msg.get("perfil") == "yard" else "mural-msg"
             st.markdown('<div class="' + css_class + '"><strong>' + msg.get("autor","") + '</strong> <span style="color:#666; font-size:11px;">' + msg.get("data_hora","") + '</span><br>' + msg.get("mensagem","") + '</div>', unsafe_allow_html=True)
-
-
-# ══════════════════════════════════════════════════════════════
+            # ══════════════════════════════════════════════════════════════
 # RODAPE
 # ══════════════════════════════════════════════════════════════
 
 st.markdown("---")
-st.markdown('<div style="text-align:center;
+st.markdown('<div style="text-align:center; padding:20px 0;"><p style="color:#666; font-size:11px;">' + SITE + ' Manager | First Mile Operations | Amazon Logistics</p></div>', unsafe_allow_html=True)
