@@ -11,13 +11,13 @@ SITE = "EUA8"
 TIPOS_VEICULO = ["Carreta (28 pallets)", "Truck (16 pallets)", "VUC (6 pallets)", "3/4", "Fiorino", "Van", "Bitruck", "Outro"]
 
 # ============================================================
-# TRADUÇÕES COMPLETAS
+# TRADUCOES COMPLETAS
 # ============================================================
 
 T = {
     "PT-BR": {
-        "titulo_op": "OPERAÇÃO FIRST MILE",
-        "perfil_lider": "Líder",
+        "titulo_op": "OPERACAO FIRST MILE",
+        "perfil_lider": "Lider",
         "perfil_otr": "OTR",
         "perfil_yard": "Yard",
         "perfil_motorista": "Motorista",
@@ -26,37 +26,37 @@ T = {
         "menu_add_drivers": "Add Drivers",
         "menu_yard_control": "Yard Control",
         "menu_mural": "Mural",
-        "menu_historico": "Histórico",
+        "menu_historico": "Historico",
         "menu_editar": "Editar Registros",
         "status_agora": "Status Agora",
         "total_previsto": "Total Previsto",
         "chegaram": "Chegaram",
-        "no_patio": "No Pátio",
+        "no_patio": "No Patio",
         "despachados": "Despachados",
         "faltam_chegar": "Faltam Chegar",
         "fora_lista": "Fora da Lista",
-        "primeiro_veiculo": "PRIMEIRO VEÍCULO",
+        "primeiro_veiculo": "PRIMEIRO VEICULO",
         "tempo_sem_chegar": "TEMPO SEM CHEGAR",
-        "media_patio": "MÉDIA NO PÁTIO",
+        "media_patio": "MEDIA NO PATIO",
         "progresso": "PROGRESSO DESPACHO",
         "faltam": "Faltam",
         "de": "de",
-        "todos_chegaram": "Todos já chegaram",
-        "patio_vazio": "Pátio vazio",
+        "todos_chegaram": "Todos ja chegaram",
+        "patio_vazio": "Patio vazio",
         "tab_rt": "Real-Time",
-        "tab_diario": "Diário",
+        "tab_diario": "Diario",
         "tab_semanal": "Semanal",
         "tab_mensal": "Mensal",
         "sel_data": "Data:",
-        "nao_vieram": "Não Vieram",
-        "primeiro": "1º Veículo",
-        "ultimo": "Último",
-        "tempo_medio": "Tempo Médio",
+        "nao_vieram": "Nao Vieram",
+        "primeiro": "1o Veiculo",
+        "ultimo": "Ultimo",
+        "tempo_medio": "Tempo Medio",
         "exportar": "Exportar CSV",
         "sem_dados": "Sem dados.",
         "modelo_plan": "Modelo da planilha:",
         "colunas": "Colunas: nome | tipo_veiculo | placa | telefone",
-        "obrigatoria": "Apenas a coluna nome é obrigatória.",
+        "obrigatoria": "Apenas nome e obrigatoria.",
         "categoria": "Categoria",
         "data_coleta": "Data",
         "importar": "Importar",
@@ -66,36 +66,36 @@ T = {
         "faixa": "Faixa",
         "hora": "Hora",
         "btn_chegou": "CHEGOU",
-        "todos_yard": "Todos já chegaram",
+        "todos_yard": "Todos ja chegaram",
         "manual_titulo": "Cadastro Manual (Fora da Lista)",
         "nome": "Nome",
-        "veiculo": "Veículo",
+        "veiculo": "Veiculo",
         "telefone": "Telefone",
         "placa": "Placa",
-        "obs": "Observação",
+        "obs": "Observacao",
         "registrar": "Registrar",
-        "registrar_saida": "Registrar Saída",
+        "registrar_saida": "Registrar Saida",
         "motorista_saindo": "Motorista saindo:",
-        "hora_saida": "Hora saída",
+        "hora_saida": "Hora saida",
         "btn_saiu": "SAIU",
-        "nenhum_patio": "Nenhum no pátio.",
+        "nenhum_patio": "Nenhum no patio.",
         "msg_rapida": "Mensagem:",
         "prioridade": "Prioridade",
         "enviar": "Enviar",
         "nenhuma_msg": "Nenhuma mensagem hoje.",
-        "historico": "Histórico",
+        "historico": "Historico",
         "nenhum_registro": "Sem registros.",
         "editar_titulo": "Editar Registro",
         "selecione": "Selecione:",
         "salvar": "Salvar",
         "salvo": "Salvo!",
-        "visto_titulo": "Confirmar Presença",
+        "visto_titulo": "Confirmar Presenca",
         "visto_instrucao": "Digite seu nome para dar o visto:",
-        "visto_btn": "CONFIRMAR PRESENÇA",
-        "visto_ok": "Presença confirmada!",
-        "visto_erro": "Nome não encontrado.",
-        "visto_ja": "Já confirmado anteriormente.",
-        "desenvolvido": "Desenvolvido por Fernando Júnior | Líder EUA8",
+        "visto_btn": "CONFIRMAR PRESENCA",
+        "visto_ok": "Presenca confirmada!",
+        "visto_erro": "Nome nao encontrado.",
+        "visto_ja": "Ja confirmado anteriormente.",
+        "desenvolvido": "Desenvolvido por Fernando Junior | Lider EUA8",
         "erro": "Erro:",
     },
     "ENG": {
@@ -182,8 +182,8 @@ T = {
         "erro": "Error:",
     },
     "ESP": {
-        "titulo_op": "OPERACIÓN FIRST MILE",
-        "perfil_lider": "Líder",
+        "titulo_op": "OPERACION FIRST MILE",
+        "perfil_lider": "Lider",
         "perfil_otr": "OTR",
         "perfil_yard": "Yard",
         "perfil_motorista": "Conductor",
@@ -201,29 +201,29 @@ T = {
         "despachados": "Despachados",
         "faltam_chegar": "Faltan",
         "fora_lista": "Fuera de Lista",
-        "primeiro_veiculo": "PRIMER VEHÍCULO",
+        "primeiro_veiculo": "PRIMER VEHICULO",
         "tempo_sem_chegar": "TIEMPO SIN LLEGAR",
         "media_patio": "PROMEDIO EN PATIO",
         "progresso": "PROGRESO DESPACHO",
         "faltam": "Faltan",
         "de": "de",
         "todos_chegaram": "Todos llegaron",
-        "patio_vazio": "Patio vacío",
+        "patio_vazio": "Patio vacio",
         "tab_rt": "Real-Time",
         "tab_diario": "Diario",
         "tab_semanal": "Semanal",
         "tab_mensal": "Mensual",
         "sel_data": "Fecha:",
         "nao_vieram": "No Vinieron",
-        "primeiro": "1er Vehículo",
-        "ultimo": "Último",
+        "primeiro": "1er Vehiculo",
+        "ultimo": "Ultimo",
         "tempo_medio": "Tiempo Promedio",
         "exportar": "Exportar CSV",
         "sem_dados": "Sin datos.",
         "modelo_plan": "Modelo planilla:",
         "colunas": "Columnas: nome | tipo_veiculo | placa | telefone",
         "obrigatoria": "Solo nome es obligatorio.",
-        "categoria": "Categoría",
+        "categoria": "Categoria",
         "data_coleta": "Fecha",
         "importar": "Importar",
         "importados": "importados!",
@@ -231,19 +231,19 @@ T = {
         "motorista_chegou": "Conductor:",
         "faixa": "Carril",
         "hora": "Hora",
-        "btn_chegou": "LLEGÓ",
+        "btn_chegou": "LLEGO",
         "todos_yard": "Todos llegaron",
         "manual_titulo": "Registro Manual (Fuera de Lista)",
         "nome": "Nombre",
-        "veiculo": "Vehículo",
-        "telefone": "Teléfono",
+        "veiculo": "Vehiculo",
+        "telefone": "Telefono",
         "placa": "Placa",
-        "obs": "Observación",
+        "obs": "Obs",
         "registrar": "Registrar",
         "registrar_saida": "Registrar Salida",
         "motorista_saindo": "Saliendo:",
         "hora_saida": "Hora salida",
-        "btn_saiu": "SALIÓ",
+        "btn_saiu": "SALIO",
         "nenhum_patio": "Nadie en patio.",
         "msg_rapida": "Mensaje:",
         "prioridade": "Prioridad",
@@ -254,20 +254,20 @@ T = {
         "editar_titulo": "Editar Registro",
         "selecione": "Seleccione:",
         "salvar": "Guardar",
-        "salvo": "¡Guardado!",
+        "salvo": "Guardado!",
         "visto_titulo": "Confirmar Presencia",
         "visto_instrucao": "Escriba su nombre:",
         "visto_btn": "CONFIRMAR",
-        "visto_ok": "¡Confirmado!",
+        "visto_ok": "Confirmado!",
         "visto_erro": "No encontrado.",
         "visto_ja": "Ya confirmado.",
-        "desenvolvido": "Desarrollado por Fernando Júnior | Líder EUA8",
+        "desenvolvido": "Desarrollado por Fernando Junior | Lider EUA8",
         "erro": "Error:",
     }
 }
 
 # ============================================================
-# BANCO DE DADOS (SUPABASE POSTGRESQL)
+# BANCO DE DADOS
 # ============================================================
 
 def get_conn():
@@ -320,7 +320,7 @@ except Exception:
     pass
 
 # ============================================================
-# FUNÇÕES AUXILIARES
+# FUNCOES AUXILIARES
 # ============================================================
 
 def carregar_motoristas():
@@ -358,7 +358,7 @@ def carregar_mural(d):
         return []
 
 # ============================================================
-# CONFIGURAÇÃO DA PÁGINA + CSS AMAZON
+# PAGINA CONFIG + CSS MODERNO AMAZON
 # ============================================================
 
 st.set_page_config(page_title="Yard Manager", page_icon=None, layout="wide")
@@ -394,7 +394,7 @@ h2,h3{color:#FFF!important;font-weight:700;}
 </style>""", unsafe_allow_html=True)
 
 # ============================================================
-# VARIÁVEIS
+# VARIAVEIS
 # ============================================================
 
 agora_dt = datetime.now(FUSO_BR)
@@ -405,7 +405,7 @@ if "perfil_idx" not in st.session_state:
     st.session_state.perfil_idx = 0
 
 # ============================================================
-# SIDEBAR
+# SIDEBAR MODERNA
 # ============================================================
 
 st.sidebar.markdown('<p style="font-size:26px;font-weight:900;color:#FFF;margin:0;">amazon</p>', unsafe_allow_html=True)
@@ -433,7 +433,7 @@ if st.sidebar.button(t["atualizar"], use_container_width=True):
 st.markdown('<div class="header-az"><p style="font-size:26px;font-weight:900;color:#FFF;margin:0;">amazon</p><p style="font-size:12px;color:#FF9900;font-weight:700;letter-spacing:3px;margin:4px 0 0 0;">' + t["titulo_op"] + '</p></div>', unsafe_allow_html=True)
 
 # ============================================================
-# FUNÇÕES DASHBOARD
+# FUNCOES DASHBOARD
 # ============================================================
 
 def dash_realtime(mots):
@@ -618,7 +618,7 @@ def dash_mensal(mots):
 
 
 # ============================================================
-# PERFIL LÍDER
+# PERFIL LIDER
 # ============================================================
 
 if perfil == t["perfil_lider"]:
@@ -751,7 +751,7 @@ if perfil == t["perfil_lider"]:
                     ep=st.text_input(t["placa"],value=mot_ed.get("placa",""),key="ep")
                     et=st.text_input(t["telefone"],value=mot_ed.get("telefone",""),key="et")
                 with e2:
-                    ev=st.selectbox(t["veiculo"],[""]+TIPOS_VEICULO,index=0,key="ev")
+                    ev=st.selectbox(t["veiculo"],[""]+ TIPOS_VEICULO,index=0,key="ev")
                     ef=st.text_input(t["faixa"],value=mot_ed.get("faixa",""),key="ef")
                     ec=st.selectbox(t["categoria"],["PICKUP","PUDO"],index=0 if mot_ed.get("categoria","")=="PICKUP" else 1,key="ec")
                 ehc=st.text_input(t["hora"],value=mot_ed.get("horario_chegada",""),key="ehc")
@@ -942,7 +942,7 @@ elif perfil == t["perfil_motorista"]:
 
 
 # ============================================================
-# RODAPÉ
+# RODAPE
 # ============================================================
 
 st.markdown("---")
