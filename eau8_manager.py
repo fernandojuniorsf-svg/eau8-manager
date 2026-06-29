@@ -1,3 +1,4 @@
+```python
 
 import streamlit as st
 import pandas as pd
@@ -36,7 +37,7 @@ T = {
         "faltam_chegar": "Faltam Chegar",
         "fora_lista": "Fora da Lista",
         "primeiro_veiculo": "PRIMEIRO VEÍCULO",
-        "tempo_sem_chegar": "TEMPO SEM CHEGAR",
+        "tempo_sem_receber": "TEMPO SEM RECEBER",
         "media_patio": "MÉDIA NO PÁTIO",
         "progresso": "PROGRESSO DESPACHO",
         "faltam": "Faltam",
@@ -97,6 +98,7 @@ T = {
         "visto_ja": "Já confirmado anteriormente.",
         "desenvolvido": "Desenvolvido por Fernando Júnior | Líder EUA8",
         "erro": "Erro:",
+        "nenhum_chegou": "Nenhum motorista chegou ainda",
     },
     "ENG": {
         "titulo_op": "OPERATION FIRST MILE",
@@ -119,7 +121,7 @@ T = {
         "faltam_chegar": "Pending",
         "fora_lista": "Off-List",
         "primeiro_veiculo": "FIRST VEHICLE",
-        "tempo_sem_chegar": "TIME W/O ARRIVAL",
+        "tempo_sem_receber": "TIME W/O RECEIVING",
         "media_patio": "AVG IN YARD",
         "progresso": "DISPATCH PROGRESS",
         "faltam": "Pending",
@@ -180,6 +182,7 @@ T = {
         "visto_ja": "Already confirmed.",
         "desenvolvido": "Developed by Fernando Junior | Leader EUA8",
         "erro": "Error:",
+        "nenhum_chegou": "No driver arrived yet",
     },
     "ESP": {
         "titulo_op": "OPERACIÓN FIRST MILE",
@@ -202,7 +205,7 @@ T = {
         "faltam_chegar": "Faltan",
         "fora_lista": "Fuera de Lista",
         "primeiro_veiculo": "PRIMER VEHÍCULO",
-        "tempo_sem_chegar": "TIEMPO SIN LLEGAR",
+        "tempo_sem_receber": "TIEMPO SIN RECIBIR",
         "media_patio": "PROMEDIO EN PATIO",
         "progresso": "PROGRESO DESPACHO",
         "faltam": "Faltan",
@@ -263,6 +266,7 @@ T = {
         "visto_ja": "Ya confirmado.",
         "desenvolvido": "Desarrollado por Fernando Júnior | Líder EUA8",
         "erro": "Error:",
+        "nenhum_chegou": "Ningún conductor llegó aún",
     }
 }
 
@@ -325,7 +329,7 @@ except Exception:
 
 def carregar_motoristas():
     try:
-        return db_query("SELECT * FROM motoristas ORDER BY id DESC")
+        return db_query("SELECT * FROM motoristas ORDER BY id ASC")
     except Exception:
         return []
 
@@ -446,17 +450,27 @@ def dash_realtime(mots):
 
     hrs = [m["horario_chegada"] for m in chegaram if m.get("horario_chegada","")]
     prim = min(hrs) if hrs else "-"
-    ult = max(hrs) if hrs else None
-    t_sem = "-"
-    ms = 0
-    if ult:
+
+    # TEMPO SEM RECEBER = hora atual - hora do ultimo motorista que chegou
+    tempo_sem_receber = "-"
+    cor_tempo = "#00C853"
+    if hrs:
+        ultimo_hr = max(hrs)
         try:
-            hu = datetime.strptime(ult,"%H:%M").replace(year=agora_dt.year,month=agora_dt.month,day=agora_dt.day)
-            ms = int((agora_dt.replace(tzinfo=None)-hu).total_seconds()/60)
-            if ms >= 0:
-                t_sem = str(ms)+" min"
+            hu = datetime.strptime(ultimo_hr, "%H:%M").replace(
+                year=agora_dt.year, month=agora_dt.month, day=agora_dt.day)
+            minutos_sem = int((agora_dt.replace(tzinfo=None) - hu).total_seconds() / 60)
+            if minutos_sem >= 0:
+                tempo_sem_receber = str(minutos_sem) + " min"
+                if minutos_sem > 30:
+                    cor_tempo = "#EF4444"
+                elif minutos_sem > 15:
+                    cor_tempo = "#FF9900"
         except Exception:
             pass
+    else:
+        tempo_sem_receber = t["nenhum_chegou"]
+        cor_tempo = "#666"
 
     tempos = []
     for m in mh:
@@ -485,8 +499,7 @@ def dash_realtime(mots):
     with ca:
         st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["primeiro_veiculo"]+'</p><p style="font-size:28px;font-weight:900;color:#00BCD4;margin:0;">'+prim+'</p></div>', unsafe_allow_html=True)
     with cb:
-        cs = "#EF4444" if ult and ms>30 else "#FF9900" if ult and ms>15 else "#00C853"
-        st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["tempo_sem_chegar"]+'</p><p style="font-size:28px;font-weight:900;color:'+cs+';margin:0;">'+t_sem+'</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["tempo_sem_receber"]+'</p><p style="font-size:28px;font-weight:900;color:'+cor_tempo+';margin:0;">'+tempo_sem_receber+'</p></div>', unsafe_allow_html=True)
     with cc:
         cm = "#00C853"
         if tempos:
@@ -945,4 +958,4 @@ elif perfil == t["perfil_motorista"]:
 # ============================================================
 
 st.markdown("---")
-st.markdown('<div class="rodape"><p style="color:#FF9900;font-size:11px;font-weight:600;margin:0;">'+t["desenvolvido"]+'</p><p style="color:#555;font-size:10px;margin:4px 0 0 0;">Yard Manager | First Mile Operations | Amazon Logistics</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="rodape"><p style="color:#FF9900;font-size:11px;font-weight:600;margin:0;">
