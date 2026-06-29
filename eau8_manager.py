@@ -958,4 +958,4 @@ elif perfil == t["perfil_motorista"]:
 # ============================================================
 
 st.markdown("---")
-st.markdown('<div class="rodape"><p style="color:#FF9900;font-size:11px;font-weight:600;margin:0;">
+st.markdown('<div class="rodape"><p style="color:#FF9900;font-size:11px;font-weight:600;margin:0;">'+t["desenvolvido"]+'</p><p style="color:#555;font-size:10px;margin:4px 0 0 0;">Yard Manager | First Mile Operations | Amazon Logistics</p></div>', unsafe_allow_html=True)
