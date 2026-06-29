@@ -10,19 +10,18 @@ FUSO_BR = pytz.timezone("America/Sao_Paulo")
 SITE = "EUA8"
 TIPOS_VEICULO = ["Carreta (28 pallets)", "Truck (16 pallets)", "VUC (6 pallets)", "3/4", "Fiorino", "Van", "Bitruck", "Outro"]
 
-# ══════════════════════════════════════════════════════════════
-# TRADUCOES
-# ══════════════════════════════════════════════════════════════
+# ============================================================
+# TRADUCOES COMPLETAS
+# ============================================================
 
-TRADUCOES = {
+T = {
     "PT-BR": {
         "titulo_op": "OPERACAO FIRST MILE",
-        "quem_voce": "Quem e voce?",
-        "lider": "Lider",
-        "otr": "OTR",
-        "yard": "Yard",
-        "motorista": "Motorista",
-        "atualizar": "Atualizar Dados",
+        "perfil_lider": "Lider",
+        "perfil_otr": "OTR",
+        "perfil_yard": "Yard",
+        "perfil_motorista": "Motorista",
+        "atualizar": "Atualizar",
         "menu_dashboard": "Control Desk",
         "menu_add_drivers": "Add Drivers",
         "menu_yard_control": "Yard Control",
@@ -36,266 +35,158 @@ TRADUCOES = {
         "despachados": "Despachados",
         "faltam_chegar": "Faltam Chegar",
         "fora_lista": "Fora da Lista",
-        "primeiro_veiculo": "PRIMEIRO VEICULO DO DIA",
-        "tempo_sem_chegar": "TEMPO SEM CHEGAR VEICULO",
-        "media_patio": "MEDIA TEMPO NO PATIO",
-        "progresso_despacho": "PROGRESSO DE DESPACHO",
-        "pudo_vs_pickup": "PUDO vs Pick Up Node",
-        "faltam_titulo": "Faltam Chegar",
-        "pct_nao_chegaram": "% dos veiculos ainda nao chegaram",
-        "todos_chegaram": "Todos os veiculos previstos ja chegaram",
-        "todos_pudo": "Todos PUDO chegaram",
-        "todos_pickup": "Todos PICKUP chegaram",
-        "no_patio_agora": "No Patio Agora",
-        "patio_vazio": "Patio vazio - todos despachados",
-        "concluido": "Concluido",
+        "primeiro_veiculo": "PRIMEIRO VEICULO",
+        "tempo_sem_chegar": "TEMPO SEM CHEGAR",
+        "media_patio": "MEDIA NO PATIO",
+        "progresso": "PROGRESSO DESPACHO",
         "faltam": "Faltam",
         "de": "de",
-        "dashboard_diario": "Dashboard Diario",
-        "selecione_data": "Selecione a data:",
-        "nao_vieram": "Nao Vieram",
-        "primeiro": "1o Veiculo",
-        "ultimo": "Ultimo Veiculo",
-        "tempo_medio_patio": "TEMPO MEDIO NO PATIO",
-        "todos_motoristas": "Todos os Motoristas do Dia",
-        "exportar_csv": "Exportar CSV",
-        "ultima_semana": "Ultima Semana",
-        "total_semana": "Total Semana",
-        "tempo_medio": "Tempo Medio",
-        "sem_dados_semana": "Sem dados na ultima semana.",
-        "ultimos_30": "Ultimos 30 Dias",
-        "resumo_30": "Resumo 30 Dias",
-        "total_veiculos": "Total Veiculos",
-        "dias_operados": "Dias Operados",
-        "media_dia": "Media/Dia",
-        "tempo_medio_geral": "TEMPO MEDIO GERAL NO PATIO",
-        "exportar_mensal": "Exportar Mensal CSV",
-        "sem_dados_mes": "Sem dados nos ultimos 30 dias.",
-        "tab_realtime": "Real-Time",
+        "todos_chegaram": "Todos ja chegaram",
+        "patio_vazio": "Patio vazio",
+        "tab_rt": "Real-Time",
         "tab_diario": "Diario",
         "tab_semanal": "Semanal",
         "tab_mensal": "Mensal",
-        "coletas_pudo": "Coletas PUDO",
-        "resp_pudo": "Responsavel PUDO: importe a planilha do dia",
-        "modelo_planilha": "Modelo da planilha:",
-        "colunas_planilha": "A planilha deve ter as seguintes colunas:",
-        "exemplo": "Exemplo:",
-        "obrigatoria": "Apenas a coluna nome e obrigatoria. As demais sao opcionais.",
-        "data_coletas": "Data das coletas",
+        "sel_data": "Data:",
+        "nao_vieram": "Nao Vieram",
+        "primeiro": "1o Veiculo",
+        "ultimo": "Ultimo",
+        "tempo_medio": "Tempo Medio",
+        "exportar": "Exportar CSV",
+        "sem_dados": "Sem dados.",
+        "modelo_plan": "Modelo da planilha:",
+        "colunas": "Colunas: nome | tipo_veiculo | placa | telefone",
+        "obrigatoria": "Apenas nome e obrigatoria.",
+        "categoria": "Categoria",
+        "data_coleta": "Data",
         "importar": "Importar",
-        "importou": "Importou",
-        "motoristas_para": "motoristas para",
         "importados": "importados!",
-        "hoje": "hoje:",
-        "motoristas_txt": "motoristas",
-        "coletas_pickup": "Coletas Pick Up Node",
-        "resp_pickup": "Responsavel PICK UP NODE: importe a planilha do dia",
-        "controle_yard": "Controle de Yard",
-        "buscar_motorista": "Buscar Motorista",
         "registrar_chegada": "Registrar Chegada",
-        "motorista_chegou": "Motorista chegou:",
+        "motorista_chegou": "Motorista:",
         "faixa": "Faixa",
-        "hora": "Hora (HH:MM)",
-        "info_adicionais": "Informacoes adicionais (opcional)",
-        "telefone_motorista": "Telefone do motorista",
-        "placa": "Placa",
-        "tipo_veiculo": "Tipo do veiculo",
+        "hora": "Hora",
         "btn_chegou": "CHEGOU",
-        "todos_chegaram_yard": "Todos os motoristas previstos ja chegaram",
-        "cadastro_manual": "Motorista nao esta na lista? Cadastrar manual",
+        "todos_yard": "Todos ja chegaram",
+        "manual_titulo": "Cadastro Manual (Fora da Lista)",
         "nome": "Nome",
         "veiculo": "Veiculo",
-        "categoria": "Categoria",
-        "hora_chegada": "Hora chegada",
-        "telefone_opc": "Telefone (opcional)",
-        "placa_opc": "Placa (opcional)",
-        "obs_opc": "Obs (opcional)",
+        "telefone": "Telefone",
+        "placa": "Placa",
+        "obs": "Observacao",
         "registrar": "Registrar",
         "registrar_saida": "Registrar Saida",
         "motorista_saindo": "Motorista saindo:",
-        "hora_saida": "Hora saida (HH:MM)",
-        "obs_saida": "Obs saida (opcional)",
+        "hora_saida": "Hora saida",
         "btn_saiu": "SAIU",
-        "nenhum_patio": "Nenhum motorista no patio para despachar.",
-        "avisar": "Avisar Lider/OTR",
-        "msg_rapida": "Mensagem rapida:",
-        "tipo": "Tipo",
-        "enviar": "Enviar",
-        "ultimas_msgs": "Ultimas Mensagens",
-        "despachado": "Despachado",
-        "aguardando": "Aguardando",
-        "mural_comunicacao": "Mural de Comunicacao",
-        "msgs_hoje": "Mensagens entre Lider, OTR e Yard - hoje",
-        "sua_msg": "Sua mensagem:",
+        "nenhum_patio": "Nenhum no patio.",
+        "msg_rapida": "Mensagem:",
         "prioridade": "Prioridade",
+        "enviar": "Enviar",
         "nenhuma_msg": "Nenhuma mensagem hoje.",
-        "historico_completo": "Historico Completo",
-        "data": "Data",
-        "nenhum_registro": "Nenhum registro nesta data.",
-        "desenvolvido": "Desenvolvido por Fernando Junior | Lider EUA8",
-        "chegou_msg": "chegou - Faixa",
-        "saiu_msg": "saiu -",
-        "manual": "(manual)",
-        "nenhum_encontrado": "Nenhum motorista encontrado.",
-        "erro": "Erro:",
-        "msg_yard_lider": "Mensagem para Yard/Lider:",
-        "nenhum_registro_data": "Nenhum registro para",
-        "editar": "Editar",
+        "historico": "Historico",
+        "nenhum_registro": "Sem registros.",
+        "editar_titulo": "Editar Registro",
+        "selecione": "Selecione:",
         "salvar": "Salvar",
-        "editar_motorista": "Editar Motorista",
-        "selecione_motorista": "Selecione o motorista:",
-        "edicao_salva": "Edicao salva com sucesso!",
-        "visto_titulo": "Confirmar Chegada (Visto)",
-        "visto_instrucao": "Motorista: digite seu nome para confirmar presenca",
+        "salvo": "Salvo!",
+        "visto_titulo": "Confirmar Presenca",
+        "visto_instrucao": "Digite seu nome para dar o visto:",
         "visto_btn": "CONFIRMAR PRESENCA",
-        "visto_sucesso": "Presenca confirmada!",
-        "visto_erro": "Nome nao encontrado na lista de hoje.",
-        "visto_ja": "Voce ja confirmou presenca anteriormente.",
+        "visto_ok": "Presenca confirmada!",
+        "visto_erro": "Nome nao encontrado.",
+        "visto_ja": "Ja confirmado anteriormente.",
+        "desenvolvido": "Desenvolvido por Fernando Junior | Lider EUA8",
+        "erro": "Erro:",
     },
     "ENG": {
         "titulo_op": "OPERATION FIRST MILE",
-        "quem_voce": "Who are you?",
-        "lider": "Leader",
-        "otr": "OTR",
-        "yard": "Yard",
-        "motorista": "Driver",
-        "atualizar": "Refresh Data",
+        "perfil_lider": "Leader",
+        "perfil_otr": "OTR",
+        "perfil_yard": "Yard",
+        "perfil_motorista": "Driver",
+        "atualizar": "Refresh",
         "menu_dashboard": "Control Desk",
         "menu_add_drivers": "Add Drivers",
         "menu_yard_control": "Yard Control",
         "menu_mural": "Board",
         "menu_historico": "History",
         "menu_editar": "Edit Records",
-        "status_agora": "Status Now",
-        "total_previsto": "Total Expected",
+        "status_agora": "Current Status",
+        "total_previsto": "Expected",
         "chegaram": "Arrived",
         "no_patio": "In Yard",
         "despachados": "Dispatched",
-        "faltam_chegar": "Pending Arrival",
+        "faltam_chegar": "Pending",
         "fora_lista": "Off-List",
-        "primeiro_veiculo": "FIRST VEHICLE OF THE DAY",
-        "tempo_sem_chegar": "TIME WITHOUT VEHICLE ARRIVING",
-        "media_patio": "AVERAGE TIME IN YARD",
-        "progresso_despacho": "DISPATCH PROGRESS",
-        "pudo_vs_pickup": "PUDO vs Pick Up Node",
-        "faltam_titulo": "Pending Arrival",
-        "pct_nao_chegaram": "% of vehicles not arrived yet",
-        "todos_chegaram": "All expected vehicles have arrived",
-        "todos_pudo": "All PUDO arrived",
-        "todos_pickup": "All PICKUP arrived",
-        "no_patio_agora": "In Yard Now",
-        "patio_vazio": "Yard empty - all dispatched",
-        "concluido": "Completed",
+        "primeiro_veiculo": "FIRST VEHICLE",
+        "tempo_sem_chegar": "TIME W/O ARRIVAL",
+        "media_patio": "AVG IN YARD",
+        "progresso": "DISPATCH PROGRESS",
         "faltam": "Pending",
         "de": "of",
-        "dashboard_diario": "Daily Dashboard",
-        "selecione_data": "Select date:",
-        "nao_vieram": "No Show",
-        "primeiro": "1st Vehicle",
-        "ultimo": "Last Vehicle",
-        "tempo_medio_patio": "AVERAGE TIME IN YARD",
-        "todos_motoristas": "All Drivers of the Day",
-        "exportar_csv": "Export CSV",
-        "ultima_semana": "Last Week",
-        "total_semana": "Week Total",
-        "tempo_medio": "Avg Time",
-        "sem_dados_semana": "No data for last week.",
-        "ultimos_30": "Last 30 Days",
-        "resumo_30": "30 Days Summary",
-        "total_veiculos": "Total Vehicles",
-        "dias_operados": "Days Operated",
-        "media_dia": "Avg/Day",
-        "tempo_medio_geral": "OVERALL AVG TIME IN YARD",
-        "exportar_mensal": "Export Monthly CSV",
-        "sem_dados_mes": "No data for last 30 days.",
-        "tab_realtime": "Real-Time",
+        "todos_chegaram": "All arrived",
+        "patio_vazio": "Yard empty",
+        "tab_rt": "Real-Time",
         "tab_diario": "Daily",
         "tab_semanal": "Weekly",
         "tab_mensal": "Monthly",
-        "coletas_pudo": "PUDO Collections",
-        "resp_pudo": "PUDO: import today's spreadsheet",
-        "modelo_planilha": "Spreadsheet template:",
-        "colunas_planilha": "Columns:",
-        "exemplo": "Example:",
-        "obrigatoria": "Only nome (name) is required.",
-        "data_coletas": "Collection date",
+        "sel_data": "Date:",
+        "nao_vieram": "No Show",
+        "primeiro": "1st Vehicle",
+        "ultimo": "Last",
+        "tempo_medio": "Avg Time",
+        "exportar": "Export CSV",
+        "sem_dados": "No data.",
+        "modelo_plan": "Spreadsheet template:",
+        "colunas": "Columns: nome | tipo_veiculo | placa | telefone",
+        "obrigatoria": "Only nome is required.",
+        "categoria": "Category",
+        "data_coleta": "Date",
         "importar": "Import",
-        "importou": "Imported",
-        "motoristas_para": "drivers for",
         "importados": "imported!",
-        "hoje": "today:",
-        "motoristas_txt": "drivers",
-        "coletas_pickup": "Pick Up Node Collections",
-        "resp_pickup": "PICK UP NODE: import today's spreadsheet",
-        "controle_yard": "Yard Control",
-        "buscar_motorista": "Search Driver",
         "registrar_chegada": "Register Arrival",
-        "motorista_chegou": "Driver arrived:",
+        "motorista_chegou": "Driver:",
         "faixa": "Lane",
-        "hora": "Time (HH:MM)",
-        "info_adicionais": "Additional info (optional)",
-        "telefone_motorista": "Driver phone",
-        "placa": "License plate",
-        "tipo_veiculo": "Vehicle type",
+        "hora": "Time",
         "btn_chegou": "ARRIVED",
-        "todos_chegaram_yard": "All expected drivers arrived",
-        "cadastro_manual": "Not on list? Manual entry",
+        "todos_yard": "All arrived",
+        "manual_titulo": "Manual Entry (Off-List)",
         "nome": "Name",
         "veiculo": "Vehicle",
-        "categoria": "Category",
-        "hora_chegada": "Arrival time",
-        "telefone_opc": "Phone (optional)",
-        "placa_opc": "Plate (optional)",
-        "obs_opc": "Notes (optional)",
+        "telefone": "Phone",
+        "placa": "Plate",
+        "obs": "Notes",
         "registrar": "Register",
         "registrar_saida": "Register Departure",
-        "motorista_saindo": "Driver departing:",
-        "hora_saida": "Departure time (HH:MM)",
-        "obs_saida": "Departure notes (optional)",
+        "motorista_saindo": "Departing:",
+        "hora_saida": "Departure time",
         "btn_saiu": "DEPARTED",
-        "nenhum_patio": "No drivers in yard.",
-        "avisar": "Notify Leader/OTR",
-        "msg_rapida": "Quick message:",
-        "tipo": "Type",
-        "enviar": "Send",
-        "ultimas_msgs": "Latest Messages",
-        "despachado": "Dispatched",
-        "aguardando": "Waiting",
-        "mural_comunicacao": "Communication Board",
-        "msgs_hoje": "Messages today",
-        "sua_msg": "Your message:",
+        "nenhum_patio": "No one in yard.",
+        "msg_rapida": "Message:",
         "prioridade": "Priority",
+        "enviar": "Send",
         "nenhuma_msg": "No messages today.",
-        "historico_completo": "Full History",
-        "data": "Date",
+        "historico": "History",
         "nenhum_registro": "No records.",
-        "desenvolvido": "Developed by Fernando Junior | Leader EUA8",
-        "chegou_msg": "arrived - Lane",
-        "saiu_msg": "departed -",
-        "manual": "(manual)",
-        "nenhum_encontrado": "No driver found.",
-        "erro": "Error:",
-        "msg_yard_lider": "Message to Yard/Leader:",
-        "nenhum_registro_data": "No records for",
-        "editar": "Edit",
+        "editar_titulo": "Edit Record",
+        "selecione": "Select:",
         "salvar": "Save",
-        "editar_motorista": "Edit Driver",
-        "selecione_motorista": "Select driver:",
-        "edicao_salva": "Saved!",
-        "visto_titulo": "Confirm Arrival (Check-in)",
-        "visto_instrucao": "Driver: type your name to confirm",
-        "visto_btn": "CONFIRM PRESENCE",
-        "visto_sucesso": "Presence confirmed!",
-        "visto_erro": "Name not found in today's list.",
-        "visto_ja": "You already confirmed.",
+        "salvo": "Saved!",
+        "visto_titulo": "Confirm Presence",
+        "visto_instrucao": "Type your name to check in:",
+        "visto_btn": "CONFIRM",
+        "visto_ok": "Confirmed!",
+        "visto_erro": "Name not found.",
+        "visto_ja": "Already confirmed.",
+        "desenvolvido": "Developed by Fernando Junior | Leader EUA8",
+        "erro": "Error:",
     },
     "ESP": {
         "titulo_op": "OPERACION FIRST MILE",
-        "quem_voce": "Quien eres?",
-        "lider": "Lider",
-        "otr": "OTR",
-        "yard": "Yard",
-        "motorista": "Conductor",
+        "perfil_lider": "Lider",
+        "perfil_otr": "OTR",
+        "perfil_yard": "Yard",
+        "perfil_motorista": "Conductor",
         "atualizar": "Actualizar",
         "menu_dashboard": "Control Desk",
         "menu_add_drivers": "Add Drivers",
@@ -304,133 +195,80 @@ TRADUCOES = {
         "menu_historico": "Historial",
         "menu_editar": "Editar Registros",
         "status_agora": "Estado Actual",
-        "total_previsto": "Total Previsto",
+        "total_previsto": "Previsto",
         "chegaram": "Llegaron",
         "no_patio": "En Patio",
         "despachados": "Despachados",
         "faltam_chegar": "Faltan",
         "fora_lista": "Fuera de Lista",
-        "primeiro_veiculo": "PRIMER VEHICULO DEL DIA",
-        "tempo_sem_chegar": "TIEMPO SIN VEHICULO",
+        "primeiro_veiculo": "PRIMER VEHICULO",
+        "tempo_sem_chegar": "TIEMPO SIN LLEGAR",
         "media_patio": "PROMEDIO EN PATIO",
-        "progresso_despacho": "PROGRESO DESPACHO",
-        "pudo_vs_pickup": "PUDO vs Pick Up Node",
-        "faltam_titulo": "Faltan por Llegar",
-        "pct_nao_chegaram": "% no llegaron",
-        "todos_chegaram": "Todos llegaron",
-        "todos_pudo": "Todos PUDO llegaron",
-        "todos_pickup": "Todos PICKUP llegaron",
-        "no_patio_agora": "En Patio Ahora",
-        "patio_vazio": "Patio vacio",
-        "concluido": "Concluido",
+        "progresso": "PROGRESO DESPACHO",
         "faltam": "Faltan",
         "de": "de",
-        "dashboard_diario": "Dashboard Diario",
-        "selecione_data": "Fecha:",
-        "nao_vieram": "No Vinieron",
-        "primeiro": "1er Vehiculo",
-        "ultimo": "Ultimo",
-        "tempo_medio_patio": "TIEMPO PROMEDIO EN PATIO",
-        "todos_motoristas": "Todos los Conductores",
-        "exportar_csv": "Exportar CSV",
-        "ultima_semana": "Ultima Semana",
-        "total_semana": "Total Semana",
-        "tempo_medio": "Tiempo Promedio",
-        "sem_dados_semana": "Sin datos.",
-        "ultimos_30": "Ultimos 30 Dias",
-        "resumo_30": "Resumen 30 Dias",
-        "total_veiculos": "Total Vehiculos",
-        "dias_operados": "Dias Operados",
-        "media_dia": "Promedio/Dia",
-        "tempo_medio_geral": "PROMEDIO GENERAL EN PATIO",
-        "exportar_mensal": "Exportar Mensual",
-        "sem_dados_mes": "Sin datos.",
-        "tab_realtime": "Real-Time",
+        "todos_chegaram": "Todos llegaron",
+        "patio_vazio": "Patio vacio",
+        "tab_rt": "Real-Time",
         "tab_diario": "Diario",
         "tab_semanal": "Semanal",
         "tab_mensal": "Mensual",
-        "coletas_pudo": "PUDO",
-        "resp_pudo": "Importe planilla PUDO",
-        "modelo_planilha": "Modelo planilla:",
-        "colunas_planilha": "Columnas:",
-        "exemplo": "Ejemplo:",
+        "sel_data": "Fecha:",
+        "nao_vieram": "No Vinieron",
+        "primeiro": "1er Vehiculo",
+        "ultimo": "Ultimo",
+        "tempo_medio": "Tiempo Promedio",
+        "exportar": "Exportar CSV",
+        "sem_dados": "Sin datos.",
+        "modelo_plan": "Modelo planilla:",
+        "colunas": "Columnas: nome | tipo_veiculo | placa | telefone",
         "obrigatoria": "Solo nome es obligatorio.",
-        "data_coletas": "Fecha",
+        "categoria": "Categoria",
+        "data_coleta": "Fecha",
         "importar": "Importar",
-        "importou": "Importo",
-        "motoristas_para": "conductores para",
         "importados": "importados!",
-        "hoje": "hoy:",
-        "motoristas_txt": "conductores",
-        "coletas_pickup": "Pick Up Node",
-        "resp_pickup": "Importe planilla PICKUP",
-        "controle_yard": "Control Yard",
-        "buscar_motorista": "Buscar",
         "registrar_chegada": "Registrar Llegada",
-        "motorista_chegou": "Conductor llego:",
+        "motorista_chegou": "Conductor:",
         "faixa": "Carril",
-        "hora": "Hora (HH:MM)",
-        "info_adicionais": "Info adicional",
-        "telefone_motorista": "Telefono",
-        "placa": "Placa",
-        "tipo_veiculo": "Tipo vehiculo",
+        "hora": "Hora",
         "btn_chegou": "LLEGO",
-        "todos_chegaram_yard": "Todos llegaron",
-        "cadastro_manual": "No esta en lista? Manual",
+        "todos_yard": "Todos llegaron",
+        "manual_titulo": "Registro Manual (Fuera de Lista)",
         "nome": "Nombre",
         "veiculo": "Vehiculo",
-        "categoria": "Categoria",
-        "hora_chegada": "Hora llegada",
-        "telefone_opc": "Telefono (opc)",
-        "placa_opc": "Placa (opc)",
-        "obs_opc": "Obs (opc)",
+        "telefone": "Telefono",
+        "placa": "Placa",
+        "obs": "Obs",
         "registrar": "Registrar",
         "registrar_saida": "Registrar Salida",
-        "motorista_saindo": "Conductor saliendo:",
+        "motorista_saindo": "Saliendo:",
         "hora_saida": "Hora salida",
-        "obs_saida": "Obs salida",
         "btn_saiu": "SALIO",
         "nenhum_patio": "Nadie en patio.",
-        "avisar": "Avisar Lider/OTR",
         "msg_rapida": "Mensaje:",
-        "tipo": "Tipo",
-        "enviar": "Enviar",
-        "ultimas_msgs": "Ultimos Mensajes",
-        "despachado": "Despachado",
-        "aguardando": "Esperando",
-        "mural_comunicacao": "Mural",
-        "msgs_hoje": "Mensajes hoy",
-        "sua_msg": "Tu mensaje:",
         "prioridade": "Prioridad",
-        "nenhuma_msg": "Sin mensajes.",
-        "historico_completo": "Historial",
-        "data": "Fecha",
+        "enviar": "Enviar",
+        "nenhuma_msg": "Sin mensajes hoy.",
+        "historico": "Historial",
         "nenhum_registro": "Sin registros.",
-        "desenvolvido": "Desarrollado por Fernando Junior | Lider EUA8",
-        "chegou_msg": "llego - Carril",
-        "saiu_msg": "salio -",
-        "manual": "(manual)",
-        "nenhum_encontrado": "No encontrado.",
-        "erro": "Error:",
-        "msg_yard_lider": "Mensaje:",
-        "nenhum_registro_data": "Sin registros para",
-        "editar": "Editar",
+        "editar_titulo": "Editar Registro",
+        "selecione": "Seleccione:",
         "salvar": "Guardar",
-        "editar_motorista": "Editar Conductor",
-        "selecione_motorista": "Seleccione:",
-        "edicao_salva": "Guardado!",
-        "visto_titulo": "Confirmar Llegada",
-        "visto_instrucao": "Conductor: escriba su nombre",
+        "salvo": "Guardado!",
+        "visto_titulo": "Confirmar Presencia",
+        "visto_instrucao": "Escriba su nombre:",
         "visto_btn": "CONFIRMAR",
-        "visto_sucesso": "Confirmado!",
-        "visto_erro": "Nombre no encontrado.",
+        "visto_ok": "Confirmado!",
+        "visto_erro": "No encontrado.",
         "visto_ja": "Ya confirmado.",
+        "desenvolvido": "Desarrollado por Fernando Junior | Lider EUA8",
+        "erro": "Error:",
     }
 }
 
-# ══════════════════════════════════════════════════════════════
-# CONEXAO BANCO
-# ══════════════════════════════════════════════════════════════
+# ============================================================
+# BANCO DE DADOS
+# ============================================================
 
 def get_conn():
     return psycopg2.connect(
@@ -451,7 +289,7 @@ def db_query(sql, params=None):
     conn.close()
     return [dict(zip(cols, r)) for r in rows]
 
-def db_execute(sql, params=None):
+def db_exec(sql, params=None):
     conn = get_conn()
     cur = conn.cursor()
     cur.execute(sql, params or ())
@@ -466,9 +304,9 @@ def init_db():
         id SERIAL PRIMARY KEY, nome TEXT, placa TEXT, tipo_veiculo TEXT,
         telefone TEXT, observacao TEXT, horario_chegada TEXT, horario_saida TEXT,
         observacoes TEXT, destino TEXT, data_chegada TEXT, data_registro TEXT,
-        importado BOOLEAN DEFAULT FALSE, foto TEXT,
-        categoria TEXT DEFAULT 'PICKUP', status_yard TEXT DEFAULT 'aguardando',
-        faixa TEXT DEFAULT '', visto BOOLEAN DEFAULT FALSE)""")
+        importado BOOLEAN DEFAULT FALSE, categoria TEXT DEFAULT 'PICKUP',
+        status_yard TEXT DEFAULT 'aguardando', faixa TEXT DEFAULT '',
+        visto BOOLEAN DEFAULT FALSE)""")
     cur.execute("""CREATE TABLE IF NOT EXISTS mural (
         id SERIAL PRIMARY KEY, autor TEXT, perfil TEXT, mensagem TEXT,
         tipo TEXT DEFAULT 'info', data_hora TEXT, data TEXT)""")
@@ -481,9 +319,9 @@ try:
 except Exception:
     pass
 
-# ══════════════════════════════════════════════════════════════
+# ============================================================
 # FUNCOES AUXILIARES
-# ══════════════════════════════════════════════════════════════
+# ============================================================
 
 def carregar_motoristas():
     try:
@@ -492,408 +330,620 @@ def carregar_motoristas():
         return []
 
 def salvar_motorista(m):
-    db_execute("""INSERT INTO motoristas (nome, placa, tipo_veiculo, telefone, observacao,
-        horario_chegada, horario_saida, observacoes, destino, data_chegada,
-        data_registro, importado, foto, categoria, status_yard, faixa, visto)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+    db_exec("""INSERT INTO motoristas (nome,placa,tipo_veiculo,telefone,observacao,
+        horario_chegada,horario_saida,observacoes,destino,data_chegada,
+        data_registro,importado,categoria,status_yard,faixa,visto)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         (str(m.get("nome","")), str(m.get("placa","")), str(m.get("tipo_veiculo","")),
-         str(m.get("telefone","")), str(m.get("observacao","")), str(m.get("horario_chegada","")),
-         str(m.get("horario_saida","")), str(m.get("observacoes","")), str(m.get("destino","")),
+         str(m.get("telefone","")), str(m.get("observacao","")),
+         str(m.get("horario_chegada","")), str(m.get("horario_saida","")),
+         str(m.get("observacoes","")), str(m.get("destino","")),
          str(m.get("data_chegada","")), str(m.get("data_registro","")),
-         bool(m.get("importado", False)), str(m.get("foto","")),
-         str(m.get("categoria","PICKUP")), str(m.get("status_yard","aguardando")),
-         str(m.get("faixa","")), bool(m.get("visto", False))))
+         bool(m.get("importado",False)), str(m.get("categoria","PICKUP")),
+         str(m.get("status_yard","aguardando")), str(m.get("faixa","")),
+         bool(m.get("visto",False))))
 
-def atualizar_motorista(mid, dados):
-    sets = ", ".join([k + "=%s" for k in dados.keys()])
-    db_execute("UPDATE motoristas SET " + sets + " WHERE id=%s", list(dados.values()) + [mid])
+def atualizar_mot(mid, dados):
+    sets = ", ".join([k+"=%s" for k in dados.keys()])
+    db_exec("UPDATE motoristas SET "+sets+" WHERE id=%s", list(dados.values())+[mid])
 
-def salvar_mural(msg):
-    db_execute("INSERT INTO mural (autor, perfil, mensagem, tipo, data_hora, data) VALUES (%s,%s,%s,%s,%s,%s)",
-        (msg["autor"], msg["perfil"], msg["mensagem"], msg.get("tipo","info"), msg["data_hora"], msg["data"]))
+def salvar_msg(msg):
+    db_exec("INSERT INTO mural (autor,perfil,mensagem,tipo,data_hora,data) VALUES (%s,%s,%s,%s,%s,%s)",
+        (msg["autor"],msg["perfil"],msg["mensagem"],msg.get("tipo","info"),msg["data_hora"],msg["data"]))
 
-def carregar_mural(data_str):
+def carregar_mural(d):
     try:
-        return db_query("SELECT * FROM mural WHERE data=%s ORDER BY id DESC", (data_str,))
+        return db_query("SELECT * FROM mural WHERE data=%s ORDER BY id DESC",(d,))
     except Exception:
         return []
 
-# ══════════════════════════════════════════════════════════════
-# CONFIG PAGINA + CSS
-# ══════════════════════════════════════════════════════════════
+# ============================================================
+# PAGINA CONFIG + CSS MODERNO AMAZON
+# ============================================================
 
 st.set_page_config(page_title="Yard Manager", page_icon=None, layout="wide")
 
 st.markdown("""<style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
-* {font-family: 'Inter', sans-serif;}
-.stApp {background: #0F1111; color: #e0e0e0;}
-[data-testid="stSidebar"] {background: #131A22 !important; border-right: 1px solid #232F3E; min-width: 300px !important;}
-[data-testid="stSidebar"] .stRadio > div > label {font-size: 16px !important; padding: 10px 14px !important;}
-div[data-testid="stMetric"] {background: #232F3E; padding: 18px; border-radius: 12px; border: 1px solid #37475A;}
-div[data-testid="stMetric"] label {color: #888 !important; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;}
-div[data-testid="stMetric"] [data-testid="stMetricValue"] {color: #FF9900 !important; font-weight: 700;}
-div[data-testid="stForm"] {background: #1A2332; padding: 20px; border-radius: 12px; border: 1px solid #37475A;}
-.stButton > button {background: #FF9900; color: #0F1111; font-weight: 700; border: none; border-radius: 8px; padding: 10px 24px; font-size: 14px;}
-.stButton > button:hover {background: #FFAD33;}
-.success-box {background: #0a2a0a; border: 1px solid #00C853; border-radius: 8px; padding: 12px; color: #a5d6a7;}
-.warning-box {background: #2a2a0a; border: 1px solid #FF9900; border-radius: 8px; padding: 12px; color: #ffe082;}
-.progress-bar {width: 100%; height: 12px; background: #37475A; border-radius: 6px; margin: 8px 0; overflow: hidden;}
-.progress-fill {height: 100%; border-radius: 6px;}
-h1 {color: #FF9900 !important; font-weight: 900;}
-h2, h3 {color: #FFFFFF !important; font-weight: 700;}
-.mural-msg {background: #232F3E; border-radius: 8px; padding: 12px 16px; margin: 6px 0; border-left: 4px solid #FF9900;}
-.mural-msg-urgente {background: #2a1a1a; border-radius: 8px; padding: 12px 16px; margin: 6px 0; border-left: 4px solid #EF4444;}
-.mural-msg-yard {background: #1a2a1a; border-radius: 8px; padding: 12px 16px; margin: 6px 0; border-left: 4px solid #00C853;}
-.yard-card {background: #1a2a1a; border-radius: 10px; padding: 14px; margin: 6px 0; border: 1px solid #00C853;}
-.kpi-box {background: #232F3E; padding: 18px; border-radius: 12px; border: 1px solid #37475A; text-align: center;}
-.faltam-card {background: #2a1a1a; padding: 10px 14px; border-radius: 8px; border: 1px solid #EF4444; margin: 4px 0;}
-.modelo-box {background: #1A2332; border: 1px solid #37475A; border-radius: 10px; padding: 14px; margin: 10px 0;}
-.amazon-header {background: #232F3E; padding: 16px 24px; border-radius: 12px; margin-bottom: 16px; border-bottom: 3px solid #FF9900;}
-.rodape {text-align: center; padding: 20px 0; border-top: 1px solid #37475A; margin-top: 30px;}
-.visto-box {background: #1a2a1a; border: 2px solid #00C853; border-radius: 12px; padding: 20px; margin: 10px 0; text-align: center;}
+*{font-family:'Inter',sans-serif;}
+.stApp{background:#0F1111;color:#e0e0e0;}
+[data-testid="stSidebar"]{background:#131A22!important;border-right:1px solid #232F3E;min-width:280px!important;}
+[data-testid="stSidebar"] .stRadio>div>label{font-size:15px!important;padding:10px 14px!important;border-radius:8px;transition:all .2s;}
+[data-testid="stSidebar"] .stRadio>div>label:hover{background:#232F3E;}
+div[data-testid="stMetric"]{background:#232F3E;padding:16px;border-radius:10px;border:1px solid #37475A;}
+div[data-testid="stMetric"] label{color:#999!important;font-size:10px;text-transform:uppercase;letter-spacing:1px;}
+div[data-testid="stMetric"] [data-testid="stMetricValue"]{color:#FF9900!important;font-weight:700;}
+div[data-testid="stForm"]{background:#1A2332;padding:20px;border-radius:10px;border:1px solid #37475A;}
+.stButton>button{background:#FF9900;color:#0F1111;font-weight:700;border:none;border-radius:8px;padding:10px 24px;font-size:14px;transition:all .2s;}
+.stButton>button:hover{background:#FFAD33;transform:scale(1.02);}
+.box-ok{background:#0a2a0a;border:1px solid #00C853;border-radius:8px;padding:12px;color:#a5d6a7;}
+.box-warn{background:#2a2a0a;border:1px solid #FF9900;border-radius:8px;padding:12px;color:#ffe082;}
+.prog-bar{width:100%;height:10px;background:#37475A;border-radius:5px;margin:8px 0;overflow:hidden;}
+.prog-fill{height:100%;border-radius:5px;}
+h1{color:#FF9900!important;font-weight:900;}
+h2,h3{color:#FFF!important;font-weight:700;}
+.kpi{background:#232F3E;padding:16px;border-radius:10px;border:1px solid #37475A;text-align:center;}
+.card-yard{background:#1a2a1a;border-radius:8px;padding:12px;margin:6px 0;border:1px solid #00C853;}
+.card-falta{background:#2a1a1a;padding:10px 12px;border-radius:8px;border:1px solid #EF4444;margin:4px 0;}
+.modelo{background:#1A2332;border:1px solid #37475A;border-radius:8px;padding:14px;margin:8px 0;}
+.header-az{background:linear-gradient(135deg,#232F3E,#1A2332);padding:16px 24px;border-radius:10px;margin-bottom:16px;border-bottom:3px solid #FF9900;}
+.mural-card{background:#232F3E;border-radius:8px;padding:10px 14px;margin:6px 0;border-left:4px solid #FF9900;}
+.mural-urg{background:#2a1a1a;border-radius:8px;padding:10px 14px;margin:6px 0;border-left:4px solid #EF4444;}
+.visto-box{background:linear-gradient(135deg,#1a2a1a,#0a2a0a);border:2px solid #00C853;border-radius:12px;padding:24px;margin:12px 0;text-align:center;}
+.rodape{text-align:center;padding:20px 0;border-top:1px solid #37475A;margin-top:30px;}
 </style>""", unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════════════════════
+# ============================================================
 # VARIAVEIS
-# ══════════════════════════════════════════════════════════════
+# ============================================================
 
 agora_dt = datetime.now(FUSO_BR)
 agora = agora_dt.strftime("%d/%m/%Y %H:%M")
 hoje_str = agora_dt.strftime("%Y-%m-%d")
 
-# Manter aba ao atualizar
 if "perfil_idx" not in st.session_state:
     st.session_state.perfil_idx = 0
 
-# ══════════════════════════════════════════════════════════════
-# SIDEBAR
-# ══════════════════════════════════════════════════════════════
+# ============================================================
+# SIDEBAR MODERNA
+# ============================================================
 
-st.sidebar.markdown('<p style="font-size:28px; font-weight:900; color:#FFFFFF; margin:0;">amazon</p>', unsafe_allow_html=True)
-st.sidebar.markdown('<p style="font-size:14px; color:#FF9900; font-weight:700; letter-spacing:2px; margin:0 0 4px 0;">YARD MANAGER</p>', unsafe_allow_html=True)
-st.sidebar.markdown('<p style="font-size:11px; color:#888; margin:0 0 12px 0;">' + SITE + '</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p style="font-size:26px;font-weight:900;color:#FFF;margin:0;">amazon</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p style="font-size:13px;color:#FF9900;font-weight:700;letter-spacing:2px;margin:0 0 2px 0;">YARD MANAGER</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p style="font-size:10px;color:#666;margin:0 0 10px 0;">' + SITE + ' | ' + agora + '</p>', unsafe_allow_html=True)
 st.sidebar.markdown("---")
 
-idioma = st.sidebar.selectbox("PT-BR / ENG / ESP", ["PT-BR", "ENG", "ESP"], index=0, key="idioma")
-t = TRADUCOES[idioma]
+idioma = st.sidebar.selectbox("Idioma / Language", ["PT-BR","ENG","ESP"], index=0, key="lang")
+t = T[idioma]
 
 st.sidebar.markdown("---")
-perfil = st.sidebar.radio(t["quem_voce"], [t["lider"], t["otr"], t["yard"], t["motorista"]], index=st.session_state.perfil_idx, key="perfil_radio")
-st.session_state.perfil_idx = [t["lider"], t["otr"], t["yard"], t["motorista"]].index(perfil)
 
-st.sidebar.markdown("---")
-st.sidebar.markdown('<p style="color:#888; font-size:12px;">' + agora + '</p>', unsafe_allow_html=True)
+perfis = [t["perfil_lider"], t["perfil_otr"], t["perfil_yard"], t["perfil_motorista"]]
+perfil = st.sidebar.radio("Perfil", perfis, index=st.session_state.perfil_idx, key="pf", label_visibility="collapsed")
+st.session_state.perfil_idx = perfis.index(perfil)
+
 st.sidebar.markdown("---")
 if st.sidebar.button(t["atualizar"], use_container_width=True):
     st.rerun()
 
-# ══════════════════════════════════════════════════════════════
+# ============================================================
 # HEADER
-# ══════════════════════════════════════════════════════════════
+# ============================================================
 
-st.markdown('<div class="amazon-header"><p style="font-size:28px; font-weight:900; color:#FFFFFF; margin:0;">amazon</p><p style="font-size:13px; color:#FF9900; font-weight:700; letter-spacing:3px; margin:4px 0 0 0;">' + t["titulo_op"] + '</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="header-az"><p style="font-size:26px;font-weight:900;color:#FFF;margin:0;">amazon</p><p style="font-size:12px;color:#FF9900;font-weight:700;letter-spacing:3px;margin:4px 0 0 0;">' + t["titulo_op"] + '</p></div>', unsafe_allow_html=True)
 
-# ══════════════════════════════════════════════════════════════
-# DASHBOARD FUNCTIONS
-# ══════════════════════════════════════════════════════════════
+# ============================================================
+# FUNCOES DASHBOARD
+# ============================================================
 
-def render_realtime(motoristas_list):
-    mot_hoje = [m for m in motoristas_list if m.get("data_chegada","")[:10] == hoje_str]
-    total = len(mot_hoje)
-    chegaram = [m for m in mot_hoje if m.get("horario_chegada","")]
-    despachados = [m for m in mot_hoje if m.get("horario_saida","")]
-    no_patio = [m for m in mot_hoje if m.get("horario_chegada","") and not m.get("horario_saida","")]
-    faltam_chegar = [m for m in mot_hoje if not m.get("horario_chegada","")]
-    fora_lista = [m for m in mot_hoje if not m.get("importado", True)]
-    pudo_total = [m for m in mot_hoje if m.get("categoria","") == "PUDO"]
-    pickup_total = [m for m in mot_hoje if m.get("categoria","") == "PICKUP"]
-    pudo_faltam = [m for m in faltam_chegar if m.get("categoria","") == "PUDO"]
-    pickup_faltam = [m for m in faltam_chegar if m.get("categoria","") == "PICKUP"]
-    pudo_desp = [m for m in despachados if m.get("categoria","") == "PUDO"]
-    pickup_desp = [m for m in despachados if m.get("categoria","") == "PICKUP"]
+def dash_realtime(mots):
+    mh = [m for m in mots if m.get("data_chegada","")[:10]==hoje_str]
+    total = len(mh)
+    chegaram = [m for m in mh if m.get("horario_chegada","")]
+    desp = [m for m in mh if m.get("horario_saida","")]
+    patio = [m for m in mh if m.get("horario_chegada","") and not m.get("horario_saida","")]
+    faltam = [m for m in mh if not m.get("horario_chegada","")]
+    fora = [m for m in mh if not m.get("importado",True)]
 
-    horarios_c = [m["horario_chegada"] for m in chegaram if m.get("horario_chegada","")]
-    primeiro_v = min(horarios_c) if horarios_c else "-"
-    ultimo_c = max(horarios_c) if horarios_c else None
-    tempo_sem = "-"
-    mins_sem = 0
-    if ultimo_c:
+    hrs = [m["horario_chegada"] for m in chegaram if m.get("horario_chegada","")]
+    prim = min(hrs) if hrs else "-"
+    ult = max(hrs) if hrs else None
+    t_sem = "-"
+    ms = 0
+    if ult:
         try:
-            h_u = datetime.strptime(ultimo_c, "%H:%M").replace(year=agora_dt.year, month=agora_dt.month, day=agora_dt.day)
-            mins_sem = int((agora_dt.replace(tzinfo=None) - h_u).total_seconds() / 60)
-            if mins_sem >= 0:
-                tempo_sem = str(mins_sem) + " min"
+            hu = datetime.strptime(ult,"%H:%M").replace(year=agora_dt.year,month=agora_dt.month,day=agora_dt.day)
+            ms = int((agora_dt.replace(tzinfo=None)-hu).total_seconds()/60)
+            if ms >= 0:
+                t_sem = str(ms)+" min"
         except Exception:
             pass
 
-    tempos_h = []
-    for m in mot_hoje:
+    tempos = []
+    for m in mh:
         if m.get("horario_chegada","") and m.get("horario_saida",""):
             try:
-                h1 = datetime.strptime(m["horario_chegada"], "%H:%M")
-                h2 = datetime.strptime(m["horario_saida"], "%H:%M")
-                d = (h2 - h1).total_seconds() / 60
-                if d > 0:
-                    tempos_h.append(d)
+                h1=datetime.strptime(m["horario_chegada"],"%H:%M")
+                h2=datetime.strptime(m["horario_saida"],"%H:%M")
+                d=(h2-h1).total_seconds()/60
+                if d>0:
+                    tempos.append(d)
             except Exception:
                 pass
-    media_p = str(int(np.mean(tempos_h))) + " min" if tempos_h else "-"
+    med_p = str(int(np.mean(tempos)))+" min" if tempos else "-"
 
-    st.markdown("### " + t["status_agora"])
-    k1, k2, k3, k4, k5, k6 = st.columns(6)
-    with k1:
-        st.metric(t["total_previsto"], total)
-    with k2:
-        st.metric(t["chegaram"], len(chegaram))
-    with k3:
-        st.metric(t["no_patio"], len(no_patio))
-    with k4:
-        st.metric(t["despachados"], len(despachados))
-    with k5:
-        st.metric(t["faltam_chegar"], len(faltam_chegar))
-    with k6:
-        st.metric(t["fora_lista"], len(fora_lista))
+    st.markdown("### "+t["status_agora"])
+    c1,c2,c3,c4,c5,c6 = st.columns(6)
+    with c1: st.metric(t["total_previsto"],total)
+    with c2: st.metric(t["chegaram"],len(chegaram))
+    with c3: st.metric(t["no_patio"],len(patio))
+    with c4: st.metric(t["despachados"],len(desp))
+    with c5: st.metric(t["faltam_chegar"],len(faltam))
+    with c6: st.metric(t["fora_lista"],len(fora))
     st.markdown("---")
 
-    ca, cb, cc = st.columns(3)
+    ca,cb,cc = st.columns(3)
     with ca:
-        st.markdown('<div class="kpi-box"><p style="color:#888; font-size:11px; margin:0;">' + t["primeiro_veiculo"] + '</p><p style="font-size:30px; font-weight:900; color:#00BCD4; margin:0;">' + primeiro_v + '</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["primeiro_veiculo"]+'</p><p style="font-size:28px;font-weight:900;color:#00BCD4;margin:0;">'+prim+'</p></div>', unsafe_allow_html=True)
     with cb:
-        cor_s = "#EF4444" if ultimo_c and mins_sem > 30 else "#FF9900" if ultimo_c and mins_sem > 15 else "#00C853"
-        st.markdown('<div class="kpi-box"><p style="color:#888; font-size:11px; margin:0;">' + t["tempo_sem_chegar"] + '</p><p style="font-size:30px; font-weight:900; color:' + cor_s + '; margin:0;">' + tempo_sem + '</p></div>', unsafe_allow_html=True)
+        cs = "#EF4444" if ult and ms>30 else "#FF9900" if ult and ms>15 else "#00C853"
+        st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["tempo_sem_chegar"]+'</p><p style="font-size:28px;font-weight:900;color:'+cs+';margin:0;">'+t_sem+'</p></div>', unsafe_allow_html=True)
     with cc:
-        cor_m = "#00C853"
-        if tempos_h:
-            mv = int(np.mean(tempos_h))
-            cor_m = "#00C853" if mv <= 20 else "#FF9900" if mv <= 30 else "#EF4444"
-        st.markdown('<div class="kpi-box"><p style="color:#888; font-size:11px; margin:0;">' + t["media_patio"] + '</p><p style="font-size:30px; font-weight:900; color:' + cor_m + '; margin:0;">' + media_p + '</p><p style="color:#666; font-size:10px; margin:0;">SLA: 20 min</p></div>', unsafe_allow_html=True)
+        cm = "#00C853"
+        if tempos:
+            vm=int(np.mean(tempos))
+            cm = "#00C853" if vm<=20 else "#FF9900" if vm<=30 else "#EF4444"
+        st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["media_patio"]+'</p><p style="font-size:28px;font-weight:900;color:'+cm+';margin:0;">'+med_p+'</p><p style="color:#555;font-size:9px;margin:0;">SLA: 20 min</p></div>', unsafe_allow_html=True)
     st.markdown("---")
 
-    pct = int((len(despachados) / total) * 100) if total > 0 else 0
-    cor = "#00C853" if pct >= 80 else "#FF9900" if pct >= 50 else "#EF4444"
-    st.markdown('<div class="kpi-box"><p style="color:#888; font-size:11px; margin:0;">' + t["progresso_despacho"] + '</p><p style="font-size:40px; font-weight:900; color:' + cor + '; margin:0;">' + str(pct) + '%</p><div class="progress-bar"><div class="progress-fill" style="width:' + str(min(pct,100)) + '%; background:' + cor + ';"></div></div><p style="color:#666; font-size:11px; margin:0;">' + str(len(despachados)) + ' ' + t["de"] + ' ' + str(total) + '</p></div>', unsafe_allow_html=True)
+    pct = int((len(desp)/total)*100) if total>0 else 0
+    cor = "#00C853" if pct>=80 else "#FF9900" if pct>=50 else "#EF4444"
+    st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["progresso"]+'</p><p style="font-size:38px;font-weight:900;color:'+cor+';margin:0;">'+str(pct)+'%</p><div class="prog-bar"><div class="prog-fill" style="width:'+str(min(pct,100))+'%;background:'+cor+';"></div></div><p style="color:#555;font-size:10px;margin:0;">'+str(len(desp))+' '+t["de"]+' '+str(total)+'</p></div>', unsafe_allow_html=True)
     st.markdown("---")
 
-    st.markdown("### " + t["pudo_vs_pickup"])
-    cp, cpk = st.columns(2)
-    with cp:
-        pp = int((len(pudo_desp)/len(pudo_total))*100) if pudo_total else 0
-        st.markdown('<div class="kpi-box" style="border-left:4px solid #8B5CF6;"><p style="color:#8B5CF6; font-weight:700; margin:0;">PUDO</p><p style="font-size:26px; font-weight:900; color:#e0e0e0; margin:4px 0;">' + str(len(pudo_desp)) + '/' + str(len(pudo_total)) + '</p><p style="color:#888; font-size:11px; margin:0;">' + t["faltam"] + ': ' + str(len(pudo_faltam)) + ' | ' + str(pp) + '%</p></div>', unsafe_allow_html=True)
-    with cpk:
-        pkp = int((len(pickup_desp)/len(pickup_total))*100) if pickup_total else 0
-        st.markdown('<div class="kpi-box" style="border-left:4px solid #00BCD4;"><p style="color:#00BCD4; font-weight:700; margin:0;">PICKUP</p><p style="font-size:26px; font-weight:900; color:#e0e0e0; margin:4px 0;">' + str(len(pickup_desp)) + '/' + str(len(pickup_total)) + '</p><p style="color:#888; font-size:11px; margin:0;">' + t["faltam"] + ': ' + str(len(pickup_faltam)) + ' | ' + str(pkp) + '%</p></div>', unsafe_allow_html=True)
+    pudo_t = [m for m in mh if m.get("categoria","")=="PUDO"]
+    pick_t = [m for m in mh if m.get("categoria","")=="PICKUP"]
+    pudo_d = [m for m in desp if m.get("categoria","")=="PUDO"]
+    pick_d = [m for m in desp if m.get("categoria","")=="PICKUP"]
+    col1,col2 = st.columns(2)
+    with col1:
+        pp = int((len(pudo_d)/len(pudo_t))*100) if pudo_t else 0
+        st.markdown('<div class="kpi" style="border-left:4px solid #8B5CF6;"><p style="color:#8B5CF6;font-weight:700;margin:0;">PUDO</p><p style="font-size:24px;font-weight:900;color:#e0e0e0;margin:4px 0;">'+str(len(pudo_d))+'/'+str(len(pudo_t))+'</p><p style="color:#888;font-size:10px;margin:0;">'+str(pp)+'%</p></div>', unsafe_allow_html=True)
+    with col2:
+        pkp = int((len(pick_d)/len(pick_t))*100) if pick_t else 0
+        st.markdown('<div class="kpi" style="border-left:4px solid #00BCD4;"><p style="color:#00BCD4;font-weight:700;margin:0;">PICKUP</p><p style="font-size:24px;font-weight:900;color:#e0e0e0;margin:4px 0;">'+str(len(pick_d))+'/'+str(len(pick_t))+'</p><p style="color:#888;font-size:10px;margin:0;">'+str(pkp)+'%</p></div>', unsafe_allow_html=True)
     st.markdown("---")
 
-    if fora_lista:
-        st.markdown("### " + t["fora_lista"] + " (" + str(len(fora_lista)) + ")")
-        for fl in fora_lista:
-            st.markdown('<div class="faltam-card">' + fl["nome"] + ' | ' + fl.get("categoria","") + ' | ' + fl.get("tipo_veiculo","") + '</div>', unsafe_allow_html=True)
+    if fora:
+        st.markdown("### "+t["fora_lista"]+" ("+str(len(fora))+")")
+        for fl in fora:
+            st.markdown('<div class="card-falta">'+fl["nome"]+' | '+fl.get("categoria","")+' | '+fl.get("tipo_veiculo","")+'</div>', unsafe_allow_html=True)
         st.markdown("---")
 
-    if faltam_chegar:
-        st.markdown("### " + t["faltam_titulo"] + " (" + str(len(faltam_chegar)) + ")")
-        for fc in faltam_chegar:
-            st.markdown('<div class="faltam-card">' + fc["nome"] + ' | ' + fc.get("categoria","") + ' | ' + fc.get("tipo_veiculo","") + '</div>', unsafe_allow_html=True)
+    if faltam:
+        st.markdown("### "+t["faltam"]+" ("+str(len(faltam))+")")
+        for f in faltam:
+            st.markdown('<div class="card-falta">'+f["nome"]+' | '+f.get("categoria","")+' | '+f.get("tipo_veiculo","")+'</div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="success-box">' + t["todos_chegaram"] + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="box-ok">'+t["todos_chegaram"]+'</div>', unsafe_allow_html=True)
     st.markdown("---")
 
-    if no_patio:
-        st.markdown("### " + t["no_patio_agora"] + " (" + str(len(no_patio)) + ")")
-        for mp in no_patio:
-            ts = "-"
-            al = ""
+    if patio:
+        st.markdown("### "+t["no_patio"]+" ("+str(len(patio))+")")
+        for p in patio:
+            ts="-"
+            al=""
             try:
-                hc = datetime.strptime(mp["horario_chegada"], "%H:%M").replace(year=agora_dt.year, month=agora_dt.month, day=agora_dt.day)
-                mi = int((agora_dt.replace(tzinfo=None) - hc).total_seconds() / 60)
-                ts = str(mi) + " min"
-                al = ' style="color:#EF4444; font-weight:700;"' if mi > 20 else ' style="color:#00C853;"'
+                hc=datetime.strptime(p["horario_chegada"],"%H:%M").replace(year=agora_dt.year,month=agora_dt.month,day=agora_dt.day)
+                mi=int((agora_dt.replace(tzinfo=None)-hc).total_seconds()/60)
+                ts=str(mi)+" min"
+                al=' style="color:#EF4444;font-weight:700;"' if mi>20 else ' style="color:#00C853;"'
             except Exception:
                 pass
-            st.markdown('<div class="yard-card"><strong>' + mp["nome"] + '</strong> | ' + mp.get("categoria","") + ' | ' + mp.get("tipo_veiculo","") + ' | ' + t["faixa"] + ': ' + mp.get("faixa","-") + ' | <span' + al + '>' + ts + '</span></div>', unsafe_allow_html=True)
+            fora_tag = " [FORA DA LISTA]" if not p.get("importado",True) else ""
+            st.markdown('<div class="card-yard"><strong>'+p["nome"]+'</strong>'+fora_tag+' | '+p.get("categoria","")+' | '+p.get("tipo_veiculo","")+' | '+t["faixa"]+': '+p.get("faixa","-")+' | <span'+al+'>'+ts+'</span></div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="success-box">' + t["patio_vazio"] + '</div>', unsafe_allow_html=True)
+        st.markdown('<div class="box-ok">'+t["patio_vazio"]+'</div>', unsafe_allow_html=True)
 
 
-def render_diario(motoristas_list, data_sel):
-    ds = data_sel.strftime("%Y-%m-%d")
-    mot_d = [m for m in motoristas_list if m.get("data_chegada","")[:10] == ds]
-    if not mot_d:
-        st.info(t["nenhum_registro_data"] + " " + data_sel.strftime("%d/%m/%Y"))
+def dash_diario(mots, dt):
+    ds = dt.strftime("%Y-%m-%d")
+    md = [m for m in mots if m.get("data_chegada","")[:10]==ds]
+    if not md:
+        st.info(t["sem_dados"])
         return
-    total = len(mot_d)
-    desp = [m for m in mot_d if m.get("horario_saida","")]
-    fora = [m for m in mot_d if not m.get("importado", True)]
-    horarios = [m["horario_chegada"] for m in mot_d if m.get("horario_chegada","")]
-    k1, k2, k3, k4, k5 = st.columns(5)
-    with k1:
-        st.metric("Total", total)
-    with k2:
-        st.metric(t["despachados"], len(desp))
-    with k3:
-        st.metric(t["fora_lista"], len(fora))
-    with k4:
-        st.metric(t["primeiro"], min(horarios) if horarios else "-")
-    with k5:
-        st.metric(t["ultimo"], max(horarios) if horarios else "-")
+    total=len(md)
+    desp=len([m for m in md if m.get("horario_saida","")])
+    fora=len([m for m in md if not m.get("importado",True)])
+    hrs=[m["horario_chegada"] for m in md if m.get("horario_chegada","")]
+    c1,c2,c3,c4,c5 = st.columns(5)
+    with c1: st.metric("Total",total)
+    with c2: st.metric(t["despachados"],desp)
+    with c3: st.metric(t["fora_lista"],fora)
+    with c4: st.metric(t["primeiro"],min(hrs) if hrs else "-")
+    with c5: st.metric(t["ultimo"],max(hrs) if hrs else "-")
     st.markdown("---")
-    tempos = []
-    for m in mot_d:
+    tempos=[]
+    for m in md:
         if m.get("horario_chegada","") and m.get("horario_saida",""):
             try:
-                h1 = datetime.strptime(m["horario_chegada"], "%H:%M")
-                h2 = datetime.strptime(m["horario_saida"], "%H:%M")
-                d = (h2 - h1).total_seconds() / 60
-                if d > 0:
+                h1=datetime.strptime(m["horario_chegada"],"%H:%M")
+                h2=datetime.strptime(m["horario_saida"],"%H:%M")
+                d=(h2-h1).total_seconds()/60
+                if d>0:
                     tempos.append(d)
             except Exception:
                 pass
     if tempos:
-        med = int(np.mean(tempos))
-        cor = "#00C853" if med <= 20 else "#FF9900" if med <= 30 else "#EF4444"
-        st.markdown('<div class="kpi-box"><p style="color:#888; font-size:11px; margin:0;">' + t["tempo_medio_patio"] + '</p><p style="font-size:34px; font-weight:900; color:' + cor + '; margin:0;">' + str(med) + ' min</p></div>', unsafe_allow_html=True)
+        med=int(np.mean(tempos))
+        cor="#00C853" if med<=20 else "#FF9900" if med<=30 else "#EF4444"
+        st.markdown('<div class="kpi"><p style="color:#888;font-size:10px;margin:0;">'+t["tempo_medio"]+'</p><p style="font-size:32px;font-weight:900;color:'+cor+';margin:0;">'+str(med)+' min</p></div>', unsafe_allow_html=True)
     st.markdown("---")
-    df = pd.DataFrame(mot_d)
-    cols = ["nome","categoria","tipo_veiculo","placa","telefone","horario_chegada","horario_saida","faixa","importado","observacoes"]
-    cols_ok = [c for c in cols if c in df.columns]
-    st.dataframe(df[cols_ok], use_container_width=True, hide_index=True)
-    st.download_button(t["exportar_csv"], data=df[cols_ok].to_csv(index=False), file_name="motoristas_" + ds + ".csv", mime="text/csv")
+    df=pd.DataFrame(md)
+    cols=["nome","categoria","tipo_veiculo","placa","telefone","horario_chegada","horario_saida","faixa","importado"]
+    cols_ok=[c for c in cols if c in df.columns]
+    st.dataframe(df[cols_ok],use_container_width=True,hide_index=True)
+    st.download_button(t["exportar"],data=df[cols_ok].to_csv(index=False),file_name="motoristas_"+ds+".csv",mime="text/csv")
 
 
-def render_semanal(motoristas_list):
-    st.markdown("### " + t["ultima_semana"])
-    dados = []
-    for i in range(6, -1, -1):
-        d = (agora_dt - timedelta(days=i)).strftime("%Y-%m-%d")
-        md = [m for m in motoristas_list if m.get("data_chegada","")[:10] == d]
-        desp = len([m for m in md if m.get("horario_saida","")])
-        fora = len([m for m in md if not m.get("importado", True)])
-        df_fmt = datetime.strptime(d, "%Y-%m-%d").strftime("%d/%m")
-        dados.append({"Dia": df_fmt, "Total": len(md), t["despachados"]: desp, t["fora_lista"]: fora, "PUDO": len([m for m in md if m.get("categoria","")=="PUDO"]), "PICKUP": len([m for m in md if m.get("categoria","")=="PICKUP"])})
-    if any(r["Total"] > 0 for r in dados):
-        st.dataframe(pd.DataFrame(dados), use_container_width=True, hide_index=True)
+def dash_semanal(mots):
+    dados=[]
+    for i in range(6,-1,-1):
+        d=(agora_dt-timedelta(days=i)).strftime("%Y-%m-%d")
+        md=[m for m in mots if m.get("data_chegada","")[:10]==d]
+        desp=len([m for m in md if m.get("horario_saida","")])
+        fora=len([m for m in md if not m.get("importado",True)])
+        dados.append({"Dia":datetime.strptime(d,"%Y-%m-%d").strftime("%d/%m"),"Total":len(md),t["despachados"]:desp,t["fora_lista"]:fora,"PUDO":len([m for m in md if m.get("categoria","")=="PUDO"]),"PICKUP":len([m for m in md if m.get("categoria","")=="PICKUP"])})
+    if any(r["Total"]>0 for r in dados):
+        st.dataframe(pd.DataFrame(dados),use_container_width=True,hide_index=True)
     else:
-        st.info(t["sem_dados_semana"])
+        st.info(t["sem_dados"])
 
 
-def render_mensal(motoristas_list):
-    st.markdown("### " + t["ultimos_30"])
-    dados = []
-    for i in range(29, -1, -1):
-        d = (agora_dt - timedelta(days=i)).strftime("%Y-%m-%d")
-        md = [m for m in motoristas_list if m.get("data_chegada","")[:10] == d]
+def dash_mensal(mots):
+    dados=[]
+    for i in range(29,-1,-1):
+        d=(agora_dt-timedelta(days=i)).strftime("%Y-%m-%d")
+        md=[m for m in mots if m.get("data_chegada","")[:10]==d]
         if md:
-            desp = len([m for m in md if m.get("horario_saida","")])
-            fora = len([m for m in md if not m.get("importado", True)])
-            dados.append({"Dia": datetime.strptime(d, "%Y-%m-%d").strftime("%d/%m"), "Total": len(md), t["despachados"]: desp, t["fora_lista"]: fora})
+            desp=len([m for m in md if m.get("horario_saida","")])
+            fora=len([m for m in md if not m.get("importado",True)])
+            dados.append({"Dia":datetime.strptime(d,"%Y-%m-%d").strftime("%d/%m"),"Total":len(md),t["despachados"]:desp,t["fora_lista"]:fora})
     if dados:
-        st.dataframe(pd.DataFrame(dados), use_container_width=True, hide_index=True)
-        tot = sum(r["Total"] for r in dados)
-        st.metric(t["total_veiculos"], tot)
+        st.dataframe(pd.DataFrame(dados),use_container_width=True,hide_index=True)
+        tot=sum(r["Total"] for r in dados)
+        st.metric(t["total_previsto"],tot)
     else:
-        st.info(t["sem_dados_mes"])
+        st.info(t["sem_dados"])
 
 
-# ══════════════════════════════════════════════════════════════
-# PERFIL: LIDER
-# ══════════════════════════════════════════════════════════════
+# ============================================================
+# PERFIL LIDER
+# ============================================================
 
-if perfil == t["lider"]:
-    tab_dash, tab_add, tab_yard, tab_mural, tab_hist, tab_edit = st.tabs([
-        t["menu_dashboard"], t["menu_add_drivers"], t["menu_yard_control"],
-        t["menu_mural"], t["menu_historico"], t["menu_editar"]
-    ])
+if perfil == t["perfil_lider"]:
+    tabs = st.tabs([t["menu_dashboard"],t["menu_add_drivers"],t["menu_yard_control"],t["menu_mural"],t["menu_historico"],t["menu_editar"]])
     motoristas = carregar_motoristas()
 
-    with tab_dash:
-        sub_rt, sub_d, sub_s, sub_m = st.tabs([t["tab_realtime"], t["tab_diario"], t["tab_semanal"], t["tab_mensal"]])
-        with sub_rt:
-            render_realtime(motoristas)
-        with sub_d:
-            dt = st.date_input(t["selecione_data"], value=date.today(), key="ld_dt")
-            render_diario(motoristas, dt)
-        with sub_s:
-            render_semanal(motoristas)
-        with sub_m:
-            render_mensal(motoristas)
+    with tabs[0]:
+        sub = st.tabs([t["tab_rt"],t["tab_diario"],t["tab_semanal"],t["tab_mensal"]])
+        with sub[0]:
+            dash_realtime(motoristas)
+        with sub[1]:
+            dt=st.date_input(t["sel_data"],value=date.today(),key="ld")
+            dash_diario(motoristas,dt)
+        with sub[2]:
+            dash_semanal(motoristas)
+        with sub[3]:
+            dash_mensal(motoristas)
 
-    with tab_add:
-        st.markdown("### " + t["menu_add_drivers"])
-        st.markdown('<div class="modelo-box"><strong>' + t["modelo_planilha"] + '</strong><br>' + t["colunas_planilha"] + '<br><code>nome | tipo_veiculo | placa | telefone | destino</code><br>' + t["exemplo"] + '<br><code>Joao Silva | Truck (16 pallets) | ABC1234 | 11999998888 | PUDO</code><br>' + t["obrigatoria"] + '</div>', unsafe_allow_html=True)
-        cat_imp = st.selectbox(t["categoria"], ["PUDO", "PICKUP"], key="l_cat")
-        dt_imp = st.date_input(t["data_coletas"], value=date.today(), key="l_dt_imp")
-        arq = st.file_uploader(t["importar"], type=["xlsx","csv"], key="l_up")
+    with tabs[1]:
+        st.markdown("### "+t["menu_add_drivers"])
+        st.markdown('<div class="modelo"><strong>'+t["modelo_plan"]+'</strong><br>'+t["colunas"]+'<br><small>'+t["obrigatoria"]+'</small></div>', unsafe_allow_html=True)
+        cat_i = st.selectbox(t["categoria"],["PUDO","PICKUP"],key="lci")
+        dt_i = st.date_input(t["data_coleta"],value=date.today(),key="ldi")
+        arq = st.file_uploader(t["importar"],type=["xlsx","csv"],key="lup")
         if arq:
             try:
                 df_i = pd.read_csv(arq) if arq.name.endswith(".csv") else pd.read_excel(arq)
-                st.dataframe(df_i, use_container_width=True, hide_index=True)
-                if st.button(t["importar"], type="primary", use_container_width=True, key="l_btn_imp"):
-                    qtd = 0
-                    for _, row in df_i.iterrows():
-                        nm = str(row.get("nome","")).strip()
-                        if nm and nm != "nan":
-                            salvar_motorista({"nome": nm, "placa": str(row.get("placa","")) if str(row.get("placa","")) != "nan" else "", "tipo_veiculo": str(row.get("tipo_veiculo","")) if str(row.get("tipo_veiculo","")) != "nan" else "", "telefone": str(row.get("telefone","")) if str(row.get("telefone","")) != "nan" else "", "observacao": "", "horario_chegada": "", "horario_saida": "", "observacoes": "", "destino": str(row.get("destino","")) if str(row.get("destino","")) != "nan" else "", "data_chegada": dt_imp.strftime("%Y-%m-%d"), "data_registro": agora, "importado": True, "foto": "", "categoria": cat_imp, "status_yard": "aguardando", "faixa": "", "visto": False})
-                            qtd += 1
-                    st.success(str(qtd) + " " + t["importados"])
+                st.dataframe(df_i,use_container_width=True,hide_index=True)
+                if st.button(t["importar"]+" OK",type="primary",use_container_width=True,key="lbi"):
+                    qtd=0
+                    for _,row in df_i.iterrows():
+                        nm=str(row.get("nome","")).strip()
+                        if nm and nm!="nan":
+                            salvar_motorista({"nome":nm,"placa":str(row.get("placa","")) if str(row.get("placa",""))!="nan" else "","tipo_veiculo":str(row.get("tipo_veiculo","")) if str(row.get("tipo_veiculo",""))!="nan" else "","telefone":str(row.get("telefone","")) if str(row.get("telefone",""))!="nan" else "","observacao":"","horario_chegada":"","horario_saida":"","observacoes":"","destino":"","data_chegada":dt_i.strftime("%Y-%m-%d"),"data_registro":agora,"importado":True,"categoria":cat_i,"status_yard":"aguardando","faixa":"","visto":False})
+                            qtd+=1
+                    st.success(str(qtd)+" "+t["importados"])
                     st.rerun()
             except Exception as ex:
-                st.error(t["erro"] + " " + str(ex))
+                st.error(t["erro"]+" "+str(ex))
 
-    with tab_yard:
-        st.markdown("### " + t["menu_yard_control"])
-        mot_hoje = [m for m in motoristas if m.get("data_chegada","")[:10] == hoje_str]
-        mot_aguard = [m for m in mot_hoje if not m.get("horario_chegada","")]
-        mot_patio = [m for m in mot_hoje if m.get("horario_chegada","") and not m.get("horario_saida","")]
+    with tabs[2]:
+        st.markdown("### "+t["menu_yard_control"])
+        mh=[m for m in motoristas if m.get("data_chegada","")[:10]==hoje_str]
+        aguard=[m for m in mh if not m.get("horario_chegada","")]
+        patio=[m for m in mh if m.get("horario_chegada","") and not m.get("horario_saida","")]
 
-        st.markdown("#### " + t["registrar_chegada"])
-        if mot_aguard:
-            nomes_a = [m["nome"] + " | " + m.get("categoria","") for m in mot_aguard]
-            sel_c = st.selectbox(t["motorista_chegou"], nomes_a, key="l_sel_c")
-            idx_c = nomes_a.index(sel_c)
-            mot_c = mot_aguard[idx_c]
-            c1, c2 = st.columns(2)
-            with c1:
-                fx = st.selectbox(t["faixa"], ["1","2","3","Doca"], key="l_fx")
-            with c2:
-                hr = st.text_input(t["hora"], value=agora_dt.strftime("%H:%M"), key="l_hr")
-            if st.button(t["btn_chegou"], type="primary", use_container_width=True, key="l_btn_c"):
-                atualizar_motorista(mot_c["id"], {"horario_chegada": hr, "faixa": fx, "status_yard": "no_patio"})
+        st.markdown("#### "+t["registrar_chegada"])
+        if aguard:
+            nms=[m["nome"]+" | "+m.get("categoria","") for m in aguard]
+            sel=st.selectbox(t["motorista_chegou"],nms,key="lsc")
+            idx=nms.index(sel)
+            mot=aguard[idx]
+            cc1,cc2=st.columns(2)
+            with cc1:
+                fx=st.selectbox(t["faixa"],["1","2","3","Doca"],key="lfx")
+            with cc2:
+                hr=st.text_input(t["hora"],value=agora_dt.strftime("%H:%M"),key="lhr")
+            if st.button(t["btn_chegou"],type="primary",use_container_width=True,key="lbc"):
+                atualizar_mot(mot["id"],{"horario_chegada":hr,"faixa":fx,"status_yard":"no_patio"})
                 st.rerun()
         else:
-            st.markdown('<div class="success-box">' + t["todos_chegaram_yard"] + '</div>', unsafe_allow_html=True)
+            st.markdown('<div class="box-ok">'+t["todos_yard"]+'</div>', unsafe_allow_html=True)
 
-        with st.expander(t["cadastro_manual"]):
-            with st.form("lider_manual"):
-                mn = st.text_input(t["nome"], key="l_mn")
-                lc1, lc2 = st.columns(2)
-                with lc1:
-                    mt = st.selectbox(t["veiculo"], TIPOS_VEICULO, key="l_mt")
-                    mc = st.selectbox(t["categoria"], ["PICKUP","PUDO"], key="l_mc")
-                with lc2:
-                    mf = st.selectbox(t["faixa"], ["1","2","3","Doca"], key="l_mf")
-                    mh = st.text_input(t["hora_chegada"], value=agora_dt.strftime("%H:%M"), key="l_mh")
-                mtel = st.text_input(t["telefone_opc"], key="l_mtel")
-                mpl = st.text_input(t["placa_opc"], key="l_mpl")
-                mob = st.text_input(t["obs_opc"], key="l_mob")
-                if st.form_submit_button(t["registrar"], use_container_width=True):
+        with st.expander(t["manual_titulo"]):
+            with st.form("frm_manual_l"):
+                mn=st.text_input(t["nome"],key="lmn")
+                fc1,fc2=st.columns(2)
+                with fc1:
+                    mv=st.selectbox(t["veiculo"],TIPOS_VEICULO,key="lmv")
+                    mc=st.selectbox(t["categoria"],["PICKUP","PUDO"],key="lmc")
+                with fc2:
+                    mf=st.selectbox(t["faixa"],["1","2","3","Doca"],key="lmf")
+                    mhr=st.text_input(t["hora"],value=agora_dt.strftime("%H:%M"),key="lmhr")
+                mtel=st.text_input(t["telefone"],key="lmtel")
+                mpl=st.text_input(t["placa"],key="lmpl")
+                mob=st.text_input(t["obs"],key="lmob")
+                if st.form_submit_button(t["registrar"],use_container_width=True):
                     if mn.strip():
-                        salvar_motorista({"nome": mn.strip(), "placa": mpl, "tipo_veiculo": mt, "telefone": mtel, "observacao": "", "horario_chegada": mh, "horario_saida": "", "observacoes": mob, "destino": "", "data_chegada": hoje_str, "data_registro": agora, "importado": False, "foto": "", "categoria": mc, "status_yard": "no_patio", "faixa": mf, "visto": False})
+                        salvar_motorista({"nome":mn.strip(),"placa":mpl,"tipo_veiculo":mv,"telefone":mtel,"observacao":"","horario_chegada":mhr,"horario_saida":"","observacoes":mob,"destino":"","data_chegada":hoje_str,"data_registro":agora,"importado":False,"categoria":mc,"status_yard":"no_patio","faixa":mf,"visto":False})
                         st.rerun()
 
         st.markdown("---")
-        st.markdown("#### " + t["registrar_saida"])
-        if mot_patio:
-            nomes_p = [m["nome"] + " | " + m.get("categoria","") + " | " + t["faixa"] + " " + m.get("faixa","") for m in mot_patio]
-            sel_s = st.selectbox(t["motorista_saindo"], nomes_p, key="l_sel_s")
-            idx_s = nomes_p.index(sel_s)
-            mot_s = mot_patio[idx_s]
-            hs = st.text_input(t["hora_saida"], value=agora_dt.strftime("%H:%M"), key="l_hs")
-            if st.button(t["btn_saiu"], type="primary", use_container_width=True, key="l_btn_s"):
-                atualizar_motorista(mot_s["id"], {"horario_saida": hs, "status_yard": "despachado"})
+        st.markdown("#### "+t["registrar_saida"])
+        if patio:
+            nps=[m["nome"]+" | "+m.get("categoria","")+" | "+t["faixa"]+" "+m.get("faixa","") for m in patio]
+            sels=st.selectbox(t["motorista_saindo"],nps,key="lss")
+            idxs=nps.index(sels)
+            mots=patio[idxs]
+            hs=st.text_input(t["hora_saida"],value=agora_dt.strftime("%H:%M"),key="lhs")
+            if st.button(t["btn_saiu"],type="primary",use_container_width=True,key="lbs"):
+                atualizar_mot(mots["id"],{"horario_saida":hs,"status_yard":"despachado"})
                 st.rerun()
         else:
             st.info(t["nenhum_patio"])
 
-    with tab_mural:
-        st.markdown("### " + t["mural_comunicacao"])
+    with tabs[3]:
+        st.markdown("### "+t["menu_mural"])
+        with st.form("frm_mural_l"):
+            msg_t=st.text_area(t["msg_rapida"],key="lmsg")
+            pri=st.selectbox(t["prioridade"],["info","urgente"],key="lpri")
+            if st.form_submit_button(t["enviar"],use_container_width=True):
+                if msg_t.strip():
+                    salvar_msg({"autor":t["perfil_lider"],"perfil":"lider","mensagem":msg_t.strip(),"tipo":pri,"data_hora":agora,"data":hoje_str})
+                    st.rerun()
+        msgs=carregar_mural(hoje_str)
+        if msgs:
+            for mg in msgs:
+                cls="mural-urg" if mg.get("tipo","")=="urgente" else "mural-card"
+                st.markdown('<div class="'+cls+'"><strong>'+mg["autor"]+'</strong> <span style="color:#666;font-size:11px;">'+mg.get("data_hora","")+'</span><br>'+mg["mensagem"]+'</div>', unsafe_allow_html=True)
+        else:
+            st.info(t["nenhuma_msg"])
+
+    with tabs[4]:
+        st.markdown("### "+t["historico"])
+        dt_h=st.date_input(t["sel_data"],value=date.today(),key="ldth")
+        dash_diario(motoristas,dt_h)
+
+    with tabs[5]:
+        st.markdown("### "+t["editar_titulo"])
+        mh_ed=[m for m in motoristas if m.get("data_chegada","")[:10]==hoje_str]
+        if mh_ed:
+            nms_ed=[m["nome"]+" | "+m.get("categoria","")+" | "+m.get("horario_chegada","-") for m in mh_ed]
+            sel_ed=st.selectbox(t["selecione"],nms_ed,key="led")
+            idx_ed=nms_ed.index(sel_ed)
+            mot_ed=mh_ed[idx_ed]
+            with st.form("frm_edit"):
+                e1,e2=st.columns(2)
+                with e1:
+                    en=st.text_input(t["nome"],value=mot_ed.get("nome",""),key="en")
+                    ep=st.text_input(t["placa"],value=mot_ed.get("placa",""),key="ep")
+                    et=st.text_input(t["telefone"],value=mot_ed.get("telefone",""),key="et")
+                with e2:
+                    ev=st.selectbox(t["veiculo"],[""]+ TIPOS_VEICULO,index=0,key="ev")
+                    ef=st.text_input(t["faixa"],value=mot_ed.get("faixa",""),key="ef")
+                    ec=st.selectbox(t["categoria"],["PICKUP","PUDO"],index=0 if mot_ed.get("categoria","")=="PICKUP" else 1,key="ec")
+                ehc=st.text_input(t["hora"],value=mot_ed.get("horario_chegada",""),key="ehc")
+                ehs=st.text_input(t["hora_saida"],value=mot_ed.get("horario_saida",""),key="ehs")
+                eob=st.text_input(t["obs"],value=mot_ed.get("observacoes",""),key="eob")
+                if st.form_submit_button(t["salvar"],use_container_width=True):
+                    dados={"nome":en,"placa":ep,"telefone":et,"faixa":ef,"categoria":ec,"horario_chegada":ehc,"horario_saida":ehs,"observacoes":eob}
+                    if ev:
+                        dados["tipo_veiculo"]=ev
+                    atualizar_mot(mot_ed["id"],dados)
+                    st.success(t["salvo"])
+                    st.rerun()
+        else:
+            st.info(t["nenhum_registro"])
+
+
+# ============================================================
+# PERFIL OTR
+# ============================================================
+
+elif perfil == t["perfil_otr"]:
+    tabs_o = st.tabs([t["menu_add_drivers"],t["menu_dashboard"],t["menu_mural"]])
+    motoristas = carregar_motoristas()
+
+    with tabs_o[0]:
+        st.markdown("### "+t["menu_add_drivers"])
+        st.markdown('<div class="modelo"><strong>'+t["modelo_plan"]+'</strong><br>'+t["colunas"]+'<br><small>'+t["obrigatoria"]+'</small></div>', unsafe_allow_html=True)
+        cat_o=st.selectbox(t["categoria"],["PUDO","PICKUP"],key="oci")
+        dt_o=st.date_input(t["data_coleta"],value=date.today(),key="odi")
+        arq_o=st.file_uploader(t["importar"],type=["xlsx","csv"],key="oup")
+        if arq_o:
+            try:
+                df_o=pd.read_csv(arq_o) if arq_o.name.endswith(".csv") else pd.read_excel(arq_o)
+                st.dataframe(df_o,use_container_width=True,hide_index=True)
+                if st.button(t["importar"]+" OK",type="primary",use_container_width=True,key="obi"):
+                    qtd=0
+                    for _,row in df_o.iterrows():
+                        nm=str(row.get("nome","")).strip()
+                        if nm and nm!="nan":
+                            salvar_motorista({"nome":nm,"placa":str(row.get("placa","")) if str(row.get("placa",""))!="nan" else "","tipo_veiculo":str(row.get("tipo_veiculo","")) if str(row.get("tipo_veiculo",""))!="nan" else "","telefone":str(row.get("telefone","")) if str(row.get("telefone",""))!="nan" else "","observacao":"","horario_chegada":"","horario_saida":"","observacoes":"","destino":"","data_chegada":dt_o.strftime("%Y-%m-%d"),"data_registro":agora,"importado":True,"categoria":cat_o,"status_yard":"aguardando","faixa":"","visto":False})
+                            qtd+=1
+                    st.success(str(qtd)+" "+t["importados"])
+                    st.rerun()
+            except Exception as ex:
+                st.error(t["erro"]+" "+str(ex))
+
+    with tabs_o[1]:
+        sub_o=st.tabs([t["tab_rt"],t["tab_diario"]])
+        with sub_o[0]:
+            dash_realtime(motoristas)
+        with sub_o[1]:
+            dt_od=st.date_input(t["sel_data"],value=date.today(),key="odd")
+            dash_diario(motoristas,dt_od)
+
+    with tabs_o[2]:
+        st.markdown("### "+t["menu_mural"])
+        with st.form("frm_mural_o"):
+            msg_o=st.text_area(t["msg_rapida"],key="omsg")
+            pri_o=st.selectbox(t["prioridade"],["info","urgente"],key="opri")
+            if st.form_submit_button(t["enviar"],use_container_width=True):
+                if msg_o.strip():
+                    salvar_msg({"autor":t["perfil_otr"],"perfil":"otr","mensagem":msg_o.strip(),"tipo":pri_o,"data_hora":agora,"data":hoje_str})
+                    st.rerun()
+        msgs_o=carregar_mural(hoje_str)
+        if msgs_o:
+            for mg in msgs_o:
+                cls="mural-urg" if mg.get("tipo","")=="urgente" else "mural-card"
+                st.markdown('<div class="'+cls+'"><strong>'+mg["autor"]+'</strong> <span style="color:#666;font-size:11px;">'+mg.get("data_hora","")+'</span><br>'+mg["mensagem"]+'</div>', unsafe_allow_html=True)
+        else:
+            st.info(t["nenhuma_msg"])
+
+
+# ============================================================
+# PERFIL YARD
+# ============================================================
+
+elif perfil == t["perfil_yard"]:
+    tabs_y = st.tabs([t["menu_yard_control"],t["menu_mural"]])
+    motoristas = carregar_motoristas()
+
+    with tabs_y[0]:
+        st.markdown("### "+t["menu_yard_control"])
+        mh=[m for m in motoristas if m.get("data_chegada","")[:10]==hoje_str]
+        aguard=[m for m in mh if not m.get("horario_chegada","")]
+        patio=[m for m in mh if m.get("horario_chegada","") and not m.get("horario_saida","")]
+
+        st.markdown("#### "+t["registrar_chegada"])
+        if aguard:
+            nms=[m["nome"]+" | "+m.get("categoria","") for m in aguard]
+            sel=st.selectbox(t["motorista_chegou"],nms,key="ysc")
+            idx=nms.index(sel)
+            mot=aguard[idx]
+            yc1,yc2=st.columns(2)
+            with yc1:
+                fx=st.selectbox(t["faixa"],["1","2","3","Doca"],key="yfx")
+            with yc2:
+                hr=st.text_input(t["hora"],value=agora_dt.strftime("%H:%M"),key="yhr")
+            if st.button(t["btn_chegou"],type="primary",use_container_width=True,key="ybc"):
+                atualizar_mot(mot["id"],{"horario_chegada":hr,"faixa":fx,"status_yard":"no_patio"})
+                st.rerun()
+        else:
+            st.markdown('<div class="box-ok">'+t["todos_yard"]+'</div>', unsafe_allow_html=True)
+
+        with st.expander(t["manual_titulo"]):
+            with st.form("frm_manual_y"):
+                yn=st.text_input(t["nome"],key="ymn")
+                yfc1,yfc2=st.columns(2)
+                with yfc1:
+                    yv=st.selectbox(t["veiculo"],TIPOS_VEICULO,key="ymv")
+                    yc=st.selectbox(t["categoria"],["PICKUP","PUDO"],key="ymc")
+                with yfc2:
+                    yf=st.selectbox(t["faixa"],["1","2","3","Doca"],key="ymf")
+                    yhr2=st.text_input(t["hora"],value=agora_dt.strftime("%H:%M"),key="ymhr")
+                ytel=st.text_input(t["telefone"],key="ymtel")
+                ypl=st.text_input(t["placa"],key="ympl")
+                yob=st.text_input(t["obs"],key="ymob")
+                if st.form_submit_button(t["registrar"],use_container_width=True):
+                    if yn.strip():
+                        salvar_motorista({"nome":yn.strip(),"placa":ypl,"tipo_veiculo":yv,"telefone":ytel,"observacao":"","horario_chegada":yhr2,"horario_saida":"","observacoes":yob,"destino":"","data_chegada":hoje_str,"data_registro":agora,"importado":False,"categoria":yc,"status_yard":"no_patio","faixa":yf,"visto":False})
+                        st.rerun()
+
+        st.markdown("---")
+        st.markdown("#### "+t["registrar_saida"])
+        if patio:
+            nps=[m["nome"]+" | "+m.get("categoria","")+" | "+t["faixa"]+" "+m.get("faixa","") for m in patio]
+            sels=st.selectbox(t["motorista_saindo"],nps,key="yss")
+            idxs=nps.index(sels)
+            mots=patio[idxs]
+            yhs=st.text_input(t["hora_saida"],value=agora_dt.strftime("%H:%M"),key="yhs")
+            if st.button(t["btn_saiu"],type="primary",use_container_width=True,key="ybs"):
+                atualizar_mot(mots["id"],{"horario_saida":yhs,"status_yard":"despachado"})
+                st.rerun()
+        else:
+            st.info(t["nenhum_patio"])
+
+    with tabs_y[1]:
+        st.markdown("### "+t["menu_mural"])
+        with st.form("frm_mural_y"):
+            msg_y=st.text_area(t["msg_rapida"],key="ymsg")
+            pri_y=st.selectbox(t["prioridade"],["info","urgente"],key="ypri")
+            if st.form_submit_button(t["enviar"],use_container_width=True):
+                if msg_y.strip():
+                    salvar_msg({"autor":t["perfil_yard"],"perfil":"yard","mensagem":msg_y.strip(),"tipo":pri_y,"data_hora":agora,"data":hoje_str})
+                    st.rerun()
+        msgs_y=carregar_mural(hoje_str)
+        if msgs_y:
+            for mg in msgs_y:
+                cls="mural-urg" if mg.get("tipo","")=="urgente" else "mural-card"
+                st.markdown('<div class="'+cls+'"><strong>'+mg["autor"]+'</strong> <span style="color:#666;font-size:11px;">'+mg.get("data_hora","")+'</span><br>'+mg["mensagem"]+'</div>', unsafe_allow_html=True)
+        else:
+            st.info(t["nenhuma_msg"])
+
+
+# ============================================================
+# PERFIL MOTORISTA (VISTO)
+# ============================================================
+
+elif perfil == t["perfil_motorista"]:
+    st.markdown('<div class="visto-box"><h2 style="color:#00C853!important;">'+t["visto_titulo"]+'</h2><p style="color:#ccc;">'+t["visto_instrucao"]+'</p></div>', unsafe_allow_html=True)
+    motoristas = carregar_motoristas()
+    mh=[m for m in motoristas if m.get("data_chegada","")[:10]==hoje_str]
+
+    with st.form("frm_visto"):
+        nome_v=st.text_input(t["nome"],key="vnome")
+        if st.form_submit_button(t["visto_btn"],type="primary",use_container_width=True):
+            if nome_v.strip():
+                encontrado=None
+                for m in mh:
+                    if m["nome"].strip().lower()==nome_v.strip().lower():
+                        encontrado=m
+                        break
+                if encontrado:
+                    if encontrado.get("visto",False):
+                        st.warning(t["visto_ja"])
+                    else:
+                        atualizar_mot(encontrado["id"],{"visto":True})
+                        st.success(t["visto_ok"])
+                        st.rerun()
+                else:
+                    st.error(t["visto_erro"])
+
+    st.markdown("---")
+    vistos=[m for m in mh if m.get("visto",False)]
+    if vistos:
+        st.markdown("### Confirmados ("+str(len(vistos))+")")
+        for v in vistos:
+            st.markdown('<div class="card-yard">'+v["nome"]+' | '+v.get("categoria","")+' | '+v.get("tipo_veiculo","")+'</div>', unsafe_allow_html=True)
+
+
+# ============================================================
+# RODAPE
+# ============================================================
+
+st.markdown("---")
+st.markdown('<div class="rodape"><p style="color:#FF9900;font-size:11px;font-weight:600;margin:0;">'+t["desenvolvido"]+'</p><p style="color:#555;font-size:10px;margin:4px 0 0 0;">Yard Manager | First Mile Operations | Amazon Logistics</p></div>', unsafe_allow_html=True)
